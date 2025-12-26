@@ -1,3 +1,5 @@
+import '../Common/Size.dart';
+
 abstract class IResizeImageService
 {
   ImageResizeResult ResizeImage(List<int> imageData, String originalContentType, int maxWidth, int maxHeight, { double quality = 97, int rotation = 0, bool shouldSetUniqueName = false });
@@ -14,13 +16,10 @@ class ImageResizeResult
   Object? nativeImage;
   List<int>? image;
   String contentType;
-  //Size imageSize;
+  Size imageSize;
   String? filePath;
 
-  ImageResizeResult({ this.isResized = true, this.nativeImage, this.image, this.contentType = "",
-        //this.imageSize = Size.Zero,
-        this.filePath
-      });
+  ImageResizeResult({ this.isResized = true, this.nativeImage, this.image, this.contentType = "", Size? imageSize, this.filePath }) : imageSize = imageSize ?? Size.Zero;
 
   String get FileExtension
   {
@@ -30,9 +29,9 @@ class ImageResizeResult
     return ".jpg";
   }
 
-  // bool get IsPortrait
-  // {
-  //   return imageSize == Size.Zero || imageSize.height > imageSize.width;
-  // }
+  bool get IsPortrait
+  {
+    return imageSize == Size.Zero || imageSize.Height > imageSize.Width;
+  }
 }
 
