@@ -10,7 +10,7 @@ class AppLogExporter extends LoggableService implements IAppLogExporter
 {
     final directoryService = LazyInjected<IDirectoryService>();
     final shareFileService = LazyInjected<IShare>();
-    final String KyChat_Logs = "KyChat_Logs";
+    final String KyChat_Logs = "MoviesApp_Logs";
 
     @override
     Future<LogSharingResult> ShareLogs() async
