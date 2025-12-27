@@ -1,4 +1,4 @@
-abstract class IAppLogExporter
+abstract interface class IAppLogExporter
 {
   Future<LogSharingResult> ShareLogs();
 }

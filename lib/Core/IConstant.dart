@@ -1,4 +1,4 @@
-abstract class IConstant
+abstract interface class IConstant
 {
     String get ServerUrlHost;
 }

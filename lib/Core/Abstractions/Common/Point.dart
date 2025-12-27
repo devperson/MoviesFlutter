@@ -4,21 +4,21 @@ import 'Size.dart';
 
 class Point
 {
-  double x = 0.0;
-  double y = 0.0;
+  double X = 0.0;
+  double Y = 0.0;
 
   static Point Zero = Point();
 
   Point([ double x = 0.0, double y = 0.0 ])
   {
-    this.x = x;
-    this.y = y;
+    this.X = x;
+    this.Y = y;
   }
 
   @override
   String toString()
   {
-    return "{X=$x Y=$y}";
+    return "{X=$X Y=$Y}";
   }
 
   @override
@@ -27,50 +27,50 @@ class Point
     if (other is! Point)
       return false;
 
-    return (x == other.x) && (y == other.y);
+    return (X == other.X) && (Y == other.Y);
   }
 
   @override
   int get hashCode
   {
-    return x.hashCode ^ (y.hashCode * 397);
+    return X.hashCode ^ (Y.hashCode * 397);
   }
 
   Point Offset(double dx, double dy)
   {
-    final p = Point(x, y);
-    p.x += dx;
-    p.y += dy;
+    final p = Point(X, Y);
+    p.X += dx;
+    p.Y += dy;
     return p;
   }
 
   Point Round()
   {
-    return Point(x.roundToDouble(), y.roundToDouble());
+    return Point(X.roundToDouble(), Y.roundToDouble());
   }
 
   bool get IsEmpty
   {
-    return (x == 0.0) && (y == 0.0);
+    return (X == 0.0) && (Y == 0.0);
   }
 
   Size ToSize()
   {
-    return Size(x, y);
+    return Size(X, Y);
   }
 
   Point operator +(Size sz)
   {
-    return Point(x + sz.Width, y + sz.Height);
+    return Point(X + sz.Width, Y + sz.Height);
   }
 
   Point operator -(Size sz)
   {
-    return Point(x - sz.Width, y - sz.Height);
+    return Point(X - sz.Width, Y - sz.Height);
   }
 
   double Distance(Point other)
   {
-    return sqrt(pow(x - other.x, 2.0) + pow(y - other.y, 2.0));
+    return sqrt(pow(X - other.X, 2.0) + pow(Y - other.Y, 2.0));
   }
 }

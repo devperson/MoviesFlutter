@@ -1,11 +1,11 @@
-abstract class ILogging
+abstract interface class ILogging
 {
   void Log(String Message);
   void LogWarning(String Message);
   void LogMethodStarted(String ClassName, String MethodName, [ List<Object?>? Args ]);
 }
 
-abstract class ILoggingService extends ILogging
+abstract interface class ILoggingService extends ILogging
 {
   Exception? get LastError;
   set LastError(Exception? Value);
@@ -25,5 +25,3 @@ abstract class ILoggingService extends ILogging
   Future<List<int>?> GetLastSessionLogBytes();
   ILogging CreateSpecificLogger(String Key);
 }
-
-

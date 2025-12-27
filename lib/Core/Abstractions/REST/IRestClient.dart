@@ -1,6 +1,6 @@
 import 'Enums.dart';
 
-abstract class IRestClient
+abstract interface class IRestClient
 {
     Future<String> DoHttpRequest(RestMethod method, RestClientHttpRequest httpRequest);
 }

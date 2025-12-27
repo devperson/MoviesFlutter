@@ -1,6 +1,6 @@
 import 'package:movies_flutter/Core/Event.dart';
 
-abstract class IErrorTrackingService
+abstract interface class IErrorTrackingService
 {
   Event<Exception> get OnServiceError;
 

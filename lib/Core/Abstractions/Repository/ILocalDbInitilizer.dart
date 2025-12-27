@@ -1,4 +1,4 @@
-abstract class ILocalDbInitilizer
+abstract interface class ILocalDbInitilizer
 {
     String get DbsFolderName;
     String get DbExtenstion;

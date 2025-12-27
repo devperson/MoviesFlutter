@@ -1,6 +1,6 @@
 import '../Common/Size.dart';
 
-abstract class IResizeImageService
+abstract interface class IResizeImageService
 {
   ImageResizeResult ResizeImage(List<int> imageData, String originalContentType, int maxWidth, int maxHeight, { double quality = 97, int rotation = 0, bool shouldSetUniqueName = false });
 
@@ -34,4 +34,3 @@ class ImageResizeResult
     return imageSize == Size.Zero || imageSize.Height > imageSize.Width;
   }
 }
-

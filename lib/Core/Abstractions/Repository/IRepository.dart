@@ -1,6 +1,6 @@
 import '../Domain/IEntity.dart';
 
-abstract class IRepository<TEntity extends IEntity>
+abstract interface class IRepository<TEntity extends IEntity>
 {
     Future<TEntity?> FindById(int id);
     Future<List<TEntity>> GetListAsync({int count = -1, int skip = 0});

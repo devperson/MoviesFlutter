@@ -1,4 +1,4 @@
-abstract class IAuthTokenService
+abstract interface class IAuthTokenService
 {
     Future<String?> GetToken();
     Future<void> EnsureAuthValid();

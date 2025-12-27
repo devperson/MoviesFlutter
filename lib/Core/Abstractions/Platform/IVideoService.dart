@@ -1,6 +1,6 @@
 import '../Common/Size.dart';
 
-abstract class IVideoService
+abstract interface class IVideoService
 {
   Future<ThumbnailInfo> GetThumbnail(String videoFilePath);
 

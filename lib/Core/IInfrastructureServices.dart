@@ -1,4 +1,4 @@
-abstract class IInfrastructureServices
+abstract interface class IInfrastructureServices
 {
     Future<void> Start();
 

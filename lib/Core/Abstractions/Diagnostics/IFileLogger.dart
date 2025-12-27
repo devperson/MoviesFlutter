@@ -1,4 +1,4 @@
-abstract class IFileLogger
+abstract interface class IFileLogger
 {
   void Init();
 
