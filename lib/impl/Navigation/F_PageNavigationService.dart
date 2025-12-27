@@ -1,20 +1,9 @@
 
 import 'package:get/get.dart';
-import 'UrlNavigationHelper.dart';
+import '../../Core/MVVM/Navigation/IPageNavigationService.dart';
+import '../../Core/MVVM/Navigation/UrlNavigationHelper.dart';
 
-abstract class IPageNavigationService
-{
-  Future<void> Navigate(String url, { Map<String, dynamic>? parameters});
 
-  Future<void> NavigateToRoot({Map<String, dynamic>? parameters});
-
-  // Widget? getCurrentPage();
-  // GetxController? getCurrentPageModel();
-  // GetxController? getRootPageModel();
-  // List<GetxController> getNavStackModels();
-
-  bool get CanNavigateBack;
-}
 
 
 class F_PageNavigationService implements IPageNavigationService
