@@ -1,6 +1,6 @@
 import '../../Core/Abstractions/Diagnostics/ILoggingService.dart';
 
-class LoggingService extends ILoggingService
+class LoggingService implements ILoggingService
 {
   @override
   Exception? LastError;
