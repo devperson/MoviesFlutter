@@ -1,20 +1,18 @@
-import '../../../Abstractions/Diagnostics/ILogging.dart';
 import '../../../Abstractions/Diagnostics/ILoggingService.dart';
-import 'package:get_it/get_it.dart';
+import '../Utils/LazyInjected.dart';
 
 class LoggableService
 {
-    ILoggingService get loggingService => GetIt.I<ILoggingService>();
-    lateinit ILogging specificLogger;
+    final loggingService = LazyInjected<ILoggingService>();
+    late ILogging specificLogger;
     bool specificLoggerInitialized = false;
 
     void LogMethodStart(String methodName, [List<Object?>? args])
     {
         try
         {
-            final loggingService = GetIt.I<ILoggingService>();
             final className = this.runtimeType.toString();
-            loggingService.LogMethodStarted(className, methodName, args);
+            loggingService.Value.LogMethodStarted(className, methodName, args);
         }
         catch (ex, stackTrace)
         {
@@ -26,7 +24,7 @@ class LoggableService
     {
         if(specificLoggerInitialized == false)
         {
-            specificLogger = loggingService.CreateSpecificLogger(key);
+            specificLogger = loggingService.Value.CreateSpecificLogger(key);
             specificLoggerInitialized = true;
         }
     }
