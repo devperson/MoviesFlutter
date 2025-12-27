@@ -1,14 +1,14 @@
 import 'dart:async';
 import '../../../Event.dart';
 
-class KmpTimer
+class CustomTimer
 {
     final Duration interval;
     Timer? _timer;
 
-    final Event<void> Elapsed = Event<void>();
+    final SimpleEvent Elapsed = SimpleEvent();
 
-    KmpTimer(this.interval);
+    CustomTimer(this.interval);
 
     bool get IsEnabled => _timer != null && _timer!.isActive;
 
@@ -18,7 +18,7 @@ class KmpTimer
             return;
 
         _timer = Timer.periodic(interval, (Timer t) {
-            Elapsed.Invoke(null);
+            Elapsed.Invoke();
         });
     }
 
