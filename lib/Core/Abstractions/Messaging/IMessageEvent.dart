@@ -1,4 +1,4 @@
-abstract class IMessageEvent
+abstract interface class IMessageEvent
 {
   void Subscribe(void Function(Object?) Handler);
   void Unsubscribe(void Function(Object?) Handler);

@@ -1,4 +1,4 @@
-abstract class IEntity
+abstract interface class IEntity
 {
   int get Id;
 

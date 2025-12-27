@@ -1,4 +1,4 @@
-abstract class IPlatformOutput
+abstract interface class IPlatformOutput
 {
     void Info(String Message);
     void Warn(String Message);

@@ -1,4 +1,4 @@
-abstract class IAppDto
+abstract interface class IAppDto
 {
   int get Id;
 
