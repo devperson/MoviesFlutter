@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:movies_flutter/impl/Utils/NumConstants.dart';
-import '../../impl/UI/Controls/F_EditTextField.dart';
-import '../../impl/UI/Controls/F_PrimaryButton.dart';
-import '../Controllers/LoginController.dart';
+
+import '../../Core/Base/Impl/UI/Controls/F_EditTextField.dart';
+import '../../Core/Base/Impl/UI/Controls/F_PrimaryButton.dart';
+import '../../Core/Base/Impl/Utils/NumConstants.dart';
+import '../Controllers/LoginPageViewModel.dart';
 
 
 
-class LoginPage extends GetView<LoginController>
+class LoginPage extends GetView<LoginPageViewModel>
 {
 
   @override

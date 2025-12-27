@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../Controllers/HomeController.dart';
+import '../Controllers/MoviesPageViewModel.dart';
 
 
-class HomePage extends GetView<HomeController>
+class HomePage extends GetView<MoviesPageViewModel>
 {
   // GetView<T> gives you controller automatically
 

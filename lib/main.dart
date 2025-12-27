@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 
-import 'App/Controllers/LoginController.dart';
-import 'App/Navigation/BaseDependencies.dart';
-import 'App/Navigation/PageRegistrar.dart';
-import 'impl/Utils/ColorConstants.dart';
+import 'App/Controllers/LoginPageViewModel.dart';
+import 'App/Bootstrap/BaseDependencies.dart';
+import 'App/Bootstrap/PageRegistrar.dart';
+import 'Core/Base/Impl/Utils/ColorConstants.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget
   {
     return GetMaterialApp(
       title: 'Movies Flutter app',
-      initialRoute: '/' + LoginController.Name,
+      initialRoute: '/' + LoginPageViewModel.Name,
       getPages: PageRegistrar.pages,
       defaultTransition: Transition.rightToLeft,
       initialBinding: BaseDependencies(),

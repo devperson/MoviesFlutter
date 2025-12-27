@@ -27,10 +27,9 @@ class AppLoggingService implements ILoggingService
 
     AppLoggingService()
     {
-        _errorTrackingService.Value.OnServiceError.AddListener(ErrorTrackingService_OnError);
-
+        //_errorTrackingService.Value.OnServiceError.AddListener(ErrorTrackingService_OnError);
         _fileLogger.Value.Init();
-        AppLaunchCount = GetLaunchCount();
+        //AppLaunchCount = GetLaunchCount();
     }
 
     void ErrorTrackingService_OnError(Object? ex)
@@ -63,7 +62,7 @@ class AppLoggingService implements ILoggingService
                 Future(() {
                     try
                     {
-                        _errorTrackingService.Value.TrackError(ex, AdditionalData: null);
+                        _errorTrackingService.Value.TrackError(ex, additionalData: null);
                     }
                     catch (ex)
                     {

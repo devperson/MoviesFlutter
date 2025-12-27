@@ -4,7 +4,7 @@ import '../../../Abstractions/Essentials/IVersionTracking.dart';
 import '../Utils/LazyInjected.dart';
 import 'LoggableService.dart';
 
-class VersionTrackingImplementation extends LoggableService implements IVersionTracking
+class VersionTrackingImplementation with LoggableService implements IVersionTracking
 {
     final preferences = LazyInjected<IPreferences>();
     final appInfo = LazyInjected<IAppInfo>();

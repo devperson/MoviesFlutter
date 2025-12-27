@@ -1,9 +1,12 @@
 
 import 'package:get/get.dart';
-import '../../Core/MVVM/Navigation/IPageNavigationService.dart';
-import '../../Core/MVVM/Navigation/UrlNavigationHelper.dart';
 
 
+import '../../../Abstractions/Navigation/IPageNavigationService.dart';
+import '../../../Abstractions/Navigation/NavigationParameters.dart';
+import '../../../Abstractions/Navigation/UrlNavigationHelper.dart';
+import '../../MVVM/ViewModels/BaseViewModel.dart';
+import '../../MVVM/ViewModels/NavigatingBaseViewModel.dart';
 
 
 class F_PageNavigationService implements IPageNavigationService
@@ -16,19 +19,40 @@ class F_PageNavigationService implements IPageNavigationService
   bool get CanNavigateBack => stack.length > 1;
 
   @override
-  Future<void> NavigateToRoot({Map<String, dynamic>? parameters}) async
+  Future<void> NavigateToRoot({NavigationParameters? parameters}) async
   {
-    //await Get.offAllNamed('/', arguments: parameters);
+    vmStack.last.OnNavigatedFrom();
+
+    var params = NavigationParameters();
+    if(parameters != null)
+    {
+      params = parameters;
+    }
+
+    final rootCtrl = stack.first;
+    Get.until((route)
+    {
+      return route.settings.name == '/$rootCtrl';
+    });
+    await Future.delayed(navigationAnimationDuration);
+
+    vmStack.last.OnNavigatedTo(params);
   }
 
   @override
-  Future<void> Navigate(String url, {Map<String, dynamic>? parameters}) async
+  Future<void> Navigate(String url, {NavigationParameters? parameters}) async
   {
+    var params = NavigationParameters();
+    if(parameters != null)
+    {
+      params = parameters;
+    }
+
     final nav = UrlNavigationHelper.Parse(url);
 
     if (nav.IsPush)
     {
-      await OnPushAsync(url, parameters);
+      await OnPushAsync(url, params);
     }
     else if (nav.IsPop)
     {
@@ -36,19 +60,19 @@ class F_PageNavigationService implements IPageNavigationService
     }
     else if (nav.IsMultiPop)
     {
-      await OnMultiPopAsync(url, parameters);
+      await OnMultiPopAsync(url, params);
     }
     else if (nav.IsMultiPopAndPush)
     {
-      await OnMultiPopAndPushAsync(url, parameters);
+      await OnMultiPopAndPushAsync(url, params);
     }
     else if (nav.IsPushAsRoot)
     {
-      await OnPushRootAsync(url, parameters);
+      await OnPushRootAsync(url, params);
     }
     else if (nav.IsMultiPushAsRoot)
     {
-      await OnMultiPushRootAsync(url, parameters);
+      await OnMultiPushRootAsync(url, params);
     }
     else
     {
@@ -56,26 +80,32 @@ class F_PageNavigationService implements IPageNavigationService
     }
   }
 
-  Future<void> OnPushAsync(String url, Map<String, dynamic>? parameters) async
+  Future<void> OnPushAsync(String url, NavigationParameters parameters) async
   {
+    vmStack.last.OnNavigatedFrom();
+
     stack.add(url);
     //we need to put forward slash for route, this is GetX requirement
     final route = "/"+ url;
     Get.toNamed(route, arguments: parameters);
-
     await Future.delayed(navigationAnimationDuration);
+
+    vmStack.last.OnNavigatedTo(parameters);
   }
 
   Future<void> OnPopAsync() async
   {
+     vmStack.last.OnNavigatedFrom();
      stack.removeLast();
      Get.back();
 
      await Future.delayed(navigationAnimationDuration);
   }
 
-  Future<void> OnMultiPopAsync(String url, Map<String, dynamic>? parameters) async
+  Future<void> OnMultiPopAsync(String url, NavigationParameters parameters) async
   {
+    vmStack.last.OnNavigatedFrom();
+
     // how many levels to pop
     final popCount = url.split('/').length - 1;
 
@@ -109,10 +139,14 @@ class F_PageNavigationService implements IPageNavigationService
     });
 
     await Future.delayed(navigationAnimationDuration);
+
+    vmStack.last.OnNavigatedTo(parameters);
   }
 
-  Future<void> OnMultiPopAndPushAsync(String url, Map<String, dynamic>? parameters) async
+  Future<void> OnMultiPopAndPushAsync(String url, NavigationParameters parameters) async
   {
+    vmStack.last.OnNavigatedFrom();
+
      final parts = url.split('/');
      final popCount = parts.where((e) => e == '..').length;
      final targetCtrl = parts.last;
@@ -128,10 +162,16 @@ class F_PageNavigationService implements IPageNavigationService
      Get.offNamedUntil('/$targetCtrl',
           (route) => route.settings.name == '/${stack[baseIndex]}',
       arguments: parameters,);
+
+    await Future.delayed(navigationAnimationDuration);
+
+    vmStack.last.OnNavigatedTo(parameters);
   }
 
-  Future<void> OnPushRootAsync(String url, Map<String, dynamic>? parameters) async
+  Future<void> OnPushRootAsync(String url, NavigationParameters parameters) async
   {
+    vmStack.last.OnNavigatedFrom();
+
      // url comes as "/page"
      final ctrlName = url.startsWith('/')
         ? url.substring(1)
@@ -146,10 +186,13 @@ class F_PageNavigationService implements IPageNavigationService
 
      // 3️⃣ wait for animation end
      await Future.delayed(Get.defaultTransitionDuration);
+
+    vmStack.last.OnNavigatedTo(parameters);
   }
 
-  Future<void> OnMultiPushRootAsync(String url, Map<String, dynamic>? parameters) async
+  Future<void> OnMultiPushRootAsync(String url, NavigationParameters parameters) async
   {
+    vmStack.last.OnNavigatedFrom();
     // "/page1/page2" -> ["page1", "page2"]
     final pages = url
         .split('/')
@@ -172,9 +215,17 @@ class F_PageNavigationService implements IPageNavigationService
     }
 
     await Future.delayed(Get.defaultTransitionDuration);
+
+    vmStack.last.OnNavigatedTo(parameters);
   }
 
+@override
+  List<String> GetNavStack()
+  {
+    return stack;
+  }
 
+  final List<NavigatingBaseViewModel> vmStack = [];
 
   // @override
   // Widget? getCurrentPage() {

@@ -1,7 +1,8 @@
+
 import '../../../Abstractions/Diagnostics/ILoggingService.dart';
 import '../Utils/LazyInjected.dart';
 
-class LoggableService
+mixin LoggableService
 {
     final loggingService = LazyInjected<ILoggingService>();
     late ILogging specificLogger;

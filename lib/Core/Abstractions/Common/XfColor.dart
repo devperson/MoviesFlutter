@@ -1,370 +1,381 @@
 import 'dart:math';
 
-class XfColor
-{
-  final _Mode _mode;
+enum Mode { Default, Rgb, Hsl }
 
-  static XfColor get Default => XfColor._(-1.0, -1.0, -1.0, -1.0, _Mode.Default);
+class XfColor {
+  final Mode _mode;
 
-  static XfColor Accent = Default;
+  final double _a;
+  final double _r;
+  final double _g;
+  final double _b;
 
-  static void SetAccent(XfColor value)
-  {
-    Accent = value;
-  }
+  final double _hue;
+  final double _saturation;
+  final double _luminosity;
 
-  double _a;
-  double _r;
-  double _g;
-  double _b;
-  double _hue;
-  double _saturation;
-  double _luminosity;
+  // ------------------------
+  // Getters
+  // ------------------------
 
-  bool get IsDefault => _mode == _Mode.Default;
+  bool get isDefault => _mode == Mode.Default;
 
   double get A => _a;
   double get R => _r;
   double get G => _g;
   double get B => _b;
+
   double get Hue => _hue;
   double get Saturation => _saturation;
   double get Luminosity => _luminosity;
 
-  XfColor(double r, double g, double b, [ double a = 1.0 ])
-      : this._(r, g, b, a, _Mode.Rgb);
+  // ------------------------
+  // Private ctor
+  // ------------------------
 
-  XfColor._(double w, double x, double y, double z, _Mode mode)
-      : _mode = mode,
-        _r = mode == _Mode.Rgb ? Clamp(w, 0.0, 1.0) : -1.0,
-        _g = mode == _Mode.Rgb ? Clamp(x, 0.0, 1.0) : -1.0,
-        _b = mode == _Mode.Rgb ? Clamp(y, 0.0, 1.0) : -1.0,
-        _a = Clamp(z, 0.0, 1.0),
-        _hue = mode == _Mode.Hsl ? Clamp(w, 0.0, 1.0) : -1.0,
-        _saturation = mode == _Mode.Hsl ? Clamp(x, 0.0, 1.0) : -1.0,
-        _luminosity = mode == _Mode.Hsl ? Clamp(y, 0.0, 1.0) : -1.0
-  {
-    if (mode == _Mode.Rgb)
-    {
-      final hsl = _ConvertToHsl(_r, _g, _b);
-      _hue = hsl.h;
-      _saturation = hsl.s;
-      _luminosity = hsl.l;
+  const XfColor._internal(
+      this._r,
+      this._g,
+      this._b,
+      this._a,
+      this._hue,
+      this._saturation,
+      this._luminosity,
+      this._mode,
+      );
+
+  factory XfColor._(
+      double w,
+      double x,
+      double y,
+      double z,
+      Mode mode,
+      ) {
+    switch (mode) {
+      case Mode.Default:
+        return const XfColor._internal(
+          -1, -1, -1, -1,
+          -1, -1, -1,
+          Mode.Default,
+        );
+
+      case Mode.Rgb:
+        final r = _clamp(w);
+        final g = _clamp(x);
+        final b = _clamp(y);
+        final a = _clamp(z);
+
+        final hsl = _convertToHsl(r, g, b);
+        return XfColor._internal(
+          r, g, b, a,
+          hsl.h, hsl.s, hsl.l,
+          Mode.Rgb,
+        );
+
+      case Mode.Hsl:
+        final h = _clamp(w);
+        final s = _clamp(x);
+        final l = _clamp(y);
+        final a = _clamp(z);
+
+        final rgb = _convertToRgb(h, s, l);
+        return XfColor._internal(
+          rgb.r, rgb.g, rgb.b, a,
+          h, s, l,
+          Mode.Hsl,
+        );
     }
-    else if (mode == _Mode.Hsl)
-    {
-      final rgb = _ConvertToRgb(_hue, _saturation, _luminosity);
-      _r = rgb.r;
-      _g = rgb.g;
-      _b = rgb.b;
+  }
+
+  // ------------------------
+  // Public constructors
+  // ------------------------
+
+  factory XfColor(double r, double g, double b, [double a = 1.0]) =>
+      XfColor._(r, g, b, a, Mode.Rgb);
+
+  factory XfColor.value(double v) =>
+      XfColor._(v, v, v, 1.0, Mode.Rgb);
+
+  // ------------------------
+  // Instance methods
+  // ------------------------
+
+  XfColor multiplyAlpha(double alpha) {
+    if (_mode == Mode.Default) {
+      throw StateError('Invalid on Color.Default');
     }
+    return XfColor._(
+      _mode == Mode.Rgb ? _r : _hue,
+      _mode == Mode.Rgb ? _g : _saturation,
+      _mode == Mode.Rgb ? _b : _luminosity,
+      _a * alpha,
+      _mode,
+    );
   }
 
-  XfColor MultiplyAlpha(double alpha)
-  {
-    if (_mode == _Mode.Default)
-      throw StateError("Invalid on Color.Default");
-
-    return _mode == _Mode.Rgb
-        ? XfColor._(_r, _g, _b, _a * alpha, _Mode.Rgb)
-        : XfColor._(_hue, _saturation, _luminosity, _a * alpha, _Mode.Hsl);
+  XfColor addLuminosity(double delta) {
+    if (_mode == Mode.Default) {
+      throw StateError('Invalid on Color.Default');
+    }
+    return XfColor._(_hue, _saturation, _luminosity + delta, _a, Mode.Hsl);
   }
 
-  XfColor AddLuminosity(double delta)
-  {
-    if (_mode == _Mode.Default)
-      throw StateError("Invalid on Color.Default");
+  XfColor withHue(double hue) =>
+      XfColor._(hue, _saturation, _luminosity, _a, Mode.Hsl);
 
-    return XfColor._(_hue, _saturation, _luminosity + delta, _a, _Mode.Hsl);
-  }
+  XfColor withSaturation(double s) =>
+      XfColor._(_hue, s, _luminosity, _a, Mode.Hsl);
 
-  XfColor WithHue(double hue)
-  {
-    if (_mode == _Mode.Default)
-      throw StateError("Invalid on Color.Default");
+  XfColor withLuminosity(double l) =>
+      XfColor._(_hue, _saturation, l, _a, Mode.Hsl);
 
-    return XfColor._(hue, _saturation, _luminosity, _a, _Mode.Hsl);
-  }
+  // ------------------------
+  // Equality / Hash
+  // ------------------------
 
-  XfColor WithSaturation(double saturation)
-  {
-    if (_mode == _Mode.Default)
-      throw StateError("Invalid on Color.Default");
+  @override
+  bool operator ==(Object other) {
+    if (other is! XfColor) return false;
 
-    return XfColor._(_hue, saturation, _luminosity, _a, _Mode.Hsl);
-  }
+    if (_mode == Mode.Default && other._mode == Mode.Default) return true;
+    if (_mode != other._mode) return false;
 
-  XfColor WithLuminosity(double luminosity)
-  {
-    if (_mode == _Mode.Default)
-      throw StateError("Invalid on Color.Default");
+    if (_mode == Mode.Hsl) {
+      return _hue == other._hue &&
+          _saturation == other._saturation &&
+          _luminosity == other._luminosity &&
+          _a == other._a;
+    }
 
-    return XfColor._(_hue, _saturation, luminosity, _a, _Mode.Hsl);
+    return _r == other._r &&
+        _g == other._g &&
+        _b == other._b &&
+        _a == other._a;
   }
 
   @override
-  bool operator ==(Object? other)
-  {
-    if (other is! XfColor)
-      return false;
-
-    if (_mode == _Mode.Default && other._mode == _Mode.Default)
-      return true;
-
-    if (_mode != other._mode)
-      return false;
-
-    return _mode == _Mode.Hsl
-        ? _hue == other._hue && _saturation == other._saturation && _luminosity == other._luminosity && _a == other._a
-        : _r == other._r && _g == other._g && _b == other._b && _a == other._a;
+  int get hashCode {
+    var h = _r.hashCode;
+    h = (h * 397) ^ _g.hashCode;
+    h = (h * 397) ^ _b.hashCode;
+    h = (h * 397) ^ _a.hashCode;
+    return h;
   }
+
+  // ------------------------
+  // String / Hex
+  // ------------------------
 
   @override
-  int get hashCode
-  {
-    int hash = _r.hashCode;
-    hash = (hash * 397) ^ _g.hashCode;
-    hash = (hash * 397) ^ _b.hashCode;
-    hash = (hash * 397) ^ _a.hashCode;
-    return hash;
+  String toString() =>
+      '[Color: A=$A, R=$R, G=$G, B=$B, '
+          'Hue=$Hue, Saturation=$Saturation, Luminosity=$Luminosity]';
+
+  String toHex() {
+    String b(double v) =>
+        _clampInt((v * 255).round(), 0, 255)
+            .toRadixString(16)
+            .padLeft(2, '0')
+            .toUpperCase();
+
+    return '#${b(A)}${b(R)}${b(G)}${b(B)}';
   }
 
-  @override
-  String toString()
-  {
-    return "[Color: A=$A, R=$R, G=$G, B=$B, Hue=$Hue, Saturation=$Saturation, Luminosity=$Luminosity]";
+  // ------------------------
+  // Static / Factory methods
+  // ------------------------
+
+  static final XfColor Default = XfColor._(0, 0, 0, 0, Mode.Default);
+  static XfColor Accent = Default;
+
+  static void setAccent(XfColor value) {
+    Accent = value;
   }
 
-  String ToHex()
-  {
-    String toHexByte(double v)
-    {
-      final int i = (v * 255).round().clamp(0, 255);
-      final h = i.toRadixString(16).toUpperCase();
-      return h.length == 1 ? "0$h" : h;
+  static XfColor fromRgb(int r, int g, int b) =>
+      fromRgba(r, g, b, 255);
+
+  static XfColor fromRgba(int r, int g, int b, int a) =>
+      XfColor._(r / 255, g / 255, b / 255, a / 255, Mode.Rgb);
+
+  static XfColor fromRgbD(double r, double g, double b) =>
+      XfColor._(r, g, b, 1.0, Mode.Rgb);
+
+  static XfColor fromRgbaD(double r, double g, double b, double a) =>
+      XfColor._(r, g, b, a, Mode.Rgb);
+
+  static XfColor fromHsla(double h, double s, double l, [double a = 1.0]) =>
+      XfColor._(h, s, l, a, Mode.Hsl);
+
+  static XfColor fromHsv(double h, double s, double v) =>
+      fromHsva(h, s, v, 1.0);
+
+  static XfColor fromHsva(double h, double s, double v, double a) {
+    final hh = _clamp(h);
+    final ss = _clamp(s);
+    final vv = _clamp(v);
+
+    final range = (hh * 6).floor() % 6;
+    final f = hh * 6 - (hh * 6).floor();
+
+    final p = vv * (1 - ss);
+    final q = vv * (1 - f * ss);
+    final t = vv * (1 - (1 - f) * ss);
+
+    switch (range) {
+      case 0:
+        return fromRgbaD(vv, t, p, a);
+      case 1:
+        return fromRgbaD(q, vv, p, a);
+      case 2:
+        return fromRgbaD(p, vv, t, a);
+      case 3:
+        return fromRgbaD(p, q, vv, a);
+      case 4:
+        return fromRgbaD(t, p, vv, a);
+      default:
+        return fromRgbaD(vv, p, q, a);
     }
-
-    return "#${toHexByte(A)}${toHexByte(R)}${toHexByte(G)}${toHexByte(B)}";
   }
 
-  // ---------- Helpers ----------
+  // ------------------------
+  // FromHex (FULL)
+  // ------------------------
 
-  static XfColor FromHex(String hex)
-  {
-    if (hex.length < 3)
-      return Default;
+  static XfColor fromHex(String hex) {
+    if (hex.length < 3) return Default;
 
     int idx = hex.startsWith('#') ? 1 : 0;
+    final chars = hex.split('');
+    final len = chars.length - idx;
 
-    switch (hex.length - idx)
-    {
+    switch (len) {
       case 3:
-        final r = _ToHexD(hex[idx++]);
-        final g = _ToHexD(hex[idx++]);
-        final b = _ToHexD(hex[idx]);
-        return FromRgb(r, g, b);
+        return fromRgb(
+          _hexD(chars[idx++]),
+          _hexD(chars[idx++]),
+          _hexD(chars[idx]),
+        );
+
+      case 4:
+        final a = _hexD(chars[idx++]);
+        final r = _hexD(chars[idx++]);
+        final g = _hexD(chars[idx++]);
+        final b = _hexD(chars[idx]);
+        return fromRgba(r, g, b, a);
 
       case 6:
-        return FromRgb(
-          (_ToHex(hex[idx++]) << 4) | _ToHex(hex[idx++]),
-          (_ToHex(hex[idx++]) << 4) | _ToHex(hex[idx++]),
-          (_ToHex(hex[idx++]) << 4) | _ToHex(hex[idx]),
-        );
+        final r = (_hex(chars[idx]) << 4) | _hex(chars[idx + 1]);
+        idx += 2;
+        final g = (_hex(chars[idx]) << 4) | _hex(chars[idx + 1]);
+        idx += 2;
+        final b = (_hex(chars[idx]) << 4) | _hex(chars[idx + 1]);
+        return fromRgb(r, g, b);
+
+      case 8:
+        final a = (_hex(chars[idx]) << 4) | _hex(chars[idx + 1]);
+        idx += 2;
+        final r = (_hex(chars[idx]) << 4) | _hex(chars[idx + 1]);
+        idx += 2;
+        final g = (_hex(chars[idx]) << 4) | _hex(chars[idx + 1]);
+        idx += 2;
+        final b = (_hex(chars[idx]) << 4) | _hex(chars[idx + 1]);
+        return fromRgba(r, g, b, a);
 
       default:
         return Default;
     }
   }
 
-  static XfColor FromUint(int argb)
-  {
-    return FromRgba(
-      (argb >> 16) & 0xFF,
-      (argb >> 8) & 0xFF,
-      argb & 0xFF,
-      (argb >> 24) & 0xFF,
-    );
-  }
+  // ------------------------
+  // Helpers
+  // ------------------------
 
-  static XfColor FromRgb(int r, int g, int b)
-  {
-    return FromRgba(r, g, b, 255);
-  }
+  static double _clamp(double v) => v.clamp(0.0, 1.0);
 
-  static XfColor FromRgba(int r, int g, int b, int a)
-  {
-    return XfColor._(
-        r / 255.0,
-        g / 255.0,
-        b / 255.0,
-        a / 255.0,
-        _Mode.Rgb
-    );
-  }
+  static int _clampInt(int v, int min, int max) =>
+      v < min ? min : (v > max ? max : v);
 
-  static XfColor FromRgbD(double r, double g, double b)
-  {
-    return XfColor._(r, g, b, 1.0, _Mode.Rgb);
-  }
-
-  static XfColor FromRgbaD(double r, double g, double b, double a)
-  {
-    return XfColor._(r, g, b, a, _Mode.Rgb);
-  }
-
-  static XfColor FromHsla(double h, double s, double l, [ double a = 1.0 ])
-  {
-    return XfColor._(h, s, l, a, _Mode.Hsl);
-  }
-
-  static XfColor FromHsva(double h, double s, double v, double a)
-  {
-    final hClamped = Clamp(h, 0.0, 1.0);
-    final sClamped = Clamp(s, 0.0, 1.0);
-    final vClamped = Clamp(v, 0.0, 1.0);
-
-    final range = (hClamped * 6).floor() % 6;
-    final f = hClamped * 6 - (hClamped * 6).floor();
-
-    final p = vClamped * (1 - sClamped);
-    final q = vClamped * (1 - f * sClamped);
-    final t = vClamped * (1 - (1 - f) * sClamped);
-
-    switch (range)
-    {
-      case 0: return FromRgbaD(vClamped, t, p, a);
-      case 1: return FromRgbaD(q, vClamped, p, a);
-      case 2: return FromRgbaD(p, vClamped, t, a);
-      case 3: return FromRgbaD(p, q, vClamped, a);
-      case 4: return FromRgbaD(t, p, vClamped, a);
-      default: return FromRgbaD(vClamped, p, q, a);
-    }
-  }
-
-  static XfColor FromHsv(double h, double s, double v)
-  {
-    return FromHsva(h, s, v, 1.0);
-  }
-
-  static XfColor FromHsvaI(int h, int s, int v, int a)
-  {
-    return FromHsva(
-        h / 360.0,
-        s / 100.0,
-        v / 100.0,
-        a / 100.0
-    );
-  }
-
-  static XfColor FromHsvI(int h, int s, int v)
-  {
-    return FromHsvaI(h, s, v, 100);
-  }
-
-  static int _ToHexD(String c)
-  {
-    final int j = _ToHex(c);
-    return (j << 4) | j;
-  }
-
-
-  static int _ToHex(String c)
-  {
-    final int x = c.codeUnitAt(0);
-
-    if (x >= '0'.codeUnitAt(0) && x <= '9'.codeUnitAt(0))
-      return x - '0'.codeUnitAt(0);
-
-    final int xOr = x | 0x20;
-    if (xOr >= 'a'.codeUnitAt(0) && xOr <= 'f'.codeUnitAt(0))
-      return xOr - 'a'.codeUnitAt(0) + 10;
-
+  static int _hex(String c) {
+    final code = c.codeUnitAt(0);
+    if (code >= 48 && code <= 57) return code - 48;
+    final lower = code | 0x20;
+    if (lower >= 97 && lower <= 102) return lower - 97 + 10;
     return 0;
   }
 
-
-
-  static double Clamp(double self, double min, double max)
-  {
-    if (max < min) return max;
-    if (self < min) return min;
-    if (self > max) return max;
-    return self;
+  static int _hexD(String c) {
+    final v = _hex(c);
+    return (v << 4) | v;
   }
 
-  static _RgbResult _ConvertToRgb(double h, double s, double l)
-  {
-    if (l == 0) return _RgbResult(0, 0, 0);
-    if (s == 0) return _RgbResult(l, l, l);
+  // ------------------------
+  // HSL / RGB conversion
+  // ------------------------
 
-    final temp2 = l <= 0.5 ? l * (1 + s) : l + s - l * s;
-    final temp1 = 2 * l - temp2;
+  static _Rgb _convertToRgb(double h, double s, double l) {
+    if (l == 0) return const _Rgb(0, 0, 0);
+    if (s == 0) return _Rgb(l, l, l);
 
-    double hueToRgb(double t)
-    {
+    final t2 = l <= 0.5 ? l * (1 + s) : l + s - l * s;
+    final t1 = 2 * l - t2;
+
+    double c(double t) {
       if (t < 0) t += 1;
       if (t > 1) t -= 1;
-      if (6 * t < 1) return temp1 + (temp2 - temp1) * 6 * t;
-      if (2 * t < 1) return temp2;
-      if (3 * t < 2) return temp1 + (temp2 - temp1) * (2 / 3 - t) * 6;
-      return temp1;
+      if (6 * t < 1) return t1 + (t2 - t1) * 6 * t;
+      if (2 * t < 1) return t2;
+      if (3 * t < 2) return t1 + (t2 - t1) * (2 / 3 - t) * 6;
+      return t1;
     }
 
-    return _RgbResult(
-        hueToRgb(h + 1 / 3),
-        hueToRgb(h),
-        hueToRgb(h - 1 / 3)
-    );
+    return _Rgb(c(h + 1 / 3), c(h), c(h - 1 / 3));
   }
 
-  static _HslResult _ConvertToHsl(double r, double g, double b)
-  {
+  static _Hsl _convertToHsl(double r, double g, double b) {
     final v = max(r, max(g, b));
     final m = min(r, min(g, b));
-    final l = (v + m) / 2;
+    final l = (m + v) / 2;
 
-    if (l <= 0) return _HslResult(0, 0, 0);
+    if (l == 0) return const _Hsl(0, 0, 0);
 
     final vm = v - m;
-    double s = vm / (l <= 0.5 ? v + m : 2 - v - m);
+    if (vm == 0) return _Hsl(0, 0, l);
+
+    final s = l <= 0.5 ? vm / (v + m) : vm / (2 - v - m);
 
     double h;
-    if (r == v)
-      h = (g == m ? 5 + (v - b) / vm : 1 - (v - g) / vm);
-    else if (g == v)
-      h = (b == m ? 1 + (v - r) / vm : 3 - (v - b) / vm);
-    else
-      h = (r == m ? 3 + (v - g) / vm : 5 - (v - r) / vm);
+    if (r == v) {
+      h = g == m ? 5 + (v - b) / vm : 1 - (v - g) / vm;
+    } else if (g == v) {
+      h = b == m ? 1 + (v - r) / vm : 3 - (v - b) / vm;
+    } else {
+      h = r == m ? 3 + (v - g) / vm : 5 - (v - r) / vm;
+    }
 
-    return _HslResult(h / 6, s, l);
+    return _Hsl(h / 6, s, l);
   }
 
-  static final XfColor Black = XfColor(0, 0, 0);
-  static final XfColor Red = XfColor(1, 0, 0);
-  static final XfColor White = XfColor(1, 1, 1);
+  // ------------------------
+  // Predefined
+  // ------------------------
+
+  static final Black = fromRgb(0, 0, 0);
+  static final Red = fromRgb(255, 0, 0);
+  static final White = fromRgb(255, 255, 255);
 }
 
-enum _Mode
-{
-  Default,
-  Rgb,
-  Hsl
+// ------------------------
+// Internal structs
+// ------------------------
+
+class _Rgb {
+  final double r, g, b;
+  const _Rgb(this.r, this.g, this.b);
 }
 
-class _RgbResult
-{
-  final double r;
-  final double g;
-  final double b;
-
-  _RgbResult(this.r, this.g, this.b);
-}
-
-class _HslResult
-{
-  final double h;
-  final double s;
-  final double l;
-
-  _HslResult(this.h, this.s, this.l);
+class _Hsl {
+  final double h, s, l;
+  const _Hsl(this.h, this.s, this.l);
 }
