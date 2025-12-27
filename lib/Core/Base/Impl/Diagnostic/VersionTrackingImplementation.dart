@@ -1,13 +1,13 @@
 import '../../../Abstractions/Essentials/IAppInfo.dart';
 import '../../../Abstractions/Essentials/IPreferences.dart';
 import '../../../Abstractions/Essentials/IVersionTracking.dart';
+import '../Utils/LazyInjected.dart';
 import 'LoggableService.dart';
-import 'package:get_it/get_it.dart';
 
 class VersionTrackingImplementation extends LoggableService implements IVersionTracking
 {
-    IPreferences get preferences => GetIt.I<IPreferences>();
-    IAppInfo get appInfo => GetIt.I<IAppInfo>();
+    final preferences = LazyInjected<IPreferences>();
+    final appInfo = LazyInjected<IAppInfo>();
 
     final String versionsKey = "VersionTracking.Versions";
     final String buildsKey = "VersionTracking.Builds";
@@ -21,7 +21,7 @@ class VersionTrackingImplementation extends LoggableService implements IVersionT
 
     VersionTrackingImplementation()
     {
-        sharedName = "${appInfo.PackageName}.essentials.versiontracking";
+        sharedName = "${appInfo.Value.PackageName}.essentials.versiontracking";
         Track();
     }
 
@@ -46,7 +46,7 @@ class VersionTrackingImplementation extends LoggableService implements IVersionT
     void InitVersionTracking()
     {
         LogMethodStart("InitVersionTracking");
-        IsFirstLaunchEver = !preferences.ContainsKey(versionsKey, sharedName: sharedName) || !preferences.ContainsKey(buildsKey, sharedName: sharedName);
+        IsFirstLaunchEver = !preferences.Value.ContainsKey(versionsKey, sharedName: sharedName) || !preferences.Value.ContainsKey(buildsKey, sharedName: sharedName);
         if (IsFirstLaunchEver)
         {
             versionTrail = {
@@ -95,10 +95,10 @@ class VersionTrackingImplementation extends LoggableService implements IVersionT
     bool IsFirstLaunchForCurrentBuild = false;
 
     @override
-    String get CurrentVersion => appInfo.VersionString;
+    String get CurrentVersion => appInfo.Value.VersionString;
 
     @override
-    String get CurrentBuild => appInfo.BuildString;
+    String get CurrentBuild => appInfo.Value.BuildString;
 
     @override
     String? get PreviousVersion => GetPrevious(versionsKey);
@@ -154,12 +154,12 @@ class VersionTrackingImplementation extends LoggableService implements IVersionT
 
     List<String> ReadHistory(String key) {
         LogMethodStart("ReadHistory", [key]);
-        return preferences.Get<String?>(key, null, sharedName: sharedName)?.split('|').where((it) => it.isNotEmpty).toList() ?? [];
+        return preferences.Value.Get<String?>(key, null, sharedName: sharedName)?.split('|').where((it) => it.isNotEmpty).toList() ?? [];
     }
 
     void WriteHistory(String key, List<String> history) {
         LogMethodStart("WriteHistory", [key, history]);
-        preferences.Set(key, history.join("|"), sharedName: sharedName);
+        preferences.Value.Set(key, history.join("|"), sharedName: sharedName);
     }
 
     String? GetPrevious(String key)

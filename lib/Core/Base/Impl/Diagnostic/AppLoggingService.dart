@@ -3,7 +3,7 @@ import '../../../Abstractions/Diagnostics/IFileLogger.dart';
 import '../../../Abstractions/Diagnostics/ILoggingService.dart';
 import '../../../Abstractions/Diagnostics/IPlatformOutput.dart';
 import '../../../Abstractions/Essentials/IPreferences.dart';
-import 'package:get_it/get_it.dart';
+import '../Utils/LazyInjected.dart';
 
 class AppLoggingService implements ILoggingService
 {
@@ -20,16 +20,16 @@ class AppLoggingService implements ILoggingService
     @override
     bool get HasError => LastError != null;
 
-    IErrorTrackingService get errorTrackingService => GetIt.I<IErrorTrackingService>();
-    IFileLogger get fileLogger => GetIt.I<IFileLogger>();
-    IPreferences get preferences => GetIt.I<IPreferences>();
-    IPlatformOutput get platformConsole => GetIt.I<IPlatformOutput>();
+    final _errorTrackingService = LazyInjected<IErrorTrackingService>();
+    final _fileLogger = LazyInjected<IFileLogger>();
+    final _preferences = LazyInjected<IPreferences>();
+    final _platformConsole = LazyInjected<IPlatformOutput>();
 
     AppLoggingService()
     {
-        errorTrackingService.OnServiceError.Subscribe(ErrorTrackingService_OnError);
+        _errorTrackingService.Value.OnServiceError.AddListener(ErrorTrackingService_OnError);
 
-        fileLogger.Init();
+        _fileLogger.Value.Init();
         AppLaunchCount = GetLaunchCount();
     }
 
@@ -63,7 +63,7 @@ class AppLoggingService implements ILoggingService
                 Future(() {
                     try
                     {
-                        errorTrackingService.TrackError(ex, AdditionalData: null);
+                        _errorTrackingService.Value.TrackError(ex, AdditionalData: null);
                     }
                     catch (ex)
                     {
@@ -82,8 +82,8 @@ class AppLoggingService implements ILoggingService
             RowNumber++;
             final tag = GetLogAppTag(AppLaunchCount, RowNumber);
             final formatted = "$tag INFO:$message";
-            fileLogger.Info(formatted);
-            platformConsole.Info(formatted);
+            _fileLogger.Value.Info(formatted);
+            _platformConsole.Value.Info(formatted);
         });
     }
 
@@ -94,8 +94,8 @@ class AppLoggingService implements ILoggingService
             RowNumber++;
             final tag = GetLogAppTag(AppLaunchCount, RowNumber);
             final formatted = "$tag WARNING:$message";
-            fileLogger.Warn(formatted);
-            platformConsole.Warn(formatted);
+            _fileLogger.Value.Warn(formatted);
+            _platformConsole.Value.Warn(formatted);
         });
     }
 
@@ -119,15 +119,15 @@ class AppLoggingService implements ILoggingService
             }
             formatted.write(ex.toString()); // Dart doesn't have stackTraceToString on Exception directly usually, but toString captures message. For stacktrace need the stacktrace object.
 
-            fileLogger.Warn(formatted.toString());
-            platformConsole.Error(formatted.toString());
+            _fileLogger.Value.Warn(formatted.toString());
+            _platformConsole.Value.Error(formatted.toString());
         });
     }
 
     @override
     ILogging CreateSpecificLogger(String key)
     {
-        final specLogger = ConditionalLogger(key, this, preferences);
+        final specLogger = ConditionalLogger(key, this, _preferences.Value);
         return specLogger;
     }
 
@@ -135,8 +135,8 @@ class AppLoggingService implements ILoggingService
     void Header(String headerMessage)
     {
         SafeCall(() {
-            fileLogger.Info(headerMessage);
-            platformConsole.Info(headerMessage);
+            _fileLogger.Value.Info(headerMessage);
+            _platformConsole.Value.Info(headerMessage);
         });
     }
 
@@ -165,28 +165,28 @@ class AppLoggingService implements ILoggingService
     {
         SafeCall(() {
             final msg = "********************************${INDICATOR_TAG}${name}*************************************";
-            fileLogger.Info(msg);
-            platformConsole.Info(msg);
+            _fileLogger.Value.Info(msg);
+            _platformConsole.Value.Info(msg);
         });
     }
 
     @override
     Future<String> GetSomeLogTextAsync() async
     {
-        final lines = await fileLogger.GetLogListAsync();
+        final lines = await _fileLogger.Value.GetLogListAsync();
         return lines.join("\n");
     }
 
     @override
     String GetLogsFolder()
     {
-        return fileLogger.GetLogsFolder();
+        return _fileLogger.Value.GetLogsFolder();
     }
 
     @override
     String GetCurrentLogFileName()
     {
-       return fileLogger.GetCurrentLogFileName();
+       return _fileLogger.Value.GetCurrentLogFileName();
     }
 
     @override
@@ -194,7 +194,7 @@ class AppLoggingService implements ILoggingService
     {
         try
         {
-            return await fileLogger.GetCompressedLogsSync(true);
+            return await _fileLogger.Value.GetCompressedLogsSync(true);
         }
         catch (ex)
         {
@@ -209,7 +209,7 @@ class AppLoggingService implements ILoggingService
     {
         try
         {
-            return await fileLogger.GetCompressedLogsSync(getOnlyLastSession);
+            return await _fileLogger.Value.GetCompressedLogsSync(getOnlyLastSession);
         }
         catch (ex)
         {
@@ -221,10 +221,10 @@ class AppLoggingService implements ILoggingService
 
     int GetLaunchCount()
     {
-        var launchCount = preferences.Get<int>("AppLaunchCount", 0);
+        var launchCount = _preferences.Value.Get<int>("AppLaunchCount", 0);
         launchCount += 1; // Logic slightly adapted: original kotlin logic incremented if not null, but get returns default if not found.
 
-        preferences.Set("AppLaunchCount", launchCount);
+        _preferences.Value.Set("AppLaunchCount", launchCount);
         return launchCount;
     }
 
@@ -250,7 +250,7 @@ class AppLoggingService implements ILoggingService
         }
         catch (ex, stackTrace)
         {
-            platformConsole.Error(stackTrace.toString());
+            _platformConsole.Value.Error(stackTrace.toString());
         }
     }
 

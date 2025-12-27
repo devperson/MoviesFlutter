@@ -2,14 +2,14 @@ import '../../../Abstractions/Diagnostics/IAppLogExporter.dart';
 import '../../../Abstractions/Diagnostics/ILoggingService.dart';
 import '../../../Abstractions/Essentials/IShare.dart';
 import '../../../Abstractions/Essentials/IDirectoryService.dart';
+import '../Utils/LazyInjected.dart';
 import 'LoggableService.dart';
-import 'package:get_it/get_it.dart';
 import 'dart:io';
 
 class AppLogExporter extends LoggableService implements IAppLogExporter
 {
-    IDirectoryService get directoryService => GetIt.I<IDirectoryService>();
-    IShare get shareFileService => GetIt.I<IShare>();
+    final directoryService = LazyInjected<IDirectoryService>();
+    final shareFileService = LazyInjected<IShare>();
     final String KyChat_Logs = "KyChat_Logs";
 
     @override
@@ -22,12 +22,12 @@ class AppLogExporter extends LoggableService implements IAppLogExporter
 
             final date = getUtcDateString();
             final fileName = "${KyChat_Logs}_${date}.zip";
-            final filePath = "${directoryService.GetCacheDir()}/$fileName";
+            final filePath = "${directoryService.Value.GetCacheDir()}/$fileName";
 
             // also include censored database into logs folder.
             //this.CopyCensoredDatabaseAsync()
 
-            final compressedLogs = await loggingService.GetCompressedLogFileBytes(false); // Assuming false for GetOnlyLastSession as in Kotlin it was no-arg call which likely defaults or needs check
+            final compressedLogs = await loggingService.Value.GetCompressedLogFileBytes(false); // Assuming false for GetOnlyLastSession as in Kotlin it was no-arg call which likely defaults or needs check
 
             if (compressedLogs == null)
             {
@@ -38,7 +38,7 @@ class AppLogExporter extends LoggableService implements IAppLogExporter
             final file = File(filePath);
             await file.writeAsBytes(compressedLogs);
 
-            shareFileService.RequestShareFile("Sharing compressed logs", filePath);
+            shareFileService.Value.RequestShareFile("Sharing compressed logs", filePath);
 
             final result = LogSharingResult(true, ExceptionValue: null);
             return result;
@@ -46,7 +46,7 @@ class AppLogExporter extends LoggableService implements IAppLogExporter
         catch (exception)
         {
             if (exception is Exception) {
-                loggingService.TrackError(exception);
+                loggingService.Value.TrackError(exception);
                 final result = LogSharingResult(false, ExceptionValue: exception);
                 return result;
             }
@@ -58,7 +58,7 @@ class AppLogExporter extends LoggableService implements IAppLogExporter
     void removeOldFilesFromCache() {
         LogMethodStart("removeOldFilesFromCache");
         try {
-            final cacheDir = Directory(directoryService.GetCacheDir());
+            final cacheDir = Directory(directoryService.Value.GetCacheDir());
 
             if (cacheDir.existsSync()) {
                 final files = cacheDir.listSync()
@@ -70,7 +70,7 @@ class AppLogExporter extends LoggableService implements IAppLogExporter
             }
         } catch (e) {
             if (e is Exception)
-             loggingService.TrackError(e);
+             loggingService.Value.TrackError(e);
         }
     }
 
