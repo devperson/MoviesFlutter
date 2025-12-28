@@ -21,13 +21,16 @@ class MoviesPageViewModel extends PageViewModel
   void Destroy()
   {
     super.Destroy();
+
   }
 
-  void increment()
+  Future<void> increment() async
   {
-    count++;
-
-    loggingService.Value.LogWarning("No message");
+    var res = await alertService.Value.ConfirmAlert("Info", "Do you want to see snackbar?", "Yes", "No");
+    if(res)
+    {
+      snackbarService.Value.ShowError("A lot of text about errors and so on; A lot of text about errors and so on; A lot of text about errors and so on; A lot of text about errors and so on;");
+    }
   }
 
 }

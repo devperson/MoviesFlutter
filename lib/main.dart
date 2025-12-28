@@ -1,14 +1,24 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 
 import 'App/Controllers/LoginPageViewModel.dart';
 import 'App/Bootstrap/BaseDependencies.dart';
 import 'App/Bootstrap/PageRegistrar.dart';
+import 'Core/Base/Impl/Diagnostic/AppPlatformOutput.dart';
 import 'Core/Base/Impl/Utils/ColorConstants.dart';
 
-void main() {
-  runApp(const MyApp());
+void main()
+{
+    final outputLog = AppPlatformOutput();
+    runZonedGuarded(()
+    {
+      runApp(const MyApp());
+    },
+    (error, stack)
+    {
+       outputLog.Error('Unhandled crash:', error: error, stackTrace: stack, isHandled: false);
+    });
 }
 
 class MyApp extends StatelessWidget
@@ -26,6 +36,11 @@ class MyApp extends StatelessWidget
       defaultTransition: Transition.rightToLeft,
       initialBinding: BaseDependencies(),
       theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+                        appBarTheme: const AppBarTheme(
+                          backgroundColor: ColorConstants.BgColor,
+                          foregroundColor: ColorConstants.DefaultTextColor, // title + icons
+                          elevation: 0,
+                          centerTitle: true,),
                        scaffoldBackgroundColor: ColorConstants.BgColor,),
     );
   }

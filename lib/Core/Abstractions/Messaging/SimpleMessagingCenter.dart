@@ -51,6 +51,6 @@ class SimpleMessageCenter implements IMessagesCenter
   }
 
 // ******** USAGE ********
-// final event = Center.GetOrCreateEvent<SubMessage>(() => SubMessage());
+//final event = Center.GetOrCreateEvent<SubMessage>(() => SubMessage());
 }
 

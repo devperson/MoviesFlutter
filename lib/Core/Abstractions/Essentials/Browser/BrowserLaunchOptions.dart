@@ -1,4 +1,4 @@
-import '../../Common/XfColor.dart';
+import 'dart:ui';
 import 'BrowserLaunchMode.dart';
 import 'BrowserLaunchFlags.dart';
 import 'BrowserTitleMode.dart';
@@ -9,11 +9,11 @@ class BrowserLaunchOptions
 {
     /// Gets or sets the preferred color of the toolbar background of the in-app browser.
     /// Remarks: This setting only applies to iOS and Android.
-    XfColor? PreferredToolbarColor;
+    Color? PreferredToolbarColor;
 
     /// Gets or sets the preferred color of the controls on the in-app browser.
     /// Remarks: This setting only applies to iOS.
-    XfColor? PreferredControlColor;
+    Color? PreferredControlColor;
 
     /// Gets or sets how the browser should be launched.
     /// Remarks: The default value is [BrowserLaunchMode.SystemPreferred].

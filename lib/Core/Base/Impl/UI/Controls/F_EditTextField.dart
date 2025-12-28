@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import '../../Utils/ColorConstants.dart';
+import '../../Utils/FontConstants.dart';
 
 class F_EditTextField extends StatefulWidget
 {
@@ -32,7 +33,7 @@ class F_EditTextField extends StatefulWidget
     this.controller,
     this.onChanged,
     this.fontSize = 15,
-    this.fontFamily = 'Sen',
+    this.fontFamily = FontConstants.RegularFont,
     this.isPassword = false,
     this.backgroundColor = Colors.white,
     this.normalBorderColor = Colors.transparent,

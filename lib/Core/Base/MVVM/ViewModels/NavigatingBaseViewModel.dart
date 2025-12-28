@@ -4,8 +4,6 @@ import 'BaseViewModel.dart';
 
 class NavigatingBaseViewModel extends BaseViewModel
 {
-
-
   bool get CanGoBack
   {
     return navigationService.Value.CanNavigateBack;
@@ -129,6 +127,6 @@ class NavigatingBaseViewModel extends BaseViewModel
 
   void LogVirtualBaseMethod(String methodName)
   {
-    this.loggingService.Value.Log('$methodName ${runtimeType}.$methodName() (from base)');
+    this.loggingService.Value.Log('${runtimeType}.$methodName() (from base)');
   }
 }
