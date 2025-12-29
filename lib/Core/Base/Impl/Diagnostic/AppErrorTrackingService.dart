@@ -1,3 +1,4 @@
+import 'package:movies_flutter/Core/Abstractions/Common/AppException.dart';
 import 'package:movies_flutter/Core/Abstractions/Diagnostics/IErrorTrackingService.dart';
 import 'package:movies_flutter/Core/Event.dart';
 
@@ -13,9 +14,20 @@ class AppErrorTrackingService implements IErrorTrackingService
   Event<Exception> get OnServiceError => Event<Exception>();
 
   @override
-  void TrackError(Exception ex, {List<int>? attachment, Map<String, String>? additionalData})
+  void TrackError(Object ex, StackTrace stackTrace, {List<int>? attachment, Map<String, String>? additionalData})
   {
-    print(ex.toString());
+    if (ex is AppException)
+    {
+      print(ex);
+    }
+    else if (ex is Exception)
+    {
+      print(ex.ToAppException(stackTrace));
+    }
+    else
+    {
+      print('Non-exception error: $ex\n$stackTrace');
+    }
   }
 
 }

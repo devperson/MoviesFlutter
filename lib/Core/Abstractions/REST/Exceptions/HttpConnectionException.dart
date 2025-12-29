@@ -1,6 +1,6 @@
-import '../../Common/BaseException.dart';
+import '../../Common/AppException.dart';
 
-class HttpConnectionException extends BaseException
+class HttpConnectionException extends AppException
 {
     HttpConnectionException(String message, [Exception? causeException]): super(message, StackTrace.current, causeException);
 }

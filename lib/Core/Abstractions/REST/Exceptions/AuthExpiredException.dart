@@ -1,8 +1,8 @@
 
 
-import '../../Common/BaseException.dart';
+import '../../Common/AppException.dart';
 
-class AuthExpiredException extends BaseException
+class AuthExpiredException extends AppException
 {
   AuthExpiredException([ String message = "user access token is expired" ])
       : super(message, StackTrace.current);

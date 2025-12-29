@@ -6,5 +6,5 @@ abstract interface class IErrorTrackingService
 
   void Initialize();
 
-  void TrackError(Exception ex, { List<int>? attachment, Map<String, String>? additionalData });
+  void TrackError(Object ex, StackTrace stackTrace, { List<int>? attachment, Map<String, String>? additionalData });
 }

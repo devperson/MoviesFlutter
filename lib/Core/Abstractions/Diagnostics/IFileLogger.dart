@@ -12,7 +12,7 @@ abstract interface class IFileLogger
 
   Future<List<String>> GetLogListAsync();
 
-  String GetLogsFolder();
+  Future<String> GetLogsFolder();
 
   String GetCurrentLogFileName();
 }

@@ -1,6 +1,7 @@
 
 import '../../../Abstractions/Diagnostics/ILoggingService.dart';
 import '../Utils/LazyInjected.dart';
+import '../../../Abstractions/Common/AppException.dart';
 
 mixin LoggableService
 {
@@ -17,9 +18,11 @@ mixin LoggableService
         }
         catch (ex, stackTrace)
         {
-            print(stackTrace.toString());
+          print(ex.ToExceptionString(stackTrace));
         }
     }
+
+
 
     void InitSpecificlogger(String key)
     {

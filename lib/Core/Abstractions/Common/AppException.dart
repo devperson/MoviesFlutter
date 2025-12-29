@@ -9,7 +9,7 @@
 /// because it is clear, and looks good in logs and diagnostic output.
 ///
 /// All custom exceptions in the project should extend this class.
-class BaseException implements Exception
+class AppException implements Exception
 {
   /// Error message describing the failure.
   final String _message;
@@ -22,7 +22,7 @@ class BaseException implements Exception
   StackTrace get ErrorStackTrace => _stackTrace;
   Exception? get CausedException => _causedException;
 
-  BaseException(this._message, this._stackTrace, [ this._causedException ]);
+  AppException(this._message, this._stackTrace, [ this._causedException ]);
 
   /// Returns a string representation in a Kotlin / C#–style format:
   ///
@@ -45,3 +45,37 @@ class BaseException implements Exception
     return buffer.toString();
   }
 }
+
+extension ExceptionExtensions on Exception
+{
+  AppException ToAppException(StackTrace stackTrace)
+  {
+    return AppException("App EXCEPTION occurred, please check caused(internal) exception", stackTrace, this);
+  }
+}
+
+extension ObjectExtensions on Object
+{
+  String ToExceptionString(StackTrace stackTrace)
+  {
+    final appException = this.ToAppException(stackTrace);
+    return appException.toString();
+  }
+
+  AppException ToAppException(StackTrace stackTrace)
+  {
+    if(this is AppException)
+      {
+        return this as AppException;
+      }
+      else if(this is Exception)
+      {
+        return (this as Exception).ToAppException(stackTrace);
+      }
+      else
+      {
+        return AppException("App ERROR occurred: $this", stackTrace);
+      }
+  }
+}
+
