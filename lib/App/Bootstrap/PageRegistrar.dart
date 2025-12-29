@@ -3,7 +3,7 @@ import 'package:movies_flutter/App/Controllers/LoginPageViewModel.dart';
 import 'package:movies_flutter/App/Pages/LoginPage.dart';
 
 import '../Controllers/MoviesPageViewModel.dart';
-import '../Pages/HomePage.dart';
+import '../Pages/MoviesPage.dart';
 
 class PageRegistrar
 {
@@ -18,7 +18,7 @@ class PageRegistrar
     ),
     GetPage(
       name: "/" + MoviesPageViewModel.Name,
-      page: () => HomePage(),
+      page: () => MoviesPage(),
       binding: BindingsBuilder(()
       {
         Get.lazyPut<MoviesPageViewModel>(() => MoviesPageViewModel());

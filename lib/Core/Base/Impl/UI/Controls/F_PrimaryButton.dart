@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../Utils/ColorConstants.dart';
+import '../../Utils/FontConstants.dart';
 import '../../Utils/NumConstants.dart';
 import 'F_RectButton.dart';
 
@@ -31,7 +32,7 @@ class F_PrimaryButton extends StatelessWidget {
             child: Text(
               text,
               style: const TextStyle(
-                fontFamily: 'Sen',
+                fontFamily: FontConstants.RegularFont,
                 fontWeight: FontWeight.w700, // Sen-Bold
                 fontSize: 18,
                 color: Colors.white,

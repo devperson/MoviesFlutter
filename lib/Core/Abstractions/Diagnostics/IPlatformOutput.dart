@@ -1,6 +1,9 @@
 abstract interface class IPlatformOutput
 {
-    void Info(String Message);
-    void Warn(String Message);
-    void Error(String Message);
+    void Info(String message);
+    void Warn(String message);
+    void Error( String message, {
+      Object? error,
+      StackTrace? stackTrace,
+    });
 }
