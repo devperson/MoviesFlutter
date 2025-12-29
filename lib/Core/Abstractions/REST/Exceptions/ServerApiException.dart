@@ -1,6 +1,6 @@
-import 'package:movies_flutter/Core/Abstractions/Common/BaseException.dart';
+import 'package:movies_flutter/Core/Abstractions/Common/AppException.dart';
 
-class ServerApiException extends BaseException
+class ServerApiException extends AppException
 {
     ServerApiException(String message) : super(message, StackTrace.current);
 }

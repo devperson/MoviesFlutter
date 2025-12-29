@@ -4,6 +4,7 @@ import '../../../Abstractions/Diagnostics/ILoggingService.dart';
 import '../../../Abstractions/Diagnostics/IPlatformOutput.dart';
 import '../../../Abstractions/Essentials/IPreferences.dart';
 import '../Utils/LazyInjected.dart';
+import '../../../Abstractions/Common/AppException.dart';
 
 class AppLoggingService implements ILoggingService
 {
@@ -16,7 +17,7 @@ class AppLoggingService implements ILoggingService
 
     int AppLaunchCount = 0;
     @override
-    Exception? LastError;
+    Object? LastError;
     @override
     bool get HasError => LastError != null;
 
@@ -34,27 +35,27 @@ class AppLoggingService implements ILoggingService
 
     void ErrorTrackingService_OnError(Object? ex)
     {
-        if (ex is Exception)
-            LogError(ex, "Error happens in IErrorTrackingService", true);
+      if(ex != null)
+        LogError(ex, StackTrace.current, "Error happens in IErrorTrackingService", true);
     }
 
     @override
-    void TrackError(Exception ex, [Map<String, String>? data])
+    void TrackError(Object ex, StackTrace stackTrace, [Map<String, String>? data])
     {
-        TrackInternal(ex, true, data);
+        TrackInternal(ex, stackTrace, true, data);
     }
 
     @override
-    void LogUnhandledError(Exception ex)
+    void LogUnhandledError(Object ex, StackTrace stackTrace)
     {
-        TrackInternal(ex, false);
+        TrackInternal(ex, stackTrace, false);
     }
 
-    void TrackInternal(Exception ex, bool handled, [Map<String, String>? data])
+    void TrackInternal(Object ex, StackTrace stackTrace, bool handled, [Map<String, String>? data])
     {
         SafeCall(() {
             LastError = ex;
-            LogError(ex, "", handled);
+            LogError(ex, stackTrace, "", handled);
 
             if (handled)
             {
@@ -62,12 +63,11 @@ class AppLoggingService implements ILoggingService
                 Future(() {
                     try
                     {
-                        _errorTrackingService.Value.TrackError(ex, additionalData: null);
+                        _errorTrackingService.Value.TrackError(ex, stackTrace, additionalData: null);
                     }
-                    catch (ex)
+                    catch (ex, stackTrace)
                     {
-                        if (ex is Exception)
-                            LogError(ex, "Failed to track error");
+                      LogError(ex, stackTrace, "Failed to track error");
                     }
                 });
             }
@@ -99,7 +99,7 @@ class AppLoggingService implements ILoggingService
     }
 
     @override
-    void LogError(Exception ex, [String message = "", bool handled = true])
+    void LogError(Object ex, StackTrace stackTrace, [String message = "", bool handled = true])
     {
         SafeCall(() {
             RowNumber++;
@@ -116,7 +116,7 @@ class AppLoggingService implements ILoggingService
             {
                 formatted.write(": $message - ");
             }
-            formatted.write(ex.toString()); // Dart doesn't have stackTraceToString on Exception directly usually, but toString captures message. For stacktrace need the stacktrace object.
+            formatted.write(ex.ToExceptionString(stackTrace));
 
             _fileLogger.Value.Warn(formatted.toString());
             _platformConsole.Value.Error(formatted.toString());
@@ -177,7 +177,7 @@ class AppLoggingService implements ILoggingService
     }
 
     @override
-    String GetLogsFolder()
+    Future<String> GetLogsFolder()
     {
         return _fileLogger.Value.GetLogsFolder();
     }
@@ -195,10 +195,9 @@ class AppLoggingService implements ILoggingService
         {
             return await _fileLogger.Value.GetCompressedLogsSync(true);
         }
-        catch (ex)
+        catch (ex, stackTrace)
         {
-            if (ex is Exception)
-                LogError(ex, "Failed to get App Log");
+            LogError(ex, stackTrace, "Failed to get App Log");
             return null;
         }
     }
@@ -210,10 +209,9 @@ class AppLoggingService implements ILoggingService
         {
             return await _fileLogger.Value.GetCompressedLogsSync(getOnlyLastSession);
         }
-        catch (ex)
+        catch (ex, stackTrace)
         {
-            if (ex is Exception)
-                LogError(ex, "Failed to get App Log");
+            LogError(ex, stackTrace, "Failed to get App Log");
             return null;
         }
     }
@@ -249,7 +247,7 @@ class AppLoggingService implements ILoggingService
         }
         catch (ex, stackTrace)
         {
-            _platformConsole.Value.Error(stackTrace.toString());
+          _platformConsole.Value.Error(ex.ToExceptionString(stackTrace));
         }
     }
 

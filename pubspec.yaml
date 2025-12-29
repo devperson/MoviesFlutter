@@ -36,6 +36,13 @@ dependencies:
   cupertino_icons: ^1.0.8
 
   get: ^4.6.6
+  #Logging dependencies
+  logger: ^2.4.0
+  intl: ^0.19.0
+  #IDirectoryService dependencies:
+  path_provider: ^2.1.4
+  #IZipService dependencies
+  archive: ^3.4.10
 
 dev_dependencies:
   flutter_test:

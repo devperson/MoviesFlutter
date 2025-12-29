@@ -1,7 +1,9 @@
+import 'package:archive/archive.dart';
+import 'package:movies_flutter/Core/Abstractions/Common/AppException.dart';
+
 import '../../../Abstractions/Diagnostics/IAppLogExporter.dart';
-import '../../../Abstractions/Diagnostics/ILoggingService.dart';
 import '../../../Abstractions/Essentials/IShare.dart';
-import '../../../Abstractions/Essentials/IDirectoryService.dart';
+import '../../../Abstractions/Platform/IDirectoryService.dart';
 import '../Utils/LazyInjected.dart';
 import 'LoggableService.dart';
 import 'dart:io';
@@ -43,38 +45,41 @@ class AppLogExporter with LoggableService implements IAppLogExporter
             final result = LogSharingResult(true, ExceptionValue: null);
             return result;
         }
-        catch (exception)
+        catch (exception, stackTrace)
         {
-            if (exception is Exception) {
-                loggingService.Value.TrackError(exception);
-                final result = LogSharingResult(false, ExceptionValue: exception);
-                return result;
-            }
-             final result = LogSharingResult(false, ExceptionValue: Exception(exception.toString()));
-             return result;
+          loggingService.Value.TrackError(exception, stackTrace);
+          final appException = exception.ToAppException(stackTrace);
+          final result = LogSharingResult(false, ExceptionValue: appException);
+          return result;
         }
     }
 
-    void removeOldFilesFromCache() {
-        LogMethodStart("removeOldFilesFromCache");
-        try {
-            final cacheDir = Directory(directoryService.Value.GetCacheDir());
+    void removeOldFilesFromCache() async
+    {
+      LogMethodStart("removeOldFilesFromCache");
+      try
+      {
+        final cacheFilePath = await directoryService.Value.GetCacheDir();
+        final cacheDir = Directory(cacheFilePath);
 
-            if (cacheDir.existsSync()) {
-                final files = cacheDir.listSync()
-                    .where((file) => file.path.contains(KyChat_Logs));
+        if (cacheDir.existsSync())
+        {
+          final files = cacheDir.listSync().where((file) => file.path.contains(KyChat_Logs));
 
-                for (final file in files) {
-                    file.deleteSync();
-                }
-            }
-        } catch (e) {
-            if (e is Exception)
-             loggingService.Value.TrackError(e);
+          for (final file in files)
+          {
+            file.deleteSync();
+          }
         }
+      }
+      catch (e, stackTrace)
+      {
+        loggingService.Value.TrackError(e, stackTrace);
+      }
     }
 
-    String getUtcDateString() {
+    String getUtcDateString()
+    {
         LogMethodStart("getUtcDateString");
         final now = DateTime.now().toUtc();
         final buffer = StringBuffer();

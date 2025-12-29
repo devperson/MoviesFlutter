@@ -7,20 +7,20 @@ abstract interface class ILogging
 
 abstract interface class ILoggingService extends ILogging
 {
-  Exception? get LastError;
-  set LastError(Exception? Value);
+  Object? get LastError;
+  set LastError(Object? Value);
   bool get HasError;
 
   void LogMethodStarted2(String MethodName);
   void Header(String HeaderMessage);
   void LogMethodFinished(String MethodName);
   void LogIndicator(String Name, String Message);
-  void LogError(Exception Ex, [String Message = "", bool Handled = true ]);
-  void TrackError(Exception Ex, [Map<String, String>? Data]);
-  void LogUnhandledError(Exception Ex);
+  void LogError(Exception Ex, StackTrace stackTrace, [String Message = "", bool Handled = true ]);
+  void TrackError(Object Ex, StackTrace stackTrace, [Map<String, String>? Data]);
+  void LogUnhandledError(Exception Ex, StackTrace stackTrace);
   Future<List<int>?> GetCompressedLogFileBytes(bool GetOnlyLastSession);
   Future<String> GetSomeLogTextAsync();
-  String GetLogsFolder();
+  Future<String> GetLogsFolder();
   String GetCurrentLogFileName();
   Future<List<int>?> GetLastSessionLogBytes();
   ILogging CreateSpecificLogger(String Key);

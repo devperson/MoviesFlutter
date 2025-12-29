@@ -1,6 +1,6 @@
-import '../../Common/BaseException.dart';
+import '../../Common/AppException.dart';
 
-class HttpRequestException extends BaseException
+class HttpRequestException extends AppException
 {
     final int? statusCode;
 
