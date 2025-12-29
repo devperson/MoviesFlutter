@@ -7,7 +7,6 @@ import 'package:movies_flutter/Core/Abstractions/Platform/IDirectoryService.dart
 import 'package:movies_flutter/Core/Abstractions/Platform/IZipService.dart';
 import 'package:movies_flutter/Core/Base/Impl/Diagnostic/F_FileLogger.dart';
 import 'package:movies_flutter/Core/Abstractions/UI/ISnackbarService.dart';
-import 'package:movies_flutter/Core/Base/Impl/Diagnostic/MockFileLogger.dart';
 import 'package:movies_flutter/Core/Base/Impl/Navigation/F_PageNavigationService.dart';
 import 'package:movies_flutter/Core/Base/Impl/Platform/F_DirectoryService.dart';
 import 'package:movies_flutter/Core/Base/Impl/Platform/F_ZipService.dart';
