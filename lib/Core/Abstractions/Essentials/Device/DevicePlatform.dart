@@ -27,13 +27,22 @@ class DevicePlatform
 
     /// Gets an instance of DevicePlatform that represents UWP.
     @Deprecated("Use WinUI instead.")
-    static const DevicePlatform UWP = DevicePlatform._("WinUI");
+    static const DevicePlatform UWP = DevicePlatform._("UWP");
 
     /// Gets an instance of DevicePlatform that represents WinUI.
     static const DevicePlatform WinUI = DevicePlatform._("WinUI");
 
+    /// Gets an instance of DevicePlatform that represents WinUI.
+    static const DevicePlatform Windows = DevicePlatform._("Windows");
+
     /// Gets an instance of DevicePlatform that represents Apple watchOS.
     static const DevicePlatform watchOS = DevicePlatform._("watchOS");
+
+    /// Gets an instance of DevicePlatform that represents Linux.
+    static const DevicePlatform Linux = DevicePlatform._("Linux");
+
+    /// Gets an instance of DevicePlatform that represents Web.
+    static const DevicePlatform Web = DevicePlatform._("Web");
 
     /// Gets an instance of DevicePlatform that represents an unknown platform. This is used for when the current platform is unknown.
     static const DevicePlatform Unknown = DevicePlatform._("Unknown");
