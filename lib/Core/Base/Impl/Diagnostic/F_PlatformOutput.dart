@@ -1,18 +1,30 @@
 import 'dart:io';
 
-import 'package:movies_flutter/Core/Abstractions/Common/AppException.dart';
 
+import 'package:movies_flutter/Core/Abstractions/Common/AppException.dart';
+import 'package:simple_native_logger/simple_native_logger.dart';
 import '../../../Abstractions/Diagnostics/IPlatformOutput.dart';
-import 'dart:developer' as dev;
+//import 'dart:developer' as dev;
 
 class F_PlatformOutput implements IPlatformOutput
 {
+  final _TAG = "AppLogger";
   final msgLevel = 800;
   final warningLevel = 900;
   final errorLevel = 1000;
   final fatalLevel = 1200;
+  late final SimpleNativeLogger nativeLogger;
 
+  @override
+  bool IsInited = false;
 
+  @override
+  void Init()
+  {
+    SimpleNativeLogger.init();
+     nativeLogger = SimpleNativeLogger(tag: _TAG);
+     IsInited = true;
+  }
 
   @override
   void Info(String message)
@@ -23,7 +35,7 @@ class F_PlatformOutput implements IPlatformOutput
       }
     else
       {
-        dev.log(message, level: msgLevel);
+        nativeLogger.i(message);
       }
 
   }
@@ -37,7 +49,8 @@ class F_PlatformOutput implements IPlatformOutput
     }
     else
       {
-        dev.log(message, level: warningLevel);
+        nativeLogger.w(message);
+        //dev.log(message, name: _TAG, level: warningLevel);
       }
 
   }
@@ -59,8 +72,17 @@ class F_PlatformOutput implements IPlatformOutput
       }
     else
       {
-        final errlevel = isHandled ? errorLevel : fatalLevel;
-        dev.log(message, name: 'ERROR', level: errlevel, error: error, stackTrace: stackTrace,);
+        if(error == null)
+          {
+            nativeLogger.e(message);
+          }
+        else
+          {
+            final exception = error.ToExceptionString(stackTrace!);
+            nativeLogger.e("$message: $exception");
+          }
+        //final errlevel = isHandled ? errorLevel : fatalLevel;
+        //dev.log(message, name: _TAG, level: errlevel, error: error, stackTrace: stackTrace,);
       }
 
   }
@@ -70,4 +92,6 @@ class F_PlatformOutput implements IPlatformOutput
     return const bool.fromEnvironment('dart.vm.product') == false
         && Platform.environment.containsKey('FLUTTER_TEST');
   }
+
+
 }

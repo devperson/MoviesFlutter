@@ -15,6 +15,7 @@ class LoginPageViewModel extends PageViewModel
     @override
     void Initialize(NavigationParameters parameters)
     {
+      LogMethodStart("Initialize");
       super.Initialize(parameters);
     }
 

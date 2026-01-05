@@ -6,6 +6,8 @@
 /// - Windows: ApplicationDataContainer
 abstract interface class IPreferences
 {
+
+    Future<void> InitializeAsync();
     /// Checks for the existence of a given key.
     ///
     /// [key] The key to check.

@@ -6,11 +6,6 @@ class F_PreferencesImplementation implements IPreferences
 {
   SharedPreferences? _prefs;
 
-  F_PreferencesImplementation()
-  {
-    InitializeAsync();
-  }
-
   Future<void> InitializeAsync() async
   {
     _prefs = await SharedPreferences.getInstance();

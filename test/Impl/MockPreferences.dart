@@ -46,4 +46,10 @@ class Mockpreferences implements IPreferences
       }
   }
 
+  @override
+  Future<void> InitializeAsync() {
+    // TODO: implement InitializeAsync
+    throw UnimplementedError();
+  }
+
 }
