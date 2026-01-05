@@ -1,8 +1,8 @@
 import 'package:movies_flutter/Core/Abstractions/Common/AppException.dart';
 import 'package:movies_flutter/Core/Abstractions/Diagnostics/IErrorTrackingService.dart';
-import 'package:movies_flutter/Core/Event.dart';
+import 'package:movies_flutter/Core/Abstractions/Common/Event.dart';
 
-class AppErrorTrackingService implements IErrorTrackingService
+class F_ErrorTrackingService implements IErrorTrackingService
 {
   @override
   void Initialize() {

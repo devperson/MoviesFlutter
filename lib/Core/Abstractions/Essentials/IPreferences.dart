@@ -11,18 +11,18 @@ abstract interface class IPreferences
     /// [key] The key to check.
     /// [sharedName] Shared container name.
     /// Returns `true` if the key exists in the preferences, otherwise `false`.
-    bool ContainsKey(String key, {String? sharedName});
+    bool ContainsKey(String key);
 
     /// Removes a key and its associated value if it exists.
     ///
     /// [key] The key to remove.
     /// [sharedName] Shared container name.
-    void Remove(String key, {String? sharedName});
+    void Remove(String key);
 
     /// Clears all keys and values.
     ///
     /// [sharedName] Shared container name.
-    void Clear({String? sharedName});
+    void Clear();
 
     /// Sets a value for a given key.
     ///
@@ -30,7 +30,7 @@ abstract interface class IPreferences
     /// [key] The key to set the value for.
     /// [value] Value to set.
     /// [sharedName] Shared container name.
-    void Set<T>(String key, T value, {String? sharedName});
+    void Set<T>(String key, T value);
 
     /// Gets the value for a given key, or the default specified if the key does not exist.
     ///
@@ -39,5 +39,5 @@ abstract interface class IPreferences
     /// [defaultValue] The default value to return when no existing value for [key] exists.
     /// [sharedName] Shared container name.
     /// Returns Value for the given key, or the value in [defaultValue] if it does not exist.
-    T Get<T>(String key, T defaultValue, {String? sharedName});
+    T Get<T>(String key, T defaultValue);
 }

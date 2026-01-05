@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
+import 'package:movies_flutter/Core/Abstractions/Common/AppException.dart';
+import 'package:path/path.dart' as p;
 
 import '../../../Abstractions/Diagnostics/IFileLogger.dart';
 import '../../../Abstractions/Platform/IDirectoryService.dart';
@@ -23,10 +25,11 @@ class F_FileLogger implements IFileLogger
   late String _logRoot;
   late String _sessionDir;
 
+  bool _isInited = false;
   static const String _tag = "FlutterFileLogger: ";
 
   @override
-  Future<void> Init() async
+  Future<void> InitAsync() async
   {
     try
     {
@@ -41,19 +44,19 @@ class F_FileLogger implements IFileLogger
 
       // 🗓 FOLDER PER DAY
       final dayStamp = DateFormat("yyyy-MM-dd").format(DateTime.now());
-      _sessionDir = "$_logRoot/$dayStamp";
+      _sessionDir = p.join(_logRoot, dayStamp);
       await Directory(_sessionDir).create(recursive: true);
 
       // 🕒 FILE PER SESSION
       final timestamp = DateFormat("yyyy-MM-dd_HH-mm-ss").format(DateTime.now());
-      _currentLogPath = "$_sessionDir/session_$timestamp.log";
+      _currentLogPath = p.join(_sessionDir,"session_$timestamp.log");
 
       _output = FileLogOutput(_currentLogPath);
 
       // 💬 Exact "%msg%n" equivalent
       _logger = Logger(
         level: Level.debug,
-        printer: SimplePrinter(printTime: false),
+        printer: SimplePrinter(printTime: false, colors: false),
         output: _output,
       );
 
@@ -65,23 +68,58 @@ class F_FileLogger implements IFileLogger
     }
   }
 
-  @override
-  void Info(String message)
+  Future<void> _ensureInitilized() async
   {
-    _logger.i(message);
+    if(!_isInited)
+    {
+      _isInited = true;
+      await InitAsync();
+    }
   }
 
   @override
-  void Warn(String message)
+  void Info(String message) async
   {
-    _logger.w(message);
+    try
+    {
+      await _ensureInitilized();
+      _logger.i(message);
+    }
+    catch(ex, stackTrace)
+    {
+      print(ex.ToExceptionString(stackTrace));
+    }
   }
 
   @override
-  void Error(String message)
+  void Warn(String message) async
   {
-    _logger.e(message);
+    try
+    {
+      await _ensureInitilized();
+      _logger.w(message);
+    }
+    catch(ex, stackTrace)
+    {
+      print(ex.ToExceptionString(stackTrace));
+    }
   }
+
+  @override
+  void Error(String message) async
+  {
+    try
+    {
+      await _ensureInitilized();
+      _logger.e(message);
+    }
+    catch(ex, stackTrace)
+    {
+      print(ex.ToExceptionString(stackTrace));
+    }
+  }
+
+
 
   Future<List<int>?> GetCompressedLogsSync(bool getOnlyLastSession) async
   {
@@ -147,7 +185,8 @@ class F_FileLogger implements IFileLogger
     try
     {
       final root = await _directoryService.Value.GetAppDataDir();
-      final folder = Directory("$root/FlutterLogs");
+      final path = p.join(root, 'FlutterLogs');
+      final folder = Directory(path);
 
       if (!await folder.exists())
         await folder.create(recursive: true);

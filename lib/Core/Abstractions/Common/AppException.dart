@@ -22,6 +22,7 @@ class AppException implements Exception
   StackTrace get ErrorStackTrace => _stackTrace;
   Exception? get CausedException => _causedException;
 
+  AppException.Throw(String message) : this(message, StackTrace.current);
   AppException(this._message, this._stackTrace, [ this._causedException ]);
 
   /// Returns a string representation in a Kotlin / C#–style format:
@@ -66,14 +67,17 @@ extension ObjectExtensions on Object
   {
     if(this is AppException)
       {
+        //no need to use stackTrace because AppException has stackTrace internally
         return this as AppException;
       }
       else if(this is Exception)
       {
+        //convert Exception to AppException
         return (this as Exception).ToAppException(stackTrace);
       }
       else
       {
+        //convert ERROR to AppException
         return AppException("App ERROR occurred: $this", stackTrace);
       }
   }

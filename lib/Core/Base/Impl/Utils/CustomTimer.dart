@@ -1,5 +1,5 @@
 import 'dart:async';
-import '../../../Event.dart';
+import '../../../Abstractions/Common/Event.dart';
 
 class CustomTimer
 {

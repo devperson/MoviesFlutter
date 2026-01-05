@@ -11,11 +11,12 @@ abstract interface class ILoggingService extends ILogging
   set LastError(Object? Value);
   bool get HasError;
 
+  Future<void> InitAsync();
   void LogMethodStarted2(String MethodName);
   void Header(String HeaderMessage);
   void LogMethodFinished(String MethodName);
   void LogIndicator(String Name, String Message);
-  void LogError(Exception Ex, StackTrace stackTrace, [String Message = "", bool Handled = true ]);
+  void LogError(Object Ex, StackTrace stackTrace, [String Message = "", bool Handled = true ]);
   void TrackError(Object Ex, StackTrace stackTrace, [Map<String, String>? Data]);
   void LogUnhandledError(Exception Ex, StackTrace stackTrace);
   Future<List<int>?> GetCompressedLogFileBytes(bool GetOnlyLastSession);

@@ -1,6 +1,6 @@
 abstract interface class IFileLogger
 {
-  void Init();
+  Future<void> InitAsync();
 
   void Info(String Message);
 
