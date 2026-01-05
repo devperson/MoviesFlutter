@@ -1,5 +1,5 @@
+import '../../../Abstractions/Common/Event.dart';
 import '../../../Abstractions/Diagnostics/ILoggingService.dart';
-import '../../../Event.dart';
 import '../../Impl/Utils/LazyInjected.dart';
 import 'ClickUtil.dart';
 

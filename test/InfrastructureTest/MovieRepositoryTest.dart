@@ -18,8 +18,8 @@ void main()
      final infraDi = InfraDI();
      infraDi.RegisterTypes();
 
-     final logging = ContainerLocator.Resolve<ILoggingService>();
-     await logging.InitAsync();
+     // final logging = ContainerLocator.Resolve<ILoggingService>();
+     // await logging.InitAsync();
 
      final dbInitializer = ContainerLocator.Resolve<ILocalDbInitilizer>();
      await dbInitializer.Init();

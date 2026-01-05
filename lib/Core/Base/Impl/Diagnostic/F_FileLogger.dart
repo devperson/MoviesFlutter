@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
+import 'package:movies_flutter/Core/Abstractions/Common/AppException.dart';
 import 'package:path/path.dart' as p;
 
 import '../../../Abstractions/Diagnostics/IFileLogger.dart';
@@ -24,6 +25,7 @@ class F_FileLogger implements IFileLogger
   late String _logRoot;
   late String _sessionDir;
 
+  bool _isInited = false;
   static const String _tag = "FlutterFileLogger: ";
 
   @override
@@ -66,23 +68,58 @@ class F_FileLogger implements IFileLogger
     }
   }
 
-  @override
-  void Info(String message)
+  Future<void> _ensureInitilized() async
   {
-    _logger.i(message);
+    if(!_isInited)
+    {
+      _isInited = true;
+      await InitAsync();
+    }
   }
 
   @override
-  void Warn(String message)
+  void Info(String message) async
   {
-    _logger.w(message);
+    try
+    {
+      await _ensureInitilized();
+      _logger.i(message);
+    }
+    catch(ex, stackTrace)
+    {
+      print(ex.ToExceptionString(stackTrace));
+    }
   }
 
   @override
-  void Error(String message)
+  void Warn(String message) async
   {
-    _logger.e(message);
+    try
+    {
+      await _ensureInitilized();
+      _logger.w(message);
+    }
+    catch(ex, stackTrace)
+    {
+      print(ex.ToExceptionString(stackTrace));
+    }
   }
+
+  @override
+  void Error(String message) async
+  {
+    try
+    {
+      await _ensureInitilized();
+      _logger.e(message);
+    }
+    catch(ex, stackTrace)
+    {
+      print(ex.ToExceptionString(stackTrace));
+    }
+  }
+
+
 
   Future<List<int>?> GetCompressedLogsSync(bool getOnlyLastSession) async
   {
