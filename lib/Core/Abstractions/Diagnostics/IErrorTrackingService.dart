@@ -1,4 +1,4 @@
-import 'package:movies_flutter/Core/Event.dart';
+import 'package:movies_flutter/Core/Abstractions/Common/Event.dart';
 
 abstract interface class IErrorTrackingService
 {

@@ -5,12 +5,12 @@ import 'package:get/get.dart';
 import 'App/Controllers/LoginPageViewModel.dart';
 import 'App/Bootstrap/BaseDependencies.dart';
 import 'App/Bootstrap/PageRegistrar.dart';
-import 'Core/Base/Impl/Diagnostic/AppPlatformOutput.dart';
+import 'Core/Base/Impl/Diagnostic/F_PlatformOutput.dart';
 import 'Core/Base/Impl/Utils/ColorConstants.dart';
 
 void main()
 {
-    final outputLog = AppPlatformOutput();
+    final outputLog = F_PlatformOutput();
     runZonedGuarded(()
     {
       runApp(const MyApp());
@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget
       getPages: PageRegistrar.pages,
       defaultTransition: Transition.rightToLeft,
       initialBinding: BaseDependencies(),
-      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
                         appBarTheme: const AppBarTheme(
                           backgroundColor: ColorConstants.BgColor,
                           foregroundColor: ColorConstants.DefaultTextColor, // title + icons

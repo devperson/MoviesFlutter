@@ -1,0 +1,145 @@
+import 'dart:core';
+
+import 'package:intl/intl.dart';
+import 'package:movies_flutter/Core/Abstractions/Common/AppException.dart';
+import 'package:movies_flutter/Core/Abstractions/Diagnostics/ILoggingService.dart';
+
+class MockLoggingService implements ILoggingService
+{
+  // ---------- constants ----------
+
+  static const String ENTER_TAG = "➡Enter";
+  static const String EXIT_TAG = "🏃Exit";
+  static const String INDICATOR_TAG = "⏱Indicator_";
+
+  // ---------- state ----------
+
+  @override
+  Object? LastError;
+
+  @override
+  bool get HasError
+  {
+    return LastError != null;
+  }
+
+  // ---------- helpers ----------
+  final DateFormat _timeFormatter = DateFormat("HH:mm:ss");
+  String _getFormattedDate()
+  {
+    final now = DateTime.now();
+    final time = _timeFormatter.format(now);
+    final micros = now.microsecond.toString().padLeft(6, '0');
+
+    return "$time:$micros";
+  }
+
+  // ---------- ILogging ----------
+
+  @override
+  void Log(String message)
+  {
+    print("${_getFormattedDate()}_$message");
+  }
+
+  @override
+  void LogWarning(String message)
+  {
+    print("${_getFormattedDate()}WARNING: $message");
+  }
+
+  // ---------- ILoggingService ----------
+
+  @override
+  void LogError(Object ex, StackTrace stacktrace, [String message = "", bool handled = true])
+  {
+    print("ERROR: $message,💥Handled Exception: ${ex.ToExceptionString(stacktrace)}");
+  }
+
+  @override
+  void TrackError(Object ex, StackTrace stacktrace, [Map<String, String>? data])
+  {
+    LastError = ex;
+    print("💥Handled Exception: ${ex.ToExceptionString(stacktrace)}");
+  }
+
+  @override
+  void LogUnhandledError(Object ex, StackTrace stackTrace)
+  {
+    LastError = ex;
+  }
+
+  @override
+  void Header(String headerMessage)
+  {
+    throw UnimplementedError();
+  }
+
+  @override
+  void LogMethodStarted(String className, String methodName, [List<Object?>? args])
+  {
+    print("$ENTER_TAG $className.$methodName()");
+  }
+
+  @override
+  void LogMethodStarted2(String methodName)
+  {
+    print("$ENTER_TAG $methodName");
+  }
+
+  @override
+  void LogMethodFinished(String methodName)
+  {
+    print("$EXIT_TAG $methodName");
+  }
+
+  @override
+  void LogIndicator(String name, String message)
+  {
+    throw UnimplementedError();
+  }
+
+  // ---------- file / diagnostics ----------
+
+  @override
+  Future<List<int>> GetCompressedLogFileBytes(bool getOnlyLastSession) async
+  {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> GetSomeLogTextAsync() async
+  {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> GetLogsFolder()
+  {
+    throw UnimplementedError();
+  }
+
+  @override
+  String GetCurrentLogFileName()
+  {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<int>> GetLastSessionLogBytes() async
+  {
+    throw UnimplementedError();
+  }
+
+  @override
+  ILogging CreateSpecificLogger(String key)
+  {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> InitAsync() async
+  {
+
+  }
+}

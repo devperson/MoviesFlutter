@@ -34,9 +34,21 @@ class F_DirectoryService implements IDirectoryService
   }
 
   @override
-  Future<void> CreateDir(String path) {
-    // TODO: implement CreateDir
-    throw UnimplementedError();
+  Future<void> CreateDir(String path) async
+  {
+    final dir = Directory(path);
+    if (!await dir.exists())
+    {
+      await dir.create(recursive: true);
+    }
+  }
+
+  @override
+  Future<bool> IsExistDir(String path) async
+  {
+    final dir = Directory(path);
+    final exist = await dir.exists();
+    return exist;
   }
 
   @override
@@ -45,9 +57,4 @@ class F_DirectoryService implements IDirectoryService
     throw UnimplementedError();
   }
 
-  @override
-  Future<bool> IsExistDir(String path) {
-    // TODO: implement IsExistDir
-    throw UnimplementedError();
-  }
 }

@@ -43,6 +43,8 @@ dependencies:
   path_provider: ^2.1.4
   #IZipService dependencies
   archive: ^3.4.10
+  realm: ^20.2.0
+
 
 dev_dependencies:
   flutter_test:

@@ -6,7 +6,7 @@ import '../../../Abstractions/Essentials/IPreferences.dart';
 import '../Utils/LazyInjected.dart';
 import '../../../Abstractions/Common/AppException.dart';
 
-class AppLoggingService implements ILoggingService
+class F_LoggingService implements ILoggingService
 {
     int RowNumber = 0;
     final String ENTER_TAG = "➡Enter";
@@ -26,11 +26,14 @@ class AppLoggingService implements ILoggingService
     final _preferences = LazyInjected<IPreferences>();
     final _platformConsole = LazyInjected<IPlatformOutput>();
 
-    AppLoggingService()
+
+
+    @override
+    Future<void> InitAsync() async
     {
-        //_errorTrackingService.Value.OnServiceError.AddListener(ErrorTrackingService_OnError);
-        _fileLogger.Value.Init();
-        //AppLaunchCount = GetLaunchCount();
+      //_errorTrackingService.Value.OnServiceError.AddListener(ErrorTrackingService_OnError);
+      await _fileLogger.Value.InitAsync();
+      //AppLaunchCount = GetLaunchCount();
     }
 
     void ErrorTrackingService_OnError(Object? ex)

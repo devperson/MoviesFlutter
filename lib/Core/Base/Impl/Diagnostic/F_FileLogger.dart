@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
+import 'package:path/path.dart' as p;
 
 import '../../../Abstractions/Diagnostics/IFileLogger.dart';
 import '../../../Abstractions/Platform/IDirectoryService.dart';
@@ -26,7 +27,7 @@ class F_FileLogger implements IFileLogger
   static const String _tag = "FlutterFileLogger: ";
 
   @override
-  Future<void> Init() async
+  Future<void> InitAsync() async
   {
     try
     {
@@ -41,19 +42,19 @@ class F_FileLogger implements IFileLogger
 
       // 🗓 FOLDER PER DAY
       final dayStamp = DateFormat("yyyy-MM-dd").format(DateTime.now());
-      _sessionDir = "$_logRoot/$dayStamp";
+      _sessionDir = p.join(_logRoot, dayStamp);
       await Directory(_sessionDir).create(recursive: true);
 
       // 🕒 FILE PER SESSION
       final timestamp = DateFormat("yyyy-MM-dd_HH-mm-ss").format(DateTime.now());
-      _currentLogPath = "$_sessionDir/session_$timestamp.log";
+      _currentLogPath = p.join(_sessionDir,"session_$timestamp.log");
 
       _output = FileLogOutput(_currentLogPath);
 
       // 💬 Exact "%msg%n" equivalent
       _logger = Logger(
         level: Level.debug,
-        printer: SimplePrinter(printTime: false),
+        printer: SimplePrinter(printTime: false, colors: false),
         output: _output,
       );
 
@@ -147,7 +148,8 @@ class F_FileLogger implements IFileLogger
     try
     {
       final root = await _directoryService.Value.GetAppDataDir();
-      final folder = Directory("$root/FlutterLogs");
+      final path = p.join(root, 'FlutterLogs');
+      final folder = Directory(path);
 
       if (!await folder.exists())
         await folder.create(recursive: true);

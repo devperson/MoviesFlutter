@@ -8,7 +8,7 @@ import '../Utils/LazyInjected.dart';
 import 'LoggableService.dart';
 import 'dart:io';
 
-class AppLogExporter with LoggableService implements IAppLogExporter
+class F_LogExporter with LoggableService implements IAppLogExporter
 {
     final directoryService = LazyInjected<IDirectoryService>();
     final shareFileService = LazyInjected<IShare>();

@@ -1,4 +1,4 @@
-import '../../Event.dart';
+import '../Common/Event.dart';
 
 abstract interface class ISnackbarService
 {

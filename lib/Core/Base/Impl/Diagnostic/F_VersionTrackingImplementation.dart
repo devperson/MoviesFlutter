@@ -4,7 +4,7 @@ import '../../../Abstractions/Essentials/IVersionTracking.dart';
 import '../Utils/LazyInjected.dart';
 import 'LoggableService.dart';
 
-class VersionTrackingImplementation with LoggableService implements IVersionTracking
+class F_VersionTrackingImplementation with LoggableService implements IVersionTracking
 {
     final preferences = LazyInjected<IPreferences>();
     final appInfo = LazyInjected<IAppInfo>();
@@ -19,7 +19,7 @@ class VersionTrackingImplementation with LoggableService implements IVersionTrac
 
     String get LastInstalledBuild => versionTrail[buildsKey]?.lastOrNull ?? "";
 
-    VersionTrackingImplementation()
+    F_VersionTrackingImplementation()
     {
         sharedName = "${appInfo.Value.PackageName}.essentials.versiontracking";
         Track();
@@ -46,7 +46,7 @@ class VersionTrackingImplementation with LoggableService implements IVersionTrac
     void InitVersionTracking()
     {
         LogMethodStart("InitVersionTracking");
-        IsFirstLaunchEver = !preferences.Value.ContainsKey(versionsKey, sharedName: sharedName) || !preferences.Value.ContainsKey(buildsKey, sharedName: sharedName);
+        IsFirstLaunchEver = !preferences.Value.ContainsKey(versionsKey) || !preferences.Value.ContainsKey(buildsKey);
         if (IsFirstLaunchEver)
         {
             versionTrail = {
@@ -154,12 +154,12 @@ class VersionTrackingImplementation with LoggableService implements IVersionTrac
 
     List<String> ReadHistory(String key) {
         LogMethodStart("ReadHistory", [key]);
-        return preferences.Value.Get<String?>(key, null, sharedName: sharedName)?.split('|').where((it) => it.isNotEmpty).toList() ?? [];
+        return preferences.Value.Get<String?>(key, null)?.split('|').where((it) => it.isNotEmpty).toList() ?? [];
     }
 
     void WriteHistory(String key, List<String> history) {
         LogMethodStart("WriteHistory", [key, history]);
-        preferences.Value.Set(key, history.join("|"), sharedName: sharedName);
+        preferences.Value.Set(key, history.join("|"));
     }
 
     String? GetPrevious(String key)

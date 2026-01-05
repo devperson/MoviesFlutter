@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:movies_flutter/Core/Event.dart';
+import 'package:movies_flutter/Core/Abstractions/Common/Event.dart';
 
 import '../../../Abstractions/UI/ISnackbarService.dart';
 import '../Utils/FontConstants.dart';

@@ -13,9 +13,9 @@ import 'package:movies_flutter/Core/Base/Impl/Platform/F_ZipService.dart';
 
 import '../Abstractions/Diagnostics/ILoggingService.dart';
 import '../Abstractions/UI/IAlertDialogService.dart';
-import 'Impl/Diagnostic/AppErrorTrackingService.dart';
-import 'Impl/Diagnostic/AppLoggingService.dart';
-import 'Impl/Diagnostic/AppPlatformOutput.dart';
+import 'Impl/Diagnostic/F_ErrorTrackingService.dart';
+import 'Impl/Diagnostic/F_LoggingService.dart';
+import 'Impl/Diagnostic/F_PlatformOutput.dart';
 import 'Impl/UI/F_AlertDialogService.dart';
 import 'Impl/UI/F_SnackbarService.dart';
 
@@ -23,10 +23,10 @@ class BaseImplRegistrar
 {
     static void RegisterTypes()
     {
-      Get.lazyPut<IPlatformOutput>(() => AppPlatformOutput(), fenix: true);
-      Get.lazyPut<IErrorTrackingService>(() => AppErrorTrackingService(), fenix: true);
+      Get.lazyPut<IPlatformOutput>(() => F_PlatformOutput(), fenix: true);
+      Get.lazyPut<IErrorTrackingService>(() => F_ErrorTrackingService(), fenix: true);
       Get.lazyPut<IFileLogger>(() => F_FileLogger(), fenix: true);
-      Get.lazyPut<ILoggingService>(() => AppLoggingService(), fenix: true);
+      Get.lazyPut<ILoggingService>(() => F_LoggingService(), fenix: true);
       Get.lazyPut<IPageNavigationService>(() => F_PageNavigationService(), fenix: true);
       Get.lazyPut<IDirectoryService>(() => F_DirectoryService(), fenix: true);
       Get.lazyPut<IZipService>(() => F_ZipService(), fenix: true);
