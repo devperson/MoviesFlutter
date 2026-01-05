@@ -32,8 +32,8 @@ class SideMenuView extends StatelessWidget
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Top spacer (60)
-          const SizedBox(height: 30),
+
+          const SizedBox(height: 80),
 
           // Share Logs button
           F_IconTextButton(
