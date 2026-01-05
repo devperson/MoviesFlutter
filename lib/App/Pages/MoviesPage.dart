@@ -13,6 +13,7 @@ import 'Controls/SideMenuView.dart';
 class MoviesPage extends GetView<MoviesPageViewModel>
 {
   // GetView<T> gives you controller automatically
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context)
@@ -20,11 +21,12 @@ class MoviesPage extends GetView<MoviesPageViewModel>
     controller.Movies.RemovedItemAnimationDelegate = this.BuildRemovedItem;
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: F_PageHeaderView(
         title: "Movies",
         leftIcon: Icons.menu,
         onLeftPressed: () {
-            Scaffold.of(context).openDrawer();
+          _scaffoldKey.currentState?.openDrawer();
         },
         rightIcon: Icons.add,
         onRightPressed: () {

@@ -11,7 +11,6 @@ import '../../MVVM/ViewModels/NavigatingBaseViewModel.dart';
 
 class F_PageNavigationService implements IPageNavigationService
 {
-
   final List<String> stack = [];
   static const Duration navigationAnimationDuration = Duration(milliseconds: 300);
 
