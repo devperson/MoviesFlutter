@@ -1,4 +1,3 @@
-import 'package:archive/archive.dart';
 import 'package:movies_flutter/Core/Abstractions/Common/AppException.dart';
 
 import '../../../Abstractions/Diagnostics/IAppLogExporter.dart';

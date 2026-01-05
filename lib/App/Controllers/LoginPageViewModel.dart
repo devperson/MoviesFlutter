@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import '../../Core/Abstractions/Navigation/NavigationParameters.dart';
 import '../../Core/Base/MVVM/ViewModels/PageViewModel.dart';
 import 'MoviesPageViewModel.dart';

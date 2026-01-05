@@ -7,14 +7,8 @@ import '../../../Abstractions/Platform/IDirectoryService.dart';
 import '../Diagnostic/LoggableService.dart';
 
 
-class F_DirectoryService with LoggableService implements IDirectoryService
+class F_DirectoryService implements IDirectoryService
 {
-
-  F_DirectoryService()
-  {
-    InitSpecificlogger(SpecificLoggingKeys.LogEssentialServices);
-  }
-
   // ----------------------------------------------------------
   // Cache directory
   // ----------------------------------------------------------
@@ -22,8 +16,6 @@ class F_DirectoryService with LoggableService implements IDirectoryService
   @override
   Future<String> GetCacheDir() async
   {
-    SpecificLogMethodStart('GetCacheDir');
-
     final dir = await getTemporaryDirectory();
     return dir.path;
   }
@@ -35,8 +27,6 @@ class F_DirectoryService with LoggableService implements IDirectoryService
   @override
   Future<String> GetAppDataDir() async
   {
-    SpecificLogMethodStart('GetAppDataDir');
-
     if (kIsWeb)
     {
       // Virtual root for Web (in-memory usage)
@@ -60,8 +50,6 @@ class F_DirectoryService with LoggableService implements IDirectoryService
   @override
   Future<bool> IsExistDir(String path) async
   {
-    SpecificLogMethodStart('IsExistDir', [path]);
-
     final dir = Directory(path);
     return await dir.exists();
   }
@@ -73,8 +61,6 @@ class F_DirectoryService with LoggableService implements IDirectoryService
   @override
   Future<void> CreateDir(String path) async
   {
-    SpecificLogMethodStart('CreateDir', [path]);
-
     final dir = Directory(path);
     final res = await dir.exists();
     if (res == false)
