@@ -26,3 +26,13 @@ abstract interface class ILoggingService extends ILogging
   Future<List<int>?> GetLastSessionLogBytes();
   ILogging CreateSpecificLogger(String Key);
 }
+
+abstract class SpecificLoggingKeys
+{
+  static const String LogEssentialServices = 'LogEssentialServices';
+  static const String LogUIServices        = 'LogUIServices';
+  static const String LogUIControlsKey     = 'LogUIControlsKey';
+  static const String LogUIPageKey         = 'LogUIPageKey';
+  static const String LogUINavigationKey   = 'LogUINavigationKey';
+  static const String LogUITableCells      = 'LogUITableCells';
+}
