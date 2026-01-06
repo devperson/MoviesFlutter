@@ -39,7 +39,13 @@ class ObservableCollection<T>
     ListKey.currentState?.insertItem(index);
   }
 
-  void RemoveAt(int index) async
+  void Remove(T removedItem)
+  {
+    final index = _items.indexOf(removedItem);
+    RemoveAt(index);
+  }
+
+  void RemoveAt(int index)
   {
     final T removedItem = _items[index];
     _items.removeAt(index);
@@ -58,7 +64,6 @@ class ObservableCollection<T>
                                             duration: animationDuration);
 
     // await Future.delayed(animationDuration);//wait animation end
-
   }
 
   void Update(int index, T newItem)
@@ -85,7 +90,6 @@ class ObservableCollection<T>
   }
 
   // -------- Internal --------
-
   void ResetListKey()
   {
      ListKey = GlobalKey<AnimatedListState>();

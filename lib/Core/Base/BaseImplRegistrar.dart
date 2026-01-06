@@ -5,6 +5,7 @@ import 'package:movies_flutter/Core/Abstractions/Diagnostics/IErrorTrackingServi
 import 'package:movies_flutter/Core/Abstractions/Diagnostics/IFileLogger.dart';
 import 'package:movies_flutter/Core/Abstractions/Diagnostics/IPlatformOutput.dart';
 import 'package:movies_flutter/Core/Abstractions/Essentials/Device/IDeviceInfo.dart';
+import 'package:movies_flutter/Core/Abstractions/Messaging/IMessagesCenter.dart';
 import 'package:movies_flutter/Core/Abstractions/Navigation/IPageNavigationService.dart';
 import 'package:movies_flutter/Core/Abstractions/Platform/IDirectoryService.dart';
 import 'package:movies_flutter/Core/Abstractions/Platform/IZipService.dart';
@@ -18,6 +19,7 @@ import '../Abstractions/Essentials/Display/IDisplay.dart';
 import '../Abstractions/Essentials/IAppInfo.dart';
 import '../Abstractions/Essentials/IPreferences.dart';
 import '../Abstractions/Essentials/IShare.dart';
+import '../Abstractions/Messaging/SimpleMessagingCenter.dart';
 import '../Abstractions/UI/IAlertDialogService.dart';
 import 'Impl/Diagnostic/F_ErrorTrackingService.dart';
 import 'Impl/Diagnostic/F_LoggingService.dart';
@@ -53,6 +55,8 @@ class BaseImplRegistrar
 
       Get.put<IPageNavigationService>(F_PageNavigationService(), permanent: true);
       Get.lazyPut<IZipService>(() => F_ZipService(), fenix: true);
+      Get.put<IMessagesCenter>(SimpleMessageCenter(), permanent: true);
+
       //UI
       Get.lazyPut<IAlertDialogService>(() => F_AlertDialogService(), fenix: true);
       Get.lazyPut<ISnackbarService>(() => F_SnackbarService(), fenix: true);

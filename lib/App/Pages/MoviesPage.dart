@@ -30,6 +30,7 @@ class MoviesPage extends GetView<MoviesPageViewModel>
         },
         rightIcon: Icons.add,
         onRightPressed: () {
+          controller.AddCommand.Execute();
         },
         viewModel: controller,
       ),

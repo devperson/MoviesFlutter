@@ -11,12 +11,12 @@ class NavigatingBaseViewModel extends BaseViewModel
 
   void OnNavigatedTo(NavigationParameters parameters)
   {
-      this.LogVirtualBaseMethod("OnNavigatedTo");
+      this.LogVirtualBaseMethod("OnNavigatedTo()");
   }
 
   void OnNavigatedFrom()
   {
-     this.LogVirtualBaseMethod("OnNavigatedFrom");
+     this.LogVirtualBaseMethod("OnNavigatedFrom()");
   }
 
   // NavigatingBaseViewModel? GetCurrentPageViewModel()
@@ -43,7 +43,7 @@ class NavigatingBaseViewModel extends BaseViewModel
   {
     // try
     // {
-      LogVirtualBaseMethod('NavigateToRoot');
+      LogVirtualBaseMethod('NavigateToRoot()');
 
       await navigationService.Value.NavigateToRoot(parameters: parameters);
     // }
@@ -74,7 +74,7 @@ class NavigatingBaseViewModel extends BaseViewModel
 
   Future<void> NavigateBack([NavigationParameters? parameters]) async
   {
-    LogVirtualBaseMethod('NavigateBack');
+    LogVirtualBaseMethod('NavigateBack()');
     await Navigate('../', parameters);
   }
 
@@ -123,10 +123,5 @@ class NavigatingBaseViewModel extends BaseViewModel
       final value = parameters.GetValue<T>(key);
       setter(value);
     }
-  }
-
-  void LogVirtualBaseMethod(String methodName)
-  {
-    this.loggingService.Value.Log('${runtimeType}.$methodName() (from base)');
   }
 }

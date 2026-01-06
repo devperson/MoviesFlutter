@@ -19,7 +19,9 @@ class MovieDetailPage extends GetView<MovieDetailPageViewModel>
         appBar: F_PageHeaderView(
           title: "Movie Detail",
           rightIcon: Icons.edit,
-          onRightPressed: () {
+          onRightPressed: ()
+          {
+            controller.EditCommand.Execute();
           },
           viewModel: controller,
         ),

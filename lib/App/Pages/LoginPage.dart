@@ -37,7 +37,7 @@ class LoginPage extends GetView<LoginPageViewModel>
 
               F_PrimaryButton(
                 text: 'Submit',
-                onTap: controller.Submit,
+                onTap: (){ controller.SubmitCommand.Execute(); },
               ),
             ],
           ),
