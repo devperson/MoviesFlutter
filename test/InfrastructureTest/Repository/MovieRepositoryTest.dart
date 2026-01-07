@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies_flutter/Core/Abstractions/Common/AppException.dart';
+import 'package:movies_flutter/Core/Abstractions/Diagnostics/ILoggingService.dart';
 import 'package:movies_flutter/Core/Abstractions/Repository/ILocalDbInitilizer.dart';
 import 'package:movies_flutter/Core/Abstractions/Repository/IRepository.dart';
 import 'package:movies_flutter/Core/Base/Impl/Utils/ContainerLocator.dart';
@@ -15,8 +16,8 @@ void main()
      final infraDi = RepoDI();
      infraDi.RegisterTypes();
 
-     // final logging = ContainerLocator.Resolve<ILoggingService>();
-     // await logging.InitAsync();
+      final logging = ContainerLocator.Resolve<ILoggingService>();
+      await logging.InitAsync();
 
      final dbInitializer = ContainerLocator.Resolve<ILocalDbInitilizer>();
      await dbInitializer.Init();

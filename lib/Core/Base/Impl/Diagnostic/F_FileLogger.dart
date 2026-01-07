@@ -36,6 +36,13 @@ class F_FileLogger with ConsoleService implements IFileLogger
   {
     try
     {
+      if(_isInited)
+        {
+          PrintOrange("$_tag.InitAsync(): Ignoring this method because it is already initilized");
+          return;
+        }
+
+      _isInited = true;
       final logFolder = await GetLogsFolder();
       if (logFolder.isEmpty)
       {
@@ -71,21 +78,11 @@ class F_FileLogger with ConsoleService implements IFileLogger
     }
   }
 
-  Future<void> _ensureInitilized() async
-  {
-    if(!_isInited)
-    {
-      _isInited = true;
-      await InitAsync();
-    }
-  }
-
   @override
   void Info(String message) async
   {
     try
     {
-      await _ensureInitilized();
       _logger.i(message);
     }
     catch(ex, stackTrace)
@@ -99,7 +96,6 @@ class F_FileLogger with ConsoleService implements IFileLogger
   {
     try
     {
-      await _ensureInitilized();
       _logger.w(message);
     }
     catch(ex, stackTrace)
@@ -113,7 +109,6 @@ class F_FileLogger with ConsoleService implements IFileLogger
   {
     try
     {
-      await _ensureInitilized();
       _logger.e(message);
     }
     catch(ex, stackTrace)

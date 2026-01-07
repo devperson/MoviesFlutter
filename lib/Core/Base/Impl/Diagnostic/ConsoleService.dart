@@ -39,6 +39,12 @@ class ConsoleServiceImpl
     ColoridPrint.redPrint("${CommonTAG.LOGGER_TAG}: $message");
     print("${CommonTAG.LOGGER_TAG}: $message");
   }
+
+  void PrintOrange(String message)
+  {
+    ColoridPrint.yellowPrint("${CommonTAG.LOGGER_TAG}: $message");
+    print("${CommonTAG.LOGGER_TAG}: $message");
+  }
 }
 
 mixin ConsoleService
@@ -57,5 +63,10 @@ mixin ConsoleService
   void PrintRed(String message)
   {
     conoleSer.PrintRed(message);
+  }
+
+  void PrintOrange(String message)
+  {
+    conoleSer.PrintOrange(message);
   }
 }
