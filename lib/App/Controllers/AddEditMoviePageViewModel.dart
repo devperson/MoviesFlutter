@@ -30,7 +30,6 @@ class AddEditMoviePageViewModel extends PageViewModel
   @override
   void Initialize(NavigationParameters parameters)
   {
-    LogMethodStart("Initialize");
     super.Initialize(parameters);
 
     if (parameters.ContainsKey(MoviesPageViewModel.SELECTED_ITEM))

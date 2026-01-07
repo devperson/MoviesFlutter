@@ -47,8 +47,8 @@ class MoviesPage extends GetView<MoviesPageViewModel> {
           },
           enterTransition: [FadeIn(), ScaleIn()],
           exitTransition: [SlideInLeft()],
-          insertDuration: const Duration(milliseconds: 150),
-          removeDuration: const Duration(milliseconds: 150),
+          insertDuration: const Duration(milliseconds: 300),
+          removeDuration: const Duration(milliseconds: 300),
         ),
       ),
     );

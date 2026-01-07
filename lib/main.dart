@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget
     navService.SetInitialPage(initialPage);
 
     //set logging navigation to true by default
-    pref.Set(SpecificLoggingKeys.LogUINavigationKey, true);
+    //pref.Set(SpecificLoggingKeys.LogUINavigationKey, true);
 
     return GetMaterialApp(
       title: 'Movies Flutter app',
