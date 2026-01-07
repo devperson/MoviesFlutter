@@ -11,7 +11,6 @@ import '../../MVVM/ViewModels/NavigatingBaseViewModel.dart';
 
 class F_PageNavigationService implements IPageNavigationService
 {
-
   final List<String> stack = [];
   static const Duration navigationAnimationDuration = Duration(milliseconds: 300);
 
@@ -56,7 +55,7 @@ class F_PageNavigationService implements IPageNavigationService
     }
     else if (nav.IsPop)
     {
-      await OnPopAsync();
+      await OnPopAsync(params);
     }
     else if (nav.IsMultiPop)
     {
@@ -93,13 +92,15 @@ class F_PageNavigationService implements IPageNavigationService
     vmStack.last.OnNavigatedTo(parameters);
   }
 
-  Future<void> OnPopAsync() async
+  Future<void> OnPopAsync(NavigationParameters parameters) async
   {
      vmStack.last.OnNavigatedFrom();
      stack.removeLast();
      Get.back();
 
      await Future.delayed(navigationAnimationDuration);
+
+     vmStack.last.OnNavigatedTo(parameters);
   }
 
   Future<void> OnMultiPopAsync(String url, NavigationParameters parameters) async

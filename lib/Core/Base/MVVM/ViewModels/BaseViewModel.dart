@@ -15,11 +15,13 @@ class BaseViewModel extends GetxController with LoggableService
 
    void Initialize(NavigationParameters parameters)
    {
+      this.LogVirtualBaseMethod("Initialize(...)");
      //Initialized.Invoke();
    }
 
    void Destroy()
    {
+     this.LogVirtualBaseMethod("Destroy()");
      //OnDestroyed.Invoke();
    }
 
@@ -54,5 +56,8 @@ class BaseViewModel extends GetxController with LoggableService
       this.Destroy();
     }
 
-
+   void LogVirtualBaseMethod(String methodName)
+   {
+     this.loggingService.Value.Log('${runtimeType}.$methodName (from base)');
+   }
 }

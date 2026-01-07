@@ -206,19 +206,16 @@ class Mockdata {
 
 class MovieItemModel
 {
-  final int id;
-  final String title;
-  final String overview;
-  final String posterPath;
-  final String releaseDate;
-  final double popularity;
+  int id;
+  String title, overview, posterPath, releaseDate;
+  double popularity;
 
-  const MovieItemModel({
-    required this.id,
-    required this.title,
-    required this.overview,
-    required this.posterPath,
-    required this.releaseDate,
-    required this.popularity,
+  MovieItemModel({
+    this.id = 0,
+    this.title = "",
+    this.overview = "",
+    this.posterPath = "",
+    this.releaseDate = "",
+    this.popularity = 0,
   });
 }

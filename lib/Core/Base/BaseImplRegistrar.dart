@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:movies_flutter/Core/Abstractions/Diagnostics/IErrorTrackingService.dart';
 import 'package:movies_flutter/Core/Abstractions/Diagnostics/IFileLogger.dart';
 import 'package:movies_flutter/Core/Abstractions/Diagnostics/IPlatformOutput.dart';
 import 'package:movies_flutter/Core/Abstractions/Essentials/Device/IDeviceInfo.dart';
+import 'package:movies_flutter/Core/Abstractions/Messaging/IMessagesCenter.dart';
 import 'package:movies_flutter/Core/Abstractions/Navigation/IPageNavigationService.dart';
 import 'package:movies_flutter/Core/Abstractions/Platform/IDirectoryService.dart';
 import 'package:movies_flutter/Core/Abstractions/Platform/IZipService.dart';
@@ -21,6 +24,7 @@ import '../Abstractions/Essentials/Display/IDisplay.dart';
 import '../Abstractions/Essentials/IAppInfo.dart';
 import '../Abstractions/Essentials/IPreferences.dart';
 import '../Abstractions/Essentials/IShare.dart';
+import '../Abstractions/Messaging/SimpleMessagingCenter.dart';
 import '../Abstractions/UI/IAlertDialogService.dart';
 import 'Impl/Diagnostic/F_ErrorTrackingService.dart';
 import 'Impl/Diagnostic/F_LoggingService.dart';
@@ -36,25 +40,38 @@ import 'Impl/UI/F_SnackbarService.dart';
 
 class BaseImplRegistrar
 {
-    static void RegisterTypes()
+    static Future<void> RegisterTypes() async
     {
-      Get.lazyPut<IPlatformOutput>(() => F_PlatformOutput(), fenix: true);
-      Get.lazyPut<IErrorTrackingService>(() => F_ErrorTrackingService(), fenix: true);
-      Get.lazyPut<IFileLogger>(() => F_FileLogger(), fenix: true);
-      Get.put<ILoggingService>(F_LoggingService(), permanent: true);
+      //We use IoC by GetX here, it has some cons though
+      //Get.put allows to create singilton instances but they will be created right away
+      //Get.lazyPut it will not create instance only when accessed but you can not make it singilton.
+      //So GetX has some limitation it can not do lazy singilton instances
+      final pref = F_PreferencesImplementation();
+      await pref.InitializeAsync();
+      Get.put<IPreferences>(pref, permanent: true);
+
+      Get.put<IFileLogger>(F_FileLogger(), permanent: true);
+      Get.put<IPlatformOutput>(F_PlatformOutput(), permanent: true);
+      Get.put<IErrorTrackingService>(F_ErrorTrackingService(), permanent: true);
+
+      final logger = F_LoggingService();
+      await logger.InitAsync();
+      Get.put<ILoggingService>(logger, permanent: true);
+
+      Get.put<IPageNavigationService>(F_PageNavigationService(), permanent: true);
       Get.lazyPut<IZipService>(() => F_ZipService(), fenix: true);
+      Get.put<IMessagesCenter>(SimpleMessageCenter(), permanent: true);
 
       //UI
       Get.lazyPut<IAlertDialogService>(() => F_AlertDialogService(), fenix: true);
       Get.lazyPut<ISnackbarService>(() => F_SnackbarService(), fenix: true);
       Get.put<IPageNavigationService>(F_PageNavigationService(), permanent: true);
       //Essentials
-      Get.lazyPut<IAppInfo>(() => F_AppInfoImplementation(), fenix: true);
-      Get.lazyPut<IDeviceInfo>(() => F_DeviceInfoImplementation(), fenix: true);
-      Get.lazyPut<IDirectoryService>(() => F_DirectoryService(), fenix: true);
-      Get.lazyPut<IDisplay>(() => F_DisplayImplementation(), fenix: true);
-      Get.lazyPut<IPreferences>(() => F_PreferencesImplementation(), fenix: true);
-      Get.lazyPut<IShare>(() => F_ShareImplementation(), fenix: true);
+      Get.put<IAppInfo>(F_AppInfoImplementation(), permanent: true);
+      Get.put<IDeviceInfo>(F_DeviceInfoImplementation(), permanent: true);
+      Get.put<IDirectoryService>(F_DirectoryService(), permanent: true);
+      Get.put<IDisplay>(F_DisplayImplementation(), permanent: true);
+      Get.put<IShare>(F_ShareImplementation(), permanent: true);
       //REST
       Get.lazyPut<IRestClient>(() => RestClient(), fenix: true);
       Get.lazyPut<RequestQueueList>(() => RequestQueueList(), fenix: true);
