@@ -1,5 +1,6 @@
 import 'package:movies_flutter/Core/Abstractions/Common/AppException.dart';
 import 'package:movies_flutter/Core/Abstractions/REST/Exceptions/RequestQueueTimeOutException.dart';
+import 'package:movies_flutter/Core/Base/Impl/Diagnostic/LoggableService.dart';
 import 'package:movies_flutter/Core/Base/Impl/Utils/CustomTimer.dart';
 
 import '../../../Abstractions/Common/Event.dart';
@@ -9,15 +10,25 @@ import 'RequestQueueItem.dart';
 import 'dart:async';
 import 'package:collection/collection.dart';
 
-class RequestQueueList extends DelegatingList<RequestQueueItem>
+class RequestQueueList extends DelegatingList<RequestQueueItem> with LoggableService
 {
-    final ILoggingService _loggingService;
+    //final ILoggingService _loggingService;
     final List<RequestQueueItem> _items;
     final CustomTimer _timeOutTimer = CustomTimer(Duration(seconds: 15));
     String get _TAG => "${this.runtimeType.toString()}";
 
-    RequestQueueList(this._loggingService, [List<RequestQueueItem>? items])
-        : _items = items ?? [], super(items ?? []);
+    //we need to make sure that this and supper(DelegatingList) shares the same List(_items)
+    //use factory to pass list items to supper constructor
+    factory RequestQueueList()
+    {
+      final items = <RequestQueueItem>[];
+      return RequestQueueList._(items);
+    }
+
+    RequestQueueList._(this._items) : super(_items)
+    {
+      _timeOutTimer.Elapsed.AddListener(TimeOutTimer_Elapsed);
+    }
 
     final RequestStarted = Event<RequestQueueItem>();
     final RequestPending = Event<RequestQueueItem>();
@@ -27,17 +38,11 @@ class RequestQueueList extends DelegatingList<RequestQueueItem>
     final int MaxHighPriority = 2;
     // In Dart, single-threaded concurrency model makes explicit Semaphore less critical for basic lists, 
     // but for async exclusion we can use a lock if needed. For now, simple async flow.
-    // private val queueSemaphor: Semaphore = Semaphore(1) 
-
-
-    void init()
-    {
-        _timeOutTimer.Elapsed.AddListener(TimeOutTimer_Elapsed);
-    }
+    // private val queueSemaphor: Semaphore = Semaphore(1)
 
     void TimeOutTimer_Elapsed()
     {
-        _loggingService.Log("$_TAG: Time out timer tick elapsed to check request that time out.");
+        loggingService.Value.Log("$_TAG: Time out timer tick elapsed to check request that time out.");
         CheckTimeOutRequest();
     }
 
@@ -123,7 +128,7 @@ class RequestQueueList extends DelegatingList<RequestQueueItem>
         }
         catch (ex, stackTrace)
         {
-          _loggingService.TrackError(ex, stackTrace);
+          loggingService.Value.TrackError(ex, stackTrace);
           return true;
         }
         return canStart;
@@ -146,12 +151,12 @@ class RequestQueueList extends DelegatingList<RequestQueueItem>
     {
         try
         {
-            _loggingService.Log("$_TAG: The next request ${item.Id} started. ${GetQueueInfo()}");
+          loggingService.Value.Log("$_TAG: The next request ${item.Id} started. ${GetQueueInfo()}");
             RequestStarted.Invoke(item);
         }
         catch (ex, stackTrace)
         {
-          _loggingService.LogError(ex, stackTrace, "OnRequestStarted() method failed for item: $item");
+          loggingService.Value.LogError(ex, stackTrace, "OnRequestStarted() method failed for item: $item");
         }
     }
 
@@ -159,12 +164,12 @@ class RequestQueueList extends DelegatingList<RequestQueueItem>
     {
         try
         {
-            _loggingService.LogWarning("$_TAG: Waiting for running requests to complete. ${GetQueueInfo()}");
+          loggingService.Value.LogWarning("$_TAG: Waiting for running requests to complete. ${GetQueueInfo()}");
             if (item != null) RequestPending.Invoke(item);
         }
         catch (ex, stackTrace)
         {
-          _loggingService.LogError(ex, stackTrace, "OnRequestPending() method failed for item $item");
+          loggingService.Value.LogError(ex, stackTrace, "OnRequestPending() method failed for item $item");
         }
     }
 
@@ -172,12 +177,12 @@ class RequestQueueList extends DelegatingList<RequestQueueItem>
     {
         try
         {
-            _loggingService.Log("$_TAG: The request ${item.Id} completed. ${GetQueueInfo()}");
+          loggingService.Value.Log("$_TAG: The request ${item.Id} completed. ${GetQueueInfo()}");
             RequestCompleted.Invoke(item);
         }
         catch (ex, stackTrace)
         {
-          _loggingService.LogError(ex, stackTrace, "OnRequestCompleted() method failed for item $item");
+          loggingService.Value.LogError(ex, stackTrace, "OnRequestCompleted() method failed for item $item");
         }
     }
 
@@ -201,11 +206,11 @@ class RequestQueueList extends DelegatingList<RequestQueueItem>
 
         if (timeOutList.isEmpty)
         {
-            _loggingService.Log("$_TAG: No timeout requests, total items count: ${timeOutList.length}");
+          loggingService.Value.Log("$_TAG: No timeout requests, total items count: ${timeOutList.length}");
         }
         else
         {
-            _loggingService.LogWarning("$_TAG: Found ${timeOutList.length} timeout items, removing them");
+          loggingService.Value.LogWarning("$_TAG: Found ${timeOutList.length} timeout items, removing them");
             for (var requestItem in timeOutList)
             {
                 final emptyStackTrace = StackTrace.empty;//it will not be used because RequestQueueTimeOutException already gets the StackTrace
@@ -215,12 +220,12 @@ class RequestQueueList extends DelegatingList<RequestQueueItem>
 
             if (_items.isEmpty)
             {
-                _loggingService.LogWarning("$_TAG: No items to run (Count:0)");
+              loggingService.Value.LogWarning("$_TAG: No items to run (Count:0)");
                 StopTimer();
             }
             else
             {
-                _loggingService.Log("$_TAG: Calling TryRunNextRequest() to run next item, totalCount: ${_items.length}");
+              loggingService.Value.Log("$_TAG: Calling TryRunNextRequest() to run next item, totalCount: ${_items.length}");
                 Future(() { TryRunNextRequest(); });
             }
         }
@@ -230,14 +235,14 @@ class RequestQueueList extends DelegatingList<RequestQueueItem>
     {
         if (!_timeOutTimer.IsEnabled)
         {
-            _loggingService.LogWarning("$_TAG: Starting timer that checks time out request in the Queue list");
+          loggingService.Value.LogWarning("$_TAG: Starting timer that checks time out request in the Queue list");
             _timeOutTimer.Start();
         }
     }
 
     void StopTimer()
     {
-        _loggingService.LogWarning("$_TAG: Queue List is empty: stoping the timeout timer");
+      loggingService.Value.LogWarning("$_TAG: Queue List is empty: stoping the timeout timer");
         _timeOutTimer.Stop();
     }
 }

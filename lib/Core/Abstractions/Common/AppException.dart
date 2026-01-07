@@ -17,13 +17,15 @@ class AppException implements Exception
   final StackTrace _stackTrace;
   /// Optional inner / caused exception (Kotlin `cause`, C# `InnerException`).
   final Exception? _causedException;
+  final StackTrace? _causedStackTrace;
 
   String get Message => _message;
   StackTrace get ErrorStackTrace => _stackTrace;
   Exception? get CausedException => _causedException;
+  StackTrace? get CausedStackTrace => _causedStackTrace;
 
   AppException.Throw(String message) : this(message, StackTrace.current);
-  AppException(this._message, this._stackTrace, [ this._causedException ]);
+  AppException(this._message, this._stackTrace, [ this._causedException, this._causedStackTrace ]);
 
   /// Returns a string representation in a Kotlin / C#–style format:
   ///
@@ -40,7 +42,7 @@ class AppException implements Exception
 
     if (_causedException != null)
     {
-      buffer.write("\nCaused by: $_causedException");
+      buffer.write("\nCaused by: $_causedException\n$_causedStackTrace");
     }
 
     return buffer.toString();

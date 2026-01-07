@@ -9,10 +9,15 @@ import 'package:movies_flutter/Core/Abstractions/Messaging/IMessagesCenter.dart'
 import 'package:movies_flutter/Core/Abstractions/Navigation/IPageNavigationService.dart';
 import 'package:movies_flutter/Core/Abstractions/Platform/IDirectoryService.dart';
 import 'package:movies_flutter/Core/Abstractions/Platform/IZipService.dart';
+import 'package:movies_flutter/Core/Abstractions/REST/IAuthTokenService.dart';
+import 'package:movies_flutter/Core/Abstractions/REST/IRestClient.dart';
 import 'package:movies_flutter/Core/Base/Impl/Diagnostic/F_FileLogger.dart';
 import 'package:movies_flutter/Core/Abstractions/UI/ISnackbarService.dart';
 import 'package:movies_flutter/Core/Base/Impl/Navigation/F_PageNavigationService.dart';
 import 'package:movies_flutter/Core/Base/Impl/Platform/F_ZipService.dart';
+import 'package:movies_flutter/Core/Base/Impl/REST/F_AuthTokenService.dart';
+import 'package:movies_flutter/Core/Base/Impl/REST/RequestQueueList.dart';
+import 'package:movies_flutter/Core/Base/Impl/REST/RestClient.dart';
 
 import '../Abstractions/Diagnostics/ILoggingService.dart';
 import '../Abstractions/Essentials/Display/IDisplay.dart';
@@ -62,11 +67,17 @@ class BaseImplRegistrar
       //UI
       Get.lazyPut<IAlertDialogService>(() => F_AlertDialogService(), fenix: true);
       Get.lazyPut<ISnackbarService>(() => F_SnackbarService(), fenix: true);
+      Get.put<IPageNavigationService>(F_PageNavigationService(), permanent: true);
       //Essentials
       Get.put<IAppInfo>(F_AppInfoImplementation(), permanent: true);
       Get.put<IDeviceInfo>(F_DeviceInfoImplementation(), permanent: true);
 
       Get.put<IDisplay>(F_DisplayImplementation(), permanent: true);
       Get.put<IShare>(F_ShareImplementation(), permanent: true);
+      //REST
+      Get.lazyPut<IRestClient>(() => RestClient(), fenix: true);
+      Get.lazyPut<RequestQueueList>(() => RequestQueueList(), fenix: true);
+      Get.lazyPut<IAuthTokenService>(() => F_AuthTokenService(), fenix: true);
+
     }
 }

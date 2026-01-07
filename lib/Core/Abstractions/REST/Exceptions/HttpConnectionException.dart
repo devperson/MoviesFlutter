@@ -2,5 +2,5 @@ import '../../Common/AppException.dart';
 
 class HttpConnectionException extends AppException
 {
-    HttpConnectionException(String message, [Exception? causeException]): super(message, StackTrace.current, causeException);
+    HttpConnectionException(String message, {Exception? causeException, StackTrace? causedStackTrace}): super(message, StackTrace.current, causeException, causedStackTrace);
 }

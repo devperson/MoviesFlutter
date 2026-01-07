@@ -1,3 +1,5 @@
+import 'package:movies_flutter/Core/Abstractions/REST/Json/IJsonModel.dart';
+
 import 'Enums.dart';
 
 class RestRequest
@@ -7,7 +9,7 @@ class RestRequest
     final TimeoutType RequestTimeOut;
     final bool CancelSameRequest;
     final bool WithBearer;
-    final String? RequestBody;
+    final ISerializable? RequestBody;
     final int RetryCount;
     final Map<String, String>? HeaderValues;
 

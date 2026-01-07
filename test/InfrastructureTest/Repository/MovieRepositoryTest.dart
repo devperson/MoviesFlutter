@@ -1,13 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
 import 'package:movies_flutter/Core/Abstractions/Common/AppException.dart';
 import 'package:movies_flutter/Core/Abstractions/Diagnostics/ILoggingService.dart';
 import 'package:movies_flutter/Core/Abstractions/Repository/ILocalDbInitilizer.dart';
 import 'package:movies_flutter/Core/Abstractions/Repository/IRepository.dart';
 import 'package:movies_flutter/Core/Base/Impl/Utils/ContainerLocator.dart';
 import 'package:movies_flutter/Core/Domain/Models/Movie.dart';
-
-import 'InfraDI.dart';
+import 'RepoDi.dart';
 
 void main()
 {
@@ -15,11 +13,11 @@ void main()
 
   setUp(() async
   {
-     final infraDi = InfraDI();
+     final infraDi = RepoDI();
      infraDi.RegisterTypes();
 
-     // final logging = ContainerLocator.Resolve<ILoggingService>();
-     // await logging.InitAsync();
+      final logging = ContainerLocator.Resolve<ILoggingService>();
+      await logging.InitAsync();
 
      final dbInitializer = ContainerLocator.Resolve<ILocalDbInitilizer>();
      await dbInitializer.Init();

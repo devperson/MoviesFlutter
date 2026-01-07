@@ -44,3 +44,6 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 /android/build/reports/problems/problems-report.html
+/lib/Core/Domain/Infrastructures/REST/Models/MovieListResponse.mapper.dart
+/lib/Core/Domain/Infrastructures/REST/Models/MovieRestModel.mapper.dart
+/devtools_options.yaml
