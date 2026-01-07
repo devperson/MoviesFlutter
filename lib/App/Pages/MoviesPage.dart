@@ -1,25 +1,19 @@
+import 'package:animated_reorderable_list/animated_reorderable_list.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:movies_flutter/Core/Base/Impl/Utils/FontConstants.dart';
-
-import '../../Core/Base/Impl/UI/Controls/F_CircleIconButton.dart';
 import '../../Core/Base/Impl/UI/Controls/F_PageHeaderView.dart';
 import '../Controllers/MoviesPageViewModel.dart';
 import '../MockData.dart';
 import 'Controls/SideMenuView.dart';
 
 
-class MoviesPage extends GetView<MoviesPageViewModel>
-{
-  // GetView<T> gives you controller automatically
+class MoviesPage extends GetView<MoviesPageViewModel> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
-  Widget build(BuildContext context)
-  {
-    controller.Movies.RemovedItemAnimationDelegate = this.BuildRemovedItem;
-
+  Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
       appBar: F_PageHeaderView(
@@ -44,30 +38,27 @@ class MoviesPage extends GetView<MoviesPageViewModel>
         ),
       ),
       body: GetBuilder<MoviesPageViewModel>(
-        builder: (_) => AnimatedList(
-          key: controller.Movies.ListKey,
-          initialItemCount: controller.Movies.Length,
-          itemBuilder: (context, index, animation)
-          {
-            final item = controller.Movies[index];
-            return SizeTransition(sizeFactor: animation,  child: BuildMovieCell(item, index));
+        builder: (_) => AnimatedListView<MovieItemModel>(
+          items: controller.Movies,
+          isSameItem: (oldItem, newItem) => oldItem.id == newItem.id,
+          // Correct: itemBuilder only takes context and index
+          itemBuilder: (context, index) {
+            return BuildMovieCell(index);
           },
+          enterTransition: [FadeIn(), ScaleIn()],
+          exitTransition: [SlideInLeft()],
+          insertDuration: const Duration(milliseconds: 150),
+          removeDuration: const Duration(milliseconds: 150),
         ),
       ),
     );
   }
 
-  Widget BuildRemovedItem(MovieItemModel item, Animation<double> animation)
-  {
-    return SizeTransition(
-      sizeFactor: animation,
-      child: BuildMovieCell(item, 0),
-    );
-  }
+  Widget BuildMovieCell(int index) {
+    final movie = controller.Movies[index];
 
-  Widget BuildMovieCell(MovieItemModel movie, int index)
-  {
     return InkWell(
+      key: ValueKey(movie.id),
       onTap: () {
         controller.ItemTappedCommand.Execute(index);
       },
@@ -76,7 +67,6 @@ class MoviesPage extends GetView<MoviesPageViewModel>
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ImageView
             Padding(
               padding: const EdgeInsets.only(left: 15),
               child: SizedBox(
@@ -84,7 +74,7 @@ class MoviesPage extends GetView<MoviesPageViewModel>
                 height: 120,
                 child: CachedNetworkImage(
                   imageUrl: movie.posterPath,
-                  fit: BoxFit.fitHeight, // closest to fitStart
+                  fit: BoxFit.fitHeight,
                   placeholder: (context, url) =>
                   const Center(child: CircularProgressIndicator(strokeWidth: 2)),
                   errorWidget: (context, url, error) =>
@@ -92,15 +82,12 @@ class MoviesPage extends GetView<MoviesPageViewModel>
                 ),
               ),
             ),
-
-            // Texts column
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(10, 0, 20, 15),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Title
                     Text(
                       movie.title,
                       style: const TextStyle(
@@ -109,10 +96,7 @@ class MoviesPage extends GetView<MoviesPageViewModel>
                         fontSize: 16,
                       ),
                     ),
-
                     const SizedBox(height: 5),
-
-                    // Description
                     Text(
                       movie.overview,
                       style: const TextStyle(

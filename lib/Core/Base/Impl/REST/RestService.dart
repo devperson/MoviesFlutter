@@ -46,25 +46,25 @@ class RestService with LoggableService
 
   Future<T> Get<T extends IDeserializable<T>>(RestRequest request)
   {
-    LogMethodStart('Get', [request]);
+    LogMethodStart('Get', {'request': request});
     return _makeWebRequest<T>(RestMethod.GET, request);
   }
 
   Future<T> Post<T extends IDeserializable<T>>(RestRequest request)
   {
-    LogMethodStart('Post', [request]);
+    LogMethodStart('Post', {'request': request});
     return _makeWebRequest<T>(RestMethod.POST, request);
   }
 
   Future<T> Put<T extends IDeserializable<T>>(RestRequest request)
   {
-    LogMethodStart('Put', [request]);
+    LogMethodStart('Put', {'request': request});
     return _makeWebRequest<T>(RestMethod.PUT, request);
   }
 
   Future<T> Delete<T extends IDeserializable<T>>(RestRequest request)
   {
-    LogMethodStart('Delete', [request]);
+    LogMethodStart('Delete', {'request': request});
     return _makeWebRequest<T>(RestMethod.DELETE, request);
   }
 

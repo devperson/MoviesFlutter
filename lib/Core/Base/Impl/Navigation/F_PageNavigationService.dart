@@ -104,19 +104,21 @@ class F_PageNavigationService with LoggableService implements IPageNavigationSer
 
   Future<void> OnPushAsync(String url, NavigationParameters parameters) async
   {
+    final page = url;
     var stackString = stack.join('>');
     var vmStackString = vmStack.map((e) => e.vmName).join(', ');
     SpecificLogMethodStart('OnPushAsync', {'stackBefore': stackString, 'vmStackBefore': vmStackString});
 
     vmStack.last.OnNavigatedFrom();
 
-    stack.add(url);
+    stack.add(page);
     //we need to put forward slash for route, this is GetX requirement
-    final route = "/"+ url;
+    final route = "/"+ page;
     Get.toNamed(route, arguments: parameters);
     await Future.delayed(navigationAnimationDuration);
 
-    vmStack.last.OnNavigatedTo(parameters);
+    final vm = GetViewModel(page);
+    vm.OnNavigatedTo(parameters);
 
     stackString = stack.join('>');
     vmStackString = vmStack.map((e) => e.vmName).join(', ');
@@ -135,7 +137,8 @@ class F_PageNavigationService with LoggableService implements IPageNavigationSer
 
      await Future.delayed(navigationAnimationDuration);
 
-     vmStack.last.OnNavigatedTo(parameters);
+    final vm = GetViewModel(stack.last);
+    vm.OnNavigatedTo(parameters);
 
     stackString = stack.join('>');
     vmStackString = vmStack.map((e) => e.vmName).join(', ');
@@ -184,7 +187,8 @@ class F_PageNavigationService with LoggableService implements IPageNavigationSer
 
     await Future.delayed(navigationAnimationDuration);
 
-    vmStack.last.OnNavigatedTo(parameters);
+    final vm = GetViewModel(stack.last);
+    vm.OnNavigatedTo(parameters);
 
     stackString = stack.join('>');
     vmStackString = vmStack.map((e) => e.vmName).join(', ');
@@ -217,7 +221,8 @@ class F_PageNavigationService with LoggableService implements IPageNavigationSer
 
     await Future.delayed(navigationAnimationDuration);
 
-    vmStack.last.OnNavigatedTo(parameters);
+    final vm = GetViewModel(stack.last);
+    vm.OnNavigatedTo(parameters);
 
     stackString = stack.join('>');
     vmStackString = vmStack.map((e) => e.vmName).join(', ');
@@ -245,9 +250,10 @@ class F_PageNavigationService with LoggableService implements IPageNavigationSer
      Get.offAllNamed('/$ctrlName', arguments: parameters);
 
      // 3️⃣ wait for animation end
-     await Future.delayed(Get.defaultTransitionDuration);
+    await Future.delayed(navigationAnimationDuration);
 
-    vmStack.last.OnNavigatedTo(parameters);
+    final vm = GetViewModel(stack.last);
+    vm.OnNavigatedTo(parameters);
 
     stackString = stack.join('>');
     vmStackString = vmStack.map((e) => e.vmName).join(', ');
@@ -282,9 +288,10 @@ class F_PageNavigationService with LoggableService implements IPageNavigationSer
       Get.toNamed('/${pages[i]}', arguments: parameters);
     }
 
-    await Future.delayed(Get.defaultTransitionDuration);
+    await Future.delayed(navigationAnimationDuration);
 
-    vmStack.last.OnNavigatedTo(parameters);
+    final vm = GetViewModel(stack.last);
+    vm.OnNavigatedTo(parameters);
 
     stackString = stack.join('>');
     vmStackString = vmStack.map((e) => e.vmName).join(', ');
@@ -295,6 +302,14 @@ class F_PageNavigationService with LoggableService implements IPageNavigationSer
   List<String> GetNavStack()
   {
     return stack;
+  }
+
+  PageViewModel GetViewModel(String name)
+  {
+    SpecificLogMethodStart('GetViewModel', {'name': name});
+
+    final vm = vmStack.firstWhere((v)=>v.vmName == name);
+    return vm;
   }
 
   void SetInitialPage(String page)

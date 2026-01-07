@@ -18,7 +18,7 @@ class PageRegistrar
       page: () => LoginPage(),
       binding: BindingsBuilder(()
       {
-        Get.lazyPut<LoginPageViewModel>(() => LoginPageViewModel());
+        Get.put<LoginPageViewModel>(LoginPageViewModel());
       }),
     ),
     GetPage(
@@ -26,7 +26,7 @@ class PageRegistrar
       page: () => MoviesPage(),
       binding: BindingsBuilder(()
       {
-        Get.lazyPut<MoviesPageViewModel>(() => MoviesPageViewModel());
+        Get.put<MoviesPageViewModel>(MoviesPageViewModel());
       }),
     ),
     GetPage(
@@ -34,7 +34,7 @@ class PageRegistrar
       page: () => MovieDetailPage(),
       binding: BindingsBuilder(()
       {
-        Get.lazyPut(() => MovieDetailPageViewModel());
+        Get.put(MovieDetailPageViewModel());
       }),
     ),
     GetPage(
@@ -42,7 +42,7 @@ class PageRegistrar
       page: () => AddEditMoviePage(),
       binding: BindingsBuilder(()
       {
-        Get.lazyPut(() => AddEditMoviePageViewModel());
+        Get.put(AddEditMoviePageViewModel());
       }),
     ),
   ];

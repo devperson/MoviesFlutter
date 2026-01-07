@@ -17,7 +17,7 @@ class MoviesPageViewModel extends PageViewModel
   static const SELECTED_ITEM = 'SELECTED_ITEM';
 
   final appLogExporter = LazyInjected<IAppLogExporter>();
-  final Movies = ObservableCollection<MovieItemModel>();
+  late final List<MovieItemModel> Movies; //= ObservableCollection<MovieItemModel>();
   late final ItemTappedCommand = AsyncCommand(OnItemTappedCommand);
   late final AddCommand = AsyncCommand(OnAddCommand);
   late final ShareLogsCommand = AsyncCommand(OnShareLogsCommand);
@@ -30,9 +30,9 @@ class MoviesPageViewModel extends PageViewModel
 
     movieCellUpdatedEvent = eventAggregator.Value.GetOrCreateEvent(()=>MovieCellItemUpdatedEvent());
     movieCellUpdatedEvent.Subscribe(OnMovieCellUpdatedEvent);
-
-    this.Movies.AddRange(Mockdata.MockMovies);
-    this.update();
+    this.Movies = Mockdata.MockMovies;
+    //this.Movies.AddRange(Mockdata.MockMovies);
+    //this.update();
   }
 
   @override
@@ -45,12 +45,18 @@ class MoviesPageViewModel extends PageViewModel
       if(parameters.ContainsKey(AddEditMoviePageViewModel.NEW_ITEM))
       {
         final newProduct = GetParameter<MovieItemModel>(parameters, AddEditMoviePageViewModel.NEW_ITEM);
-        Movies.Insert(0,newProduct!);
+        Movies.insert(0,newProduct!);
+
+        //update ui
+        this.update();
       }
       else if(parameters.ContainsKey(AddEditMoviePageViewModel.REMOVE_ITEM))
       {
         final removedItem = GetParameter<MovieItemModel>(parameters, AddEditMoviePageViewModel.REMOVE_ITEM);
-        Movies.Remove(removedItem!);
+        Movies.remove(removedItem!);
+
+        //update ui
+        this.update();
       }
     }
     catch (ex, stack)
@@ -73,11 +79,11 @@ class MoviesPageViewModel extends PageViewModel
     {
       final movieItem = obj as MovieItemModel;
 
-      final oldItem = Movies.Items.firstWhere((x) => x.id == movieItem.id);
-      final index = Movies.Items.indexOf(oldItem);
+      final oldItem = Movies.firstWhere((x) => x.id == movieItem.id);
+      final index = Movies.indexOf(oldItem);
       if (index >= 0)
       {
-        Movies.Update(index, movieItem);
+        Movies[index] = movieItem;
         //update ui
         this.update();
       }
