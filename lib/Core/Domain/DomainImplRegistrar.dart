@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
+import 'package:movies_flutter/Core/Abstractions/AppServices/IInfrastructureServices.dart';
 import 'package:movies_flutter/Core/Abstractions/Repository/ILocalDbInitilizer.dart';
+import 'package:movies_flutter/Core/Domain/AppInfrastructureService.dart';
 import 'package:movies_flutter/Core/Domain/Infrastructures/REST/IMovieRestService.dart';
 import 'package:movies_flutter/Core/Domain/Infrastructures/REST/JsonMapper.dart';
 import 'package:movies_flutter/Core/Domain/Infrastructures/REST/MovieRestService.dart';
@@ -20,15 +22,19 @@ class BaseImplRegistrar
 {
   static void RegisterTypes()
   {
+    //repo
     Get.lazyPut<ILocalDbInitilizer>(() => F_DbInitilizer(), fenix: true);
     Get.lazyPut<IRepoMapper<Movie, Movietb>>(() => MovieRepoMapper(), fenix: true);
     Get.lazyPut<IRepository<Movie>>(() => MovieRepository(), fenix: true);
 
+    //REST
     final jsonMapper = JsonMapper();
     jsonMapper.Register(MovieListResponse.Empty());
     jsonMapper.Register(MovieRestModel.Empty());
     Get.put<IJsonMapper>(jsonMapper , permanent: true);
     Get.lazyPut<IMovieRestService>(() => MovieRestService(), fenix: true);
 
+    //Common
+    Get.lazyPut<IInfrastructureServices>(() => AppInfrastructureService(), fenix: true);
   }
 }

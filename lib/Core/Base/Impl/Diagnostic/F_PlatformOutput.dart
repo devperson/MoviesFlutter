@@ -20,7 +20,8 @@ class F_PlatformOutput implements IPlatformOutput
       printer: PrettyPrinter(
         methodCount: 0, // No stacktrace for cleaner logs
         colors: true,   // True for terminal colors
-        printEmojis: true,
+        printEmojis: false,
+        noBoxingByDefault: true
       ),
     );
     SimpleNativeLogger.init();

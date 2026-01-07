@@ -3,6 +3,8 @@ import 'dart:core';
 import 'package:intl/intl.dart';
 import 'package:movies_flutter/Core/Abstractions/Common/AppException.dart';
 import 'package:movies_flutter/Core/Abstractions/Diagnostics/ILoggingService.dart';
+import 'package:movies_flutter/Core/Abstractions/Diagnostics/IPlatformOutput.dart';
+import 'package:movies_flutter/Core/Base/Impl/Utils/LazyInjected.dart';
 
 class MockLoggingService implements ILoggingService
 {
@@ -13,6 +15,8 @@ class MockLoggingService implements ILoggingService
   static const String INDICATOR_TAG = "⏱Indicator_";
 
   // ---------- state ----------
+
+  final _platformOutput = LazyInjected<IPlatformOutput>();
 
   @override
   Object? LastError;
@@ -39,13 +43,13 @@ class MockLoggingService implements ILoggingService
   @override
   void Log(String message)
   {
-    print("${_getFormattedDate()}_$message");
+    _platformOutput.Value.Info("${_getFormattedDate()}_$message");
   }
 
   @override
   void LogWarning(String message)
   {
-    print("${_getFormattedDate()}WARNING: $message");
+    _platformOutput.Value.Warn("${_getFormattedDate()}WARNING: $message");
   }
 
   // ---------- ILoggingService ----------
@@ -53,20 +57,21 @@ class MockLoggingService implements ILoggingService
   @override
   void LogError(Object ex, StackTrace stacktrace, [String message = "", bool handled = true])
   {
-    print("ERROR: $message,💥Handled Exception: ${ex.ToExceptionString(stacktrace)}");
+    _platformOutput.Value.Error("ERROR: $message,💥Handled Exception: ${ex.ToExceptionString(stacktrace)}");
   }
 
   @override
   void TrackError(Object ex, StackTrace stacktrace, [Map<String, String>? data])
   {
     LastError = ex;
-    print("💥Handled Exception: ${ex.ToExceptionString(stacktrace)}");
+    _platformOutput.Value.Error("💥Handled Exception: ${ex.ToExceptionString(stacktrace)}");
   }
 
   @override
   void LogUnhandledError(Object ex, StackTrace stackTrace)
   {
     LastError = ex;
+    _platformOutput.Value.Error("💥Unhandled Exception: ${ex.ToExceptionString(stackTrace)}");
   }
 
   @override
@@ -78,16 +83,20 @@ class MockLoggingService implements ILoggingService
   @override
   void LogMethodStarted(String className, String methodName, [Map<String, Object?>? args])
   {
-    print("$ENTER_TAG $className.$methodName()");
+    _platformOutput.Value.Info("${_getFormattedDate()}_$ENTER_TAG $className.$methodName()");
   }
 
   @override
   void LogMethodStarted2(String methodName)
   {
-    print("$ENTER_TAG $methodName");
+    _platformOutput.Value.Info("${_getFormattedDate()}_$ENTER_TAG $methodName");
   }
 
-  
+  @override
+  void LogMethodFinished(String methodName)
+  {
+    _platformOutput.Value.Info("${_getFormattedDate()}_$EXIT_TAG $methodName");
+  }
 
   @override
   void LogIndicator(String name, String message)

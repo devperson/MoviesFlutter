@@ -1,5 +1,3 @@
-import 'dart:js_interop';
-
 import 'package:dart_mappable/dart_mappable.dart';
 import '../../../../Abstractions/REST/Json/IJsonModel.dart';
 
