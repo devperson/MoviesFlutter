@@ -7,6 +7,7 @@ import '../../Impl/Utils/LazyInjected.dart';
 import '../../../Abstractions/Navigation/NavigationParameters.dart';
 import '../../Impl/Diagnostic/LoggableService.dart';
 import 'NavigatingBaseViewModel.dart';
+import 'PageViewModel.dart';
 
 
 class BaseViewModel extends GetxController with LoggableService
@@ -32,7 +33,7 @@ class BaseViewModel extends GetxController with LoggableService
 
         //we use own viewmodels stack as GetX does not help as to get info about current viewmodels stack
         var getx_navService = navigationService.Value as F_PageNavigationService;
-        getx_navService.vmStack.add(this as NavigatingBaseViewModel);
+        getx_navService.vmStack.add(this as PageViewModel);
 
         late NavigationParameters navParams;
         if(Get.arguments is NavigationParameters)
@@ -51,7 +52,7 @@ class BaseViewModel extends GetxController with LoggableService
     {
       //we use own viewmodels stack as GetX does not help as to get info about current viewmodels stack
       var getx_navService = navigationService.Value as F_PageNavigationService;
-      getx_navService.vmStack.remove(this as NavigatingBaseViewModel);
+      getx_navService.vmStack.remove(this as PageViewModel);
 
       this.Destroy();
     }

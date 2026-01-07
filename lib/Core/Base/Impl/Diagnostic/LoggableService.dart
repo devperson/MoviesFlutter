@@ -9,7 +9,7 @@ mixin LoggableService
     late ILogging specificLogger;
     bool specificLoggerInitialized = false;
 
-    void LogMethodStart(String methodName, [List<Object?>? args])
+    void LogMethodStart(String methodName, [Map<String, Object?>? args])
     {
         try
         {
@@ -22,8 +22,6 @@ mixin LoggableService
         }
     }
 
-
-
     void InitSpecificlogger(String key)
     {
         if(specificLoggerInitialized == false)
@@ -33,7 +31,7 @@ mixin LoggableService
         }
     }
 
-    void SpecificLogMethodStart(String methodName, [List<Object?>? args])
+    void SpecificLogMethodStart(String methodName, [Map<String, Object?>? args])
     {
         try
         {
@@ -44,5 +42,18 @@ mixin LoggableService
         {
             print(stackTrace.toString());
         }
+    }
+
+    void SpecificLogMethodFinished(String methodName, [Map<String, Object?>? args])
+    {
+      try
+      {
+        final className = this.runtimeType.toString();
+        specificLogger.LogMethodFinished(className, methodName, args);
+      }
+      catch (ex, stackTrace)
+      {
+        print(stackTrace.toString());
+      }
     }
 }

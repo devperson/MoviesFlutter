@@ -38,7 +38,7 @@ class F_DisplayImplementation with LoggableService implements IDisplay
   @override
   Future<void> SetDisplayKeepOnValue(bool keepOn) async
   {
-    SpecificLogMethodStart('SetDisplayKeepOnValue', [keepOn]);
+    SpecificLogMethodStart('SetDisplayKeepOnValue', {'keepOn': keepOn});
 
     _keepScreenOn = keepOn;
 

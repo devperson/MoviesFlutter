@@ -105,7 +105,7 @@ class F_DbInitilizer
   @override
   Future<void> Release({bool closeConnection = false}) async
   {
-    LogMethodStart("Release", [closeConnection]);
+    LogMethodStart("Release", {'closeConnection': closeConnection, });
 
     _isInited = false;
 

@@ -19,8 +19,8 @@ class AddEditMoviePage extends GetView<AddEditMoviePageViewModel>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: F_PageHeaderView(
-        title: "Movie Detail",
-        rightIcon: Icons.delete,
+        title: controller.Title.value,
+        rightIcon: controller.IsEdit ? Icons.delete : null, //show delete button only if in edit mode
         onRightPressed: () {
           controller.DeleteCommand.Execute();
         },
@@ -39,41 +39,58 @@ class AddEditMoviePage extends GetView<AddEditMoviePageViewModel>
             // Photo card
             // =========================
             Center(
-              child: GestureDetector(
-                onTap: (){ controller.ChangePhotoCommand.Execute(); },
-                child: Card(
-                  elevation: 1,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.zero,
-                  ),
+              child: Card(
+                elevation: 1,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.zero,
+                ),
+                // Material is required for InkWell to render
+                child: Material(
+                  color: Colors.transparent,
                   child: SizedBox(
                     width: 200,
                     height: 300,
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
-
+                        // 1. Background Image
                         if (!controller.MovieItem.posterPath.isEmpty)
                           CachedNetworkImage(
                             imageUrl: controller.MovieItem.posterPath,
                             fit: BoxFit.cover,
-                            placeholder: (_, __) =>
-                            const Center(child: CircularProgressIndicator()),
-                            errorWidget: (_, __, ___) =>
-                            const Icon(Icons.broken_image),
+                            placeholder: (_, __) => const Center(child: CircularProgressIndicator()),
+                            errorWidget: (_, __, ___) => const Icon(Icons.broken_image),
                           )
                         else
                           Container(color: Colors.grey.shade300),
 
+                        // 2. Semi-transparent Overlay
                         Container(
-                          color: Colors.white.withOpacity(0.5),
+                          color: Colors.white.withValues(alpha:0.5),
                         ),
 
+                        // 3. Icon
                         const Center(
                           child: Icon(
                             Icons.photo_camera,
                             size: 45,
                             color: Colors.black,
+                          ),
+                        ),
+
+                        // 4. THE RIPPLE LAYER (Placed last to be on top)
+                        Positioned.fill(
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              // Set the ripple (splash) color
+                              splashColor: Colors.grey.withValues(alpha:0.4),
+                              // Set the color when the button is held down
+                              highlightColor: Colors.grey.withValues(alpha:0.2),
+                              onTap: () {
+                                controller.ChangePhotoCommand.Execute();
+                              },
+                            ),
                           ),
                         ),
                       ],
@@ -97,8 +114,7 @@ class AddEditMoviePage extends GetView<AddEditMoviePageViewModel>
                 const SizedBox(width: 20),
                 Expanded(
                   child: F_EditTextField(
-                    placeholder: "",
-                    onChanged: (text){ controller.MovieItem.title = text;},
+                    controller: controller.titleController,
                   ),
                 ),
               ],
@@ -122,8 +138,7 @@ class AddEditMoviePage extends GetView<AddEditMoviePageViewModel>
                 const SizedBox(width: 20),
                 Expanded(
                   child: F_MultilineEditTextField(
-                    placeholder: "",
-                    onChanged: (text){ controller.MovieItem.overview = text; },
+                    controller: controller.descriptionController,
                     minHeight: 150,
                   ),
                 ),

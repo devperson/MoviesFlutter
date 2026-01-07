@@ -67,7 +67,7 @@ class MoviesPageViewModel extends PageViewModel
 
   void OnMovieCellUpdatedEvent(Object? obj)
   {
-    LogMethodStart("OnMovieCellItemUpdatedEvent");
+    LogMethodStart("OnMovieCellItemUpdatedEvent", {'item': obj});
 
     try
     {
@@ -78,6 +78,8 @@ class MoviesPageViewModel extends PageViewModel
       if (index >= 0)
       {
         Movies.Update(index, movieItem);
+        //update ui
+        this.update();
       }
     }
     catch (ex, stack)
@@ -90,7 +92,7 @@ class MoviesPageViewModel extends PageViewModel
   {
     try
     {
-      LogMethodStart("OnItemTappedCommand");
+      LogMethodStart("OnItemTappedCommand", {'index': param});
       final index = param as int;
       final item = this.Movies[index];
 

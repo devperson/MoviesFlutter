@@ -19,6 +19,8 @@ class PageViewModel extends NavigatingBaseViewModel
    final alertService = LazyInjected<IAlertDialogService>();
    final eventAggregator = LazyInjected<IMessagesCenter>();
 
+   String get vmName => runtimeType.toString();
+
    Rx<String> Title = "".obs;
    late final AsyncCommand BackCommand = AsyncCommand(OnBackCommand);
    final IsPageVisable = false.obs;

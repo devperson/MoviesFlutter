@@ -22,7 +22,7 @@ class F_MultilineEditTextField extends StatefulWidget
 
   const F_MultilineEditTextField({
     super.key,
-    required this.placeholder,
+    this.placeholder = "",
     this.controller,
     this.onChanged,
     this.fontSize = 15,
@@ -102,6 +102,9 @@ class _F_MultilineEditTextFieldState
             textInputAction: TextInputAction.newline,
             minLines: minLines,
             maxLines: null, // unlimited
+            onTapOutside: (event) {
+              FocusManager.instance.primaryFocus?.unfocus();
+            },
             style: TextStyle(
               fontSize: widget.fontSize,
               fontFamily: widget.fontFamily,

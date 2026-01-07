@@ -41,6 +41,8 @@ class BaseImplRegistrar
       //Get.put allows to create singilton instances but they will be created right away
       //Get.lazyPut it will not create instance only when accessed but you can not make it singilton.
       //So GetX has some limitation it can not do lazy singilton instances
+      Get.put<IDirectoryService>(F_DirectoryService(), permanent: true);
+
       final pref = F_PreferencesImplementation();
       await pref.InitializeAsync();
       Get.put<IPreferences>(pref, permanent: true);
@@ -63,7 +65,7 @@ class BaseImplRegistrar
       //Essentials
       Get.put<IAppInfo>(F_AppInfoImplementation(), permanent: true);
       Get.put<IDeviceInfo>(F_DeviceInfoImplementation(), permanent: true);
-      Get.put<IDirectoryService>(F_DirectoryService(), permanent: true);
+
       Get.put<IDisplay>(F_DisplayImplementation(), permanent: true);
       Get.put<IShare>(F_ShareImplementation(), permanent: true);
     }

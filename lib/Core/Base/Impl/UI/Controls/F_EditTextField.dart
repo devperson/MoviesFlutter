@@ -29,7 +29,7 @@ class F_EditTextField extends StatefulWidget
 
   const F_EditTextField({
     super.key,
-    required this.placeholder,
+    this.placeholder ="",
     this.controller,
     this.onChanged,
     this.fontSize = 15,
@@ -93,6 +93,9 @@ class _F_EditTextFieldState extends State<F_EditTextField> {
           obscureText: widget.isPassword,
           textInputAction: TextInputAction.done,
           onSubmitted: (_) => _focusNode.unfocus(),
+          onTapOutside: (event) {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
           style: TextStyle(
             fontSize: widget.fontSize,
             fontFamily: widget.fontFamily,

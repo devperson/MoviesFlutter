@@ -76,7 +76,7 @@ class MockLoggingService implements ILoggingService
   }
 
   @override
-  void LogMethodStarted(String className, String methodName, [List<Object?>? args])
+  void LogMethodStarted(String className, String methodName, [Map<String, Object?>? args])
   {
     print("$ENTER_TAG $className.$methodName()");
   }
@@ -87,11 +87,7 @@ class MockLoggingService implements ILoggingService
     print("$ENTER_TAG $methodName");
   }
 
-  @override
-  void LogMethodFinished(String methodName)
-  {
-    print("$EXIT_TAG $methodName");
-  }
+  
 
   @override
   void LogIndicator(String name, String message)
@@ -141,5 +137,10 @@ class MockLoggingService implements ILoggingService
   Future<void> InitAsync() async
   {
 
+  }
+
+  @override
+  void LogMethodFinished(String ClassName, String MethodName, [Map<String, Object?>? args]) {
+    // TODO: implement LogMethodFinished
   }
 }

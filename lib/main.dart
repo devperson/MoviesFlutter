@@ -5,10 +5,13 @@ import 'package:get/get.dart';
 import 'package:movies_flutter/App/Controllers/MoviesPageViewModel.dart';
 import 'package:movies_flutter/Core/Abstractions/Diagnostics/IPlatformOutput.dart';
 import 'package:movies_flutter/Core/Abstractions/Essentials/IPreferences.dart';
+import 'package:movies_flutter/Core/Abstractions/Navigation/IPageNavigationService.dart';
+import 'package:movies_flutter/Core/Base/Impl/Navigation/F_PageNavigationService.dart';
 import 'package:movies_flutter/Core/Base/Impl/Utils/ContainerLocator.dart';
 
 import 'App/Controllers/LoginPageViewModel.dart';
 import 'App/Utils/Bootstrap/PageRegistrar.dart';
+import 'Core/Abstractions/Diagnostics/ILoggingService.dart';
 import 'Core/Base/BaseImplRegistrar.dart';
 import 'Core/Base/Impl/Utils/ColorConstants.dart';
 
@@ -41,9 +44,19 @@ class MyApp extends StatelessWidget
   @override
   Widget build(BuildContext context)
   {
+    //Resove initial page from preferences
     final pref = ContainerLocator.Resolve<IPreferences>();
     final isLoggedIn = pref.Get(LoginPageViewModel.IsLoggedIn, false);
     final initialPage = isLoggedIn ? MoviesPageViewModel.Name : LoginPageViewModel.Name;
+
+    // The initial page is set by GetX, not by NavService.
+    // NavService needs to be informed about the initial page.
+    // All subsequent navigation is handled by NavService.
+    final navService = ContainerLocator.Resolve<IPageNavigationService>() as F_PageNavigationService;
+    navService.SetInitialPage(initialPage);
+
+    //set logging navigation to true by default
+    pref.Set(SpecificLoggingKeys.LogUINavigationKey, true);
 
     return GetMaterialApp(
       title: 'Movies Flutter app',

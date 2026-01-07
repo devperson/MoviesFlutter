@@ -1,25 +1,40 @@
 
 import 'package:get/get.dart';
 
-
+import '../../../Abstractions/Diagnostics/ILoggingService.dart';
 import '../../../Abstractions/Navigation/IPageNavigationService.dart';
 import '../../../Abstractions/Navigation/NavigationParameters.dart';
 import '../../../Abstractions/Navigation/UrlNavigationHelper.dart';
-import '../../MVVM/ViewModels/BaseViewModel.dart';
-import '../../MVVM/ViewModels/NavigatingBaseViewModel.dart';
+import '../../MVVM/ViewModels/PageViewModel.dart';
+import '../Diagnostic/LoggableService.dart';
 
 
-class F_PageNavigationService implements IPageNavigationService
+class F_PageNavigationService with LoggableService implements IPageNavigationService
 {
-  final List<String> stack = [];
-  static const Duration navigationAnimationDuration = Duration(milliseconds: 300);
+  List<String> stack = [];
+  final List<PageViewModel> vmStack = [];
+  static const Duration navigationAnimationDuration = Duration(milliseconds: 400);
 
+  F_PageNavigationService()
+  {
+    InitSpecificlogger(SpecificLoggingKeys.LogUINavigationKey);
+  }
 
-  bool get CanNavigateBack => stack.length > 1;
+  bool get CanNavigateBack
+  {
+    final result = stack.length > 1;
+    var stackString = stack.join('>');
+    SpecificLogMethodFinished('CanNavigateBack', {'result': result, 'stack': stackString});
+    return result;
+  }
 
   @override
   Future<void> NavigateToRoot({NavigationParameters? parameters}) async
   {
+    var stackString = stack.join('>');
+    var vmStackString = vmStack.map((e) => e.vmName).join(', ');
+    SpecificLogMethodStart('NavigateToRoot', {'stackBefore': stackString, 'vmStackBefore': vmStackString});
+
     vmStack.last.OnNavigatedFrom();
 
     var params = NavigationParameters();
@@ -29,6 +44,7 @@ class F_PageNavigationService implements IPageNavigationService
     }
 
     final rootCtrl = stack.first;
+    stack = [rootCtrl];
     Get.until((route)
     {
       return route.settings.name == '/$rootCtrl';
@@ -36,11 +52,18 @@ class F_PageNavigationService implements IPageNavigationService
     await Future.delayed(navigationAnimationDuration);
 
     vmStack.last.OnNavigatedTo(params);
+
+
+    stackString = stack.join('>');
+    vmStackString = vmStack.map((e) => e.vmName).join(', ');
+    SpecificLogMethodFinished('NavigateToRoot', {'stackAfter': stackString, 'vmStackAfter': vmStackString});
   }
 
   @override
   Future<void> Navigate(String url, {NavigationParameters? parameters}) async
   {
+    SpecificLogMethodStart('Navigate', {'url': url});
+
     var params = NavigationParameters();
     if(parameters != null)
     {
@@ -81,6 +104,10 @@ class F_PageNavigationService implements IPageNavigationService
 
   Future<void> OnPushAsync(String url, NavigationParameters parameters) async
   {
+    var stackString = stack.join('>');
+    var vmStackString = vmStack.map((e) => e.vmName).join(', ');
+    SpecificLogMethodStart('OnPushAsync', {'stackBefore': stackString, 'vmStackBefore': vmStackString});
+
     vmStack.last.OnNavigatedFrom();
 
     stack.add(url);
@@ -90,10 +117,18 @@ class F_PageNavigationService implements IPageNavigationService
     await Future.delayed(navigationAnimationDuration);
 
     vmStack.last.OnNavigatedTo(parameters);
+
+    stackString = stack.join('>');
+    vmStackString = vmStack.map((e) => e.vmName).join(', ');
+    SpecificLogMethodFinished('OnPushAsync', {'stackAfter': stackString, 'vmStackAfter': vmStackString});
   }
 
   Future<void> OnPopAsync(NavigationParameters parameters) async
   {
+    var stackString = stack.join('>');
+    var vmStackString = vmStack.map((e) => e.vmName).join(', ');
+    SpecificLogMethodStart('OnPopAsync', {'stackBefore': stackString, 'vmStackBefore': vmStackString});
+
      vmStack.last.OnNavigatedFrom();
      stack.removeLast();
      Get.back();
@@ -101,10 +136,18 @@ class F_PageNavigationService implements IPageNavigationService
      await Future.delayed(navigationAnimationDuration);
 
      vmStack.last.OnNavigatedTo(parameters);
+
+    stackString = stack.join('>');
+    vmStackString = vmStack.map((e) => e.vmName).join(', ');
+    SpecificLogMethodFinished('OnPopAsync', {'stackAfter': stackString, 'vmStackAfter': vmStackString});
   }
 
   Future<void> OnMultiPopAsync(String url, NavigationParameters parameters) async
   {
+    var stackString = stack.join('>');
+    var vmStackString = vmStack.map((e) => e.vmName).join(', ');
+    SpecificLogMethodStart('OnMultiPopAsync', {'stackBefore': stackString, 'vmStackBefore': vmStackString});
+
     vmStack.last.OnNavigatedFrom();
 
     // how many levels to pop
@@ -142,10 +185,18 @@ class F_PageNavigationService implements IPageNavigationService
     await Future.delayed(navigationAnimationDuration);
 
     vmStack.last.OnNavigatedTo(parameters);
+
+    stackString = stack.join('>');
+    vmStackString = vmStack.map((e) => e.vmName).join(', ');
+    SpecificLogMethodFinished('OnMultiPopAsync', {'stackAfter': stackString, 'vmStackAfter': vmStackString});
   }
 
   Future<void> OnMultiPopAndPushAsync(String url, NavigationParameters parameters) async
   {
+    var stackString = stack.join('>');
+    var vmStackString = vmStack.map((e) => e.vmName).join(', ');
+    SpecificLogMethodStart('OnMultiPopAndPushAsync', {'stackBefore': stackString, 'vmStackBefore': vmStackString});
+
     vmStack.last.OnNavigatedFrom();
 
      final parts = url.split('/');
@@ -167,10 +218,18 @@ class F_PageNavigationService implements IPageNavigationService
     await Future.delayed(navigationAnimationDuration);
 
     vmStack.last.OnNavigatedTo(parameters);
+
+    stackString = stack.join('>');
+    vmStackString = vmStack.map((e) => e.vmName).join(', ');
+    SpecificLogMethodFinished('OnMultiPopAndPushAsync', {'stackAfter': stackString, 'vmStackAfter': vmStackString});
   }
 
   Future<void> OnPushRootAsync(String url, NavigationParameters parameters) async
   {
+    var stackString = stack.join('>');
+    var vmStackString = vmStack.map((e) => e.vmName).join(', ');
+    SpecificLogMethodStart('OnPushRootAsync', {'stackBefore': stackString, 'vmStackBefore': vmStackString});
+
     vmStack.last.OnNavigatedFrom();
 
      // url comes as "/page"
@@ -189,10 +248,18 @@ class F_PageNavigationService implements IPageNavigationService
      await Future.delayed(Get.defaultTransitionDuration);
 
     vmStack.last.OnNavigatedTo(parameters);
+
+    stackString = stack.join('>');
+    vmStackString = vmStack.map((e) => e.vmName).join(', ');
+    SpecificLogMethodFinished('OnPushRootAsync', {'stackAfter': stackString, 'vmStackAfter': vmStackString});
   }
 
   Future<void> OnMultiPushRootAsync(String url, NavigationParameters parameters) async
   {
+    var stackString = stack.join('>');
+    var vmStackString = vmStack.map((e) => e.vmName).join(', ');
+    SpecificLogMethodStart('OnMultiPushRootAsync', {'stackBefore': stackString, 'vmStackBefore': vmStackString});
+
     vmStack.last.OnNavigatedFrom();
     // "/page1/page2" -> ["page1", "page2"]
     final pages = url
@@ -218,6 +285,10 @@ class F_PageNavigationService implements IPageNavigationService
     await Future.delayed(Get.defaultTransitionDuration);
 
     vmStack.last.OnNavigatedTo(parameters);
+
+    stackString = stack.join('>');
+    vmStackString = vmStack.map((e) => e.vmName).join(', ');
+    SpecificLogMethodFinished('OnMultiPushRootAsync', {'stackAfter': stackString, 'vmStackAfter': vmStackString});
   }
 
 @override
@@ -226,7 +297,12 @@ class F_PageNavigationService implements IPageNavigationService
     return stack;
   }
 
-  final List<NavigatingBaseViewModel> vmStack = [];
+  void SetInitialPage(String page)
+  {
+    stack = [page];
+  }
+
+
 
   // @override
   // Widget? getCurrentPage() {
