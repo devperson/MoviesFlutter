@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:colorid_print/colorid_print.dart';
 import '../../../Abstractions/Common/AppException.dart';
 import '../../../Abstractions/Diagnostics/CommonTAG.dart';
@@ -14,7 +16,8 @@ class ConsoleServiceImpl
     }
     catch (ex, stackTrace)
     {
-      PrintException(ex, stackTrace);
+      final error = ex.ToExceptionString(stackTrace);
+      PrintRed(error);
       return null;
     }
   }
@@ -22,28 +25,32 @@ class ConsoleServiceImpl
   void PrintException(Object obj, StackTrace stackTrace)
   {
     final error = obj.ToExceptionString(stackTrace);
-    final console = GetPlatformConsole();
-    if(console!= null)
-    {
-      console.Error(error);
-    }
-    else
-    {
-      PrintRed(error);
-    }
-
-  }
-
-  void PrintRed(String message)
-  {
-    ColoridPrint.redPrint("${CommonTAG.LOGGER_TAG}: $message");
-    print("${CommonTAG.LOGGER_TAG}: $message");
+    final console = _ensureConsole();
+    console.Error(error);
   }
 
   void PrintOrange(String message)
   {
-    ColoridPrint.yellowPrint("${CommonTAG.LOGGER_TAG}: $message");
-    print("${CommonTAG.LOGGER_TAG}: $message");
+    final console = _ensureConsole();
+    console.Warn(message);
+  }
+
+  void PrintRed(String message)
+  {
+    final console = _ensureConsole();
+    console.Error(message);
+  }
+
+  IPlatformOutput _ensureConsole()
+  {
+    final console = GetPlatformConsole();
+
+    if(console == null)
+    {
+      throw AppException.Throw("Failed to resolve IPlatformConsole. It seems there are some issue in IPlatformOutput. The error happened in ConsoleServiceImpl.PrintException()");
+    }
+
+    return console;
   }
 }
 

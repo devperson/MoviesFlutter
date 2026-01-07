@@ -36,11 +36,12 @@ class LazyInjected<T> with ConsoleService
         }
         catch(ex, stackTrace)
         {
-          final logger = _getLogger();
-          if(logger != null)
-          {
-            logger.LogError(ex, stackTrace);
-          }
+          // final logger = _getLogger();
+          // if(logger != null)
+          // {
+          //   logger.LogError(ex, stackTrace);
+          // }
+          PrintException(ex, stackTrace);
           rethrow;
         }
       }
