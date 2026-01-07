@@ -6,10 +6,15 @@ import 'package:movies_flutter/Core/Abstractions/Essentials/Device/IDeviceInfo.d
 import 'package:movies_flutter/Core/Abstractions/Navigation/IPageNavigationService.dart';
 import 'package:movies_flutter/Core/Abstractions/Platform/IDirectoryService.dart';
 import 'package:movies_flutter/Core/Abstractions/Platform/IZipService.dart';
+import 'package:movies_flutter/Core/Abstractions/REST/IAuthTokenService.dart';
+import 'package:movies_flutter/Core/Abstractions/REST/IRestClient.dart';
 import 'package:movies_flutter/Core/Base/Impl/Diagnostic/F_FileLogger.dart';
 import 'package:movies_flutter/Core/Abstractions/UI/ISnackbarService.dart';
 import 'package:movies_flutter/Core/Base/Impl/Navigation/F_PageNavigationService.dart';
 import 'package:movies_flutter/Core/Base/Impl/Platform/F_ZipService.dart';
+import 'package:movies_flutter/Core/Base/Impl/REST/F_AuthTokenService.dart';
+import 'package:movies_flutter/Core/Base/Impl/REST/RequestQueueList.dart';
+import 'package:movies_flutter/Core/Base/Impl/REST/RestClient.dart';
 
 import '../Abstractions/Diagnostics/ILoggingService.dart';
 import '../Abstractions/Essentials/Display/IDisplay.dart';
@@ -36,12 +41,13 @@ class BaseImplRegistrar
       Get.lazyPut<IPlatformOutput>(() => F_PlatformOutput(), fenix: true);
       Get.lazyPut<IErrorTrackingService>(() => F_ErrorTrackingService(), fenix: true);
       Get.lazyPut<IFileLogger>(() => F_FileLogger(), fenix: true);
-      Get.lazyPut<ILoggingService>(() => F_LoggingService(), fenix: true);
-      Get.lazyPut<IPageNavigationService>(() => F_PageNavigationService(), fenix: true);
+      Get.put<ILoggingService>(F_LoggingService(), permanent: true);
       Get.lazyPut<IZipService>(() => F_ZipService(), fenix: true);
+
       //UI
       Get.lazyPut<IAlertDialogService>(() => F_AlertDialogService(), fenix: true);
       Get.lazyPut<ISnackbarService>(() => F_SnackbarService(), fenix: true);
+      Get.put<IPageNavigationService>(F_PageNavigationService(), permanent: true);
       //Essentials
       Get.lazyPut<IAppInfo>(() => F_AppInfoImplementation(), fenix: true);
       Get.lazyPut<IDeviceInfo>(() => F_DeviceInfoImplementation(), fenix: true);
@@ -49,5 +55,10 @@ class BaseImplRegistrar
       Get.lazyPut<IDisplay>(() => F_DisplayImplementation(), fenix: true);
       Get.lazyPut<IPreferences>(() => F_PreferencesImplementation(), fenix: true);
       Get.lazyPut<IShare>(() => F_ShareImplementation(), fenix: true);
+      //REST
+      Get.lazyPut<IRestClient>(() => RestClient(), fenix: true);
+      Get.lazyPut<RequestQueueList>(() => RequestQueueList(), fenix: true);
+      Get.lazyPut<IAuthTokenService>(() => F_AuthTokenService(), fenix: true);
+
     }
 }

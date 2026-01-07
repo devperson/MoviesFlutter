@@ -1,4 +1,7 @@
-import 'package:get/get.dart';
+import 'package:movies_flutter/Core/Abstractions/Common/AppException.dart';
+import 'package:movies_flutter/Core/Abstractions/Diagnostics/CommonTAG.dart';
+import 'package:movies_flutter/Core/Base/Impl/Diagnostic/LoggableService.dart';
+import 'package:movies_flutter/Core/Base/Impl/Utils/ContainerLocator.dart';
 
 /// LazyInjected<T>
 /// ----------------
@@ -18,17 +21,32 @@ import 'package:get/get.dart';
 /// Prefer using `LazyInjected<T>` instead of `Get.find<T>()`
 /// directly inside services, controllers, or view models.
 /// This limits DI framework coupling to one place.
-class LazyInjected<T>
+class LazyInjected<T> with LoggableService
 {
-  final String? tag;
   T? _value;
-
-  /// Creates a lazy dependency resolver.
-  ///
-  /// [tag] — optional GetX tag for named registrations.
-  LazyInjected({this.tag});
-
   /// Gets the resolved dependency.
   /// The instance is resolved lazily on first access and cached.
-  T get Value => _value ??= Get.find<T>(tag: tag);
+  T get Value
+  {
+    if(_value == null)
+      {
+        try
+        {
+          _value = ContainerLocator.Resolve<T>();
+          return _value!;
+        }
+        catch(ex, stackTrace)
+        {
+          loggingService.Value.LogError(ex, stackTrace);
+          rethrow;
+        }
+      }
+    else
+      {
+        return _value!;
+      }
+  }
+
+
+
 }

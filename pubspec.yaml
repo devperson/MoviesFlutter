@@ -44,9 +44,14 @@ dependencies:
   intl: ^0.19.0
   #Logcat logger:
   simple_native_logger: ^0.2.1
+  #colored logger for flutter console
+  colorid_print: ^0.0.1
   #local Db
   realm: ^20.2.0
-
+  #JsonDeserializer
+  #dart_json_mapper: ^2.2.20
+  #Http client
+  dio: ^5.4.0
 
   #Essentials dependencies
   package_info_plus: ^8.0.0
@@ -59,6 +64,8 @@ dependencies:
   path_provider: ^2.1.4
   #IZipService dependencies
   archive: ^3.4.10
+  #JsonDeserializer
+  dart_mappable: ^4.6.1
 
 
 
@@ -72,6 +79,9 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  #JsonDeserializer
+  build_runner:
+  dart_mappable_builder: ^4.5.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

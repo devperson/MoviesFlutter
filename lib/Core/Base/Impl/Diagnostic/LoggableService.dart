@@ -1,10 +1,10 @@
-
 import '../../../Abstractions/Diagnostics/ILoggingService.dart';
 import '../Utils/LazyInjected.dart';
-import '../../../Abstractions/Common/AppException.dart';
+import 'ConsoleService.dart';
 
 mixin LoggableService
 {
+    final consoleImpl = ConsoleServiceImpl();
     final loggingService = LazyInjected<ILoggingService>();
     late ILogging specificLogger;
     bool specificLoggerInitialized = false;
@@ -18,11 +18,9 @@ mixin LoggableService
         }
         catch (ex, stackTrace)
         {
-          print(ex.ToExceptionString(stackTrace));
+          consoleImpl.PrintException(ex, stackTrace);
         }
     }
-
-
 
     void InitSpecificlogger(String key)
     {
@@ -42,7 +40,9 @@ mixin LoggableService
         }
         catch (ex, stackTrace)
         {
-            print(stackTrace.toString());
+          consoleImpl.PrintException(ex, stackTrace);
         }
     }
+
+
 }

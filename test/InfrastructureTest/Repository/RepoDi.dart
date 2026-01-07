@@ -17,12 +17,12 @@ import 'package:movies_flutter/Core/Domain/Infrastructures/Repository/MoviesRepo
 import 'package:movies_flutter/Core/Domain/Infrastructures/Repository/Tables/Movietb.dart';
 import 'package:movies_flutter/Core/Domain/Mappers/MovieRepoMapper.dart';
 import 'package:movies_flutter/Core/Domain/Models/Movie.dart';
-import '../Impl/MockDbInitializer.dart';
-import '../Impl/MockDirectoryDir.dart';
-import '../Impl/MockPreferences.dart';
-import '../Impl/MockZipService.dart';
+import '../../Impl/MockDbInitializer.dart';
+import '../../Impl/MockDirectoryDir.dart';
+import '../../Impl/MockPreferences.dart';
+import '../../Impl/MockZipService.dart';
 
-class InfraDI
+class RepoDI
 {
    void RegisterTypes()
    {

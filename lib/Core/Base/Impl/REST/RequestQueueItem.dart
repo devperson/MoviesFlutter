@@ -83,7 +83,9 @@ class RequestQueueItem
         IsRunning = false;
         IsCompleted = true;
         if (!CompletionSource.isCompleted)
-            CompletionSource.completeError(error);
+        {
+          CompletionSource.completeError(error);
+        }
         logger?.LogError(error, stackTrace, logString);
     }
 

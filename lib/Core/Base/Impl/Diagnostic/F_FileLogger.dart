@@ -3,6 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:movies_flutter/Core/Abstractions/Common/AppException.dart';
+import 'package:movies_flutter/Core/Abstractions/Diagnostics/CommonTAG.dart';
+import 'package:movies_flutter/Core/Base/Impl/Diagnostic/ConsoleService.dart';
+import 'package:movies_flutter/Core/Base/Impl/Diagnostic/LoggableService.dart';
 import 'package:path/path.dart' as p;
 
 import '../../../Abstractions/Diagnostics/IFileLogger.dart';
@@ -13,7 +16,7 @@ import 'FileLogOutput.dart';
 
 
 
-class F_FileLogger implements IFileLogger
+class F_FileLogger with ConsoleService implements IFileLogger
 {
   final LazyInjected<IDirectoryService> _directoryService = LazyInjected<IDirectoryService>();
   final LazyInjected<IZipService> _zipService = LazyInjected<IZipService>();
@@ -26,7 +29,7 @@ class F_FileLogger implements IFileLogger
   late String _sessionDir;
 
   bool _isInited = false;
-  static const String _tag = "FlutterFileLogger: ";
+  static const String _tag = "F_FileLogger:";
 
   @override
   Future<void> InitAsync() async
@@ -36,7 +39,7 @@ class F_FileLogger implements IFileLogger
       final logFolder = await GetLogsFolder();
       if (logFolder.isEmpty)
       {
-        print("$_tag ERROR Failed to get GetLogsFolder()");
+        PrintRed("$_tag.InitAsync(): Failed to get GetLogsFolder()");
         return;
       }
 
@@ -62,9 +65,9 @@ class F_FileLogger implements IFileLogger
 
       await _cleanupOldLogs();
     }
-    catch (ex)
+    catch (ex, stackTrace)
     {
-      print("$_tag Init failed: $ex");
+      PrintException(ex,stackTrace);
     }
   }
 
@@ -87,7 +90,7 @@ class F_FileLogger implements IFileLogger
     }
     catch(ex, stackTrace)
     {
-      print(ex.ToExceptionString(stackTrace));
+      PrintException(ex,stackTrace);
     }
   }
 
@@ -101,7 +104,7 @@ class F_FileLogger implements IFileLogger
     }
     catch(ex, stackTrace)
     {
-      print(ex.ToExceptionString(stackTrace));
+      PrintException(ex,stackTrace);
     }
   }
 
@@ -115,7 +118,7 @@ class F_FileLogger implements IFileLogger
     }
     catch(ex, stackTrace)
     {
-      print(ex.ToExceptionString(stackTrace));
+      PrintException(ex, stackTrace);
     }
   }
 
@@ -173,8 +176,9 @@ class F_FileLogger implements IFileLogger
           ? lines
           : lines.sublist(lines.length - 100);
     }
-    catch (_)
+    catch (ex, stackTrace)
     {
+      PrintException(ex, stackTrace);
       return [];
     }
   }
@@ -193,9 +197,9 @@ class F_FileLogger implements IFileLogger
 
       return folder.path;
     }
-    catch (ex)
+    catch (ex, stackTrace)
     {
-      print("$_tag GetLogsFolder failed: $ex");
+      PrintException(ex, stackTrace);
       return "";
     }
   }
@@ -240,12 +244,15 @@ class F_FileLogger implements IFileLogger
       for (final dir in folders.skip(7))
       {
         try { await dir.delete(recursive: true); }
-        catch (_) {}
+        catch (ex, stackTrace)
+        {
+          PrintException(ex, stackTrace);
+        }
       }
     }
-    catch (ex)
+    catch (ex, stackTrace)
     {
-      print("$_tag cleanup failed: $ex");
+      PrintException(ex, stackTrace);
     }
   }
 }

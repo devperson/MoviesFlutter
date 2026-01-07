@@ -3,67 +3,97 @@ import 'dart:convert';
 import 'dart:io';
 
 import '../../../Abstractions/REST/Enums.dart';
+import '../../../Abstractions/REST/Exceptions/AuthExpiredException.dart';
+import '../../../Abstractions/REST/Exceptions/HttpConnectionException.dart';
+import '../../../Abstractions/REST/Exceptions/HttpRequestException.dart';
 import '../../../Abstractions/REST/IRestClient.dart';
+
+import 'dart:async';
+import 'package:dio/dio.dart';
 
 class RestClient implements IRestClient
 {
-  final HttpClient httpClient = HttpClient();
+  late final Dio _dio;
+
+  RestClient()
+  {
+    _dio = Dio(BaseOptions(
+        connectTimeout: const Duration(seconds: 15),
+        sendTimeout: const Duration(seconds: 15),
+        receiveTimeout: const Duration(seconds: 30),
+        headers: { 'Accept': 'application/json' },
+      ));
+  }
 
   @override
   Future<String> DoHttpRequest(RestMethod method, RestClientHttpRequest httpRequest) async
   {
-    final uri = Uri.parse(httpRequest.Url);
-    // dart:io HttpClient.open(...) requires an explicit port number.
-    // Uri.port returns 0 when the port is not specified in the URL,
-    // so we must manually resolve the default port based on the scheme.
-    // These are the same default ports used by browsers:
-    //   - 443 for HTTPS
-    //   - 80  for HTTP
-    final int resolvedPort =
-    uri.hasPort
-        ? uri.port
-        : (uri.scheme == 'https' ? 443 : 80);
+    final int timeoutSeconds = httpRequest.RequestTimeout.value;
+    final Duration timeout = Duration(seconds: timeoutSeconds);
 
-    final request = await httpClient.open(
-      method.name,
-      uri.host,
-      resolvedPort,
-      uri.path + (uri.hasQuery ? '?${uri.query}' : ''),
-    );
-
-    request.headers.set(HttpHeaders.acceptHeader, "application/json");
-
-    if (httpRequest.AccessToken != null && httpRequest.AccessToken!.isNotEmpty)
+    try
     {
-      request.headers.set(HttpHeaders.authorizationHeader, "Bearer ${httpRequest.AccessToken}");
+      final customOption = Options(
+        method: method.name,
+        headers: _buildHeaders(httpRequest),
+        // 👇 per-request timeout override
+        sendTimeout: timeout,
+        receiveTimeout: timeout,
+        responseType: ResponseType.plain,
+      );
+
+      final response = await _dio.request<String>(httpRequest.Url, data: httpRequest.JsonBody, options: customOption);
+
+      return response.data ?? '';
     }
-
-    // Optional custom headers
-    // if (httpRequest.HeaderValues != null)
-    // {
-    //   httpRequest.HeaderValues!.forEach((key, value)
-    //   {
-    //     request.headers.set(key, value);
-    //   });
-    // }
-
-    if (httpRequest.JsonBody != null && httpRequest.JsonBody!.isNotEmpty)
+    on DioException catch (e, stackTrace)
     {
-      request.headers.set(HttpHeaders.contentTypeHeader, ContentType.json.mimeType);
-      request.add(utf8.encode(httpRequest.JsonBody!));
+      // --- Timeouts ---
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.sendTimeout ||
+          e.type == DioExceptionType.receiveTimeout)
+      {
+        throw HttpConnectionException('Request timed out', causeException: e, causedStackTrace: stackTrace);
+      }
+
+      // --- Network ---
+      if (e.type == DioExceptionType.connectionError)
+      {
+        throw HttpConnectionException('Network error: ${e.error}',causeException: e, causedStackTrace: stackTrace);
+      }
+
+      // --- HTTP errors ---
+      final response = e.response;
+      if (response != null)
+      {
+        final statusCode = response.statusCode ?? 0;
+        final body = response.data?.toString() ?? '';
+
+        if (statusCode == 401)
+        {
+          throw AuthExpiredException();
+        }
+
+        throw HttpRequestException(statusCode, body, e);
+      }
+
+      throw HttpConnectionException('Unexpected HTTP error',causeException: e, causedStackTrace: stackTrace);
     }
-
-    //convert timeOut enum to integer equivalent in milliseconds
-    final int timeoutMillis = httpRequest.RequestTimeout.value * 1000;
-    final response = await request.close()
-        .timeout(Duration(milliseconds: timeoutMillis));
-
-    final responseContent = await utf8.decoder.bind(response).join();
-
-    return responseContent;
   }
 
-  // ---------- helpers ----------
+  Map<String, String> _buildHeaders(RestClientHttpRequest request)
+  {
+    final headers = <String, String>{};
 
+    if (request.AccessToken != null &&
+        request.AccessToken!.isNotEmpty)
+    {
+      headers['Authorization'] =
+      'Bearer ${request.AccessToken}';
+    }
 
+    headers['Content-Type'] = 'application/json';
+
+    return headers;
+  }
 }
