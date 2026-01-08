@@ -26,15 +26,15 @@ class PageViewModel extends NavigatingBaseViewModel
    final BusyLoading = false.obs;
    final DisableDeviceBackButton = false;
 
-  Future<void> OnBackCommand(Object? param) async
+  Future<void> OnBackCommand(Object? param)
   {
-    this.LogVirtualBaseMethod("OnBackCommand()");
-    this.NavigateBack(NavigationParameters());
+    LogVirtualBaseMethod("OnBackCommand()");
+    return NavigateBack(NavigationParameters());
   }
 
    Future<void> DoDeviceBackCommand() async
    {
-     this.LogVirtualBaseMethod("DoDeviceBackCommand()");
+     LogVirtualBaseMethod("DoDeviceBackCommand()");
 
      if (DisableDeviceBackButton)
      {

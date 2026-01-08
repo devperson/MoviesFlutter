@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io' as io;
 import 'dart:math';
 import 'dart:ui';
@@ -25,7 +26,7 @@ class F_DeviceInfoImplementation with LoggableService implements IDeviceInfo
   F_DeviceInfoImplementation()
   {
     InitSpecificlogger(SpecificLoggingKeys.LogEssentialServices);
-    InitializeAsync();
+    unawaited(InitializeAsync());
   }
 
   // ----------------------------------------------------------
@@ -34,20 +35,27 @@ class F_DeviceInfoImplementation with LoggableService implements IDeviceInfo
 
   Future<void> InitializeAsync() async
   {
-    SpecificLogMethodStart('InitializeAsync');
+    try
+    {
+      SpecificLogMethodStart('InitializeAsync');
 
-    if (io.Platform.isAndroid)
-      _deviceInfo = await _plugin.androidInfo;
-    else if (io.Platform.isIOS)
-      _deviceInfo = await _plugin.iosInfo;
-    else if (io.Platform.isWindows)
-      _deviceInfo = await _plugin.windowsInfo;
-    else if (io.Platform.isMacOS)
-      _deviceInfo = await _plugin.macOsInfo;
-    else if (io.Platform.isLinux)
-      _deviceInfo = await _plugin.linuxInfo;
-    else
-      _deviceInfo = await _plugin.webBrowserInfo;
+      if (io.Platform.isAndroid)
+        _deviceInfo = await _plugin.androidInfo;
+      else if (io.Platform.isIOS)
+        _deviceInfo = await _plugin.iosInfo;
+      else if (io.Platform.isWindows)
+        _deviceInfo = await _plugin.windowsInfo;
+      else if (io.Platform.isMacOS)
+        _deviceInfo = await _plugin.macOsInfo;
+      else if (io.Platform.isLinux)
+        _deviceInfo = await _plugin.linuxInfo;
+      else
+        _deviceInfo = await _plugin.webBrowserInfo;
+    }
+    catch(ex, stackTrace)
+    {
+      loggingService.Value.TrackError(ex, stackTrace);
+    }
   }
 
   // ----------------------------------------------------------

@@ -12,7 +12,7 @@ class AppInfrastructureService extends InfrastructureService with LoggableServic
   Future<void> Start() async
   {
     await super.Start();
-    dbInitilizer.Value.Init();
+    await dbInitilizer.Value.Init();
   }
 
   @override
@@ -31,7 +31,7 @@ class AppInfrastructureService extends InfrastructureService with LoggableServic
   Future<void> Stop() async
   {
     await super.Stop();
-    dbInitilizer.Value.Release();
+    await dbInitilizer.Value.Release();
   }
 
 }

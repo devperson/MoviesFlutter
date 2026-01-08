@@ -66,7 +66,7 @@ class AddEditMoviePageViewModel extends PageViewModel
 
 
       final key = IsEdit ? UPDATE_ITEM : NEW_ITEM;
-      NavigateBack(NavigationParameters().With(key, MovieItem));
+      await NavigateBack(NavigationParameters().With(key, MovieItem));
 
       // Some<MovieDto>? Result;
       //
@@ -176,9 +176,7 @@ class AddEditMoviePageViewModel extends PageViewModel
 
         // if (result.Success)
         // {
-          NavigateToRoot(
-            NavigationParameters().With(REMOVE_ITEM, MovieItem),
-          );
+          await NavigateToRoot(NavigationParameters().With(REMOVE_ITEM, MovieItem));
         // }
         // else
         // {

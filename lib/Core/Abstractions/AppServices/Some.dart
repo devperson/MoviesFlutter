@@ -1,9 +1,11 @@
 import 'dart:core';
 
+import 'package:movies_flutter/Core/Abstractions/Common/AppException.dart';
+
 class Some<T>
 {
   final T? _Value;
-  final Exception? Error;
+  final AppException? Error;
 
   bool get Success
   {
@@ -27,7 +29,7 @@ class Some<T>
     return Some<T>._(Value);
   }
 
-  static Some<T> FromError<T>(Exception Ex)
+  static Some<T> FromError<T>(AppException Ex)
   {
     return Some<T>._(null, Ex);
   }

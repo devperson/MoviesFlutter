@@ -94,7 +94,7 @@ class MoviesPageViewModel extends PageViewModel
       final index = param as int;
       final item = this.Movies[index];
 
-      Navigate(MovieDetailPageViewModel.Name,
+      await Navigate(MovieDetailPageViewModel.Name,
           NavigationParameters().With(SELECTED_ITEM, item));
     }
     catch (ex, stack)
@@ -130,7 +130,7 @@ class MoviesPageViewModel extends PageViewModel
 
       if (confirmed)
       {
-        this.Navigate("/" + LoginPageViewModel.Name, NavigationParameters().With(LoginPageViewModel.LogoutRequest, true));
+        await this.Navigate("/" + LoginPageViewModel.Name, NavigationParameters().With(LoginPageViewModel.LogoutRequest, true));
       }
     }
     catch (ex, stack)
@@ -143,7 +143,7 @@ class MoviesPageViewModel extends PageViewModel
   {
     try {
       LogMethodStart("OnAddCommand");
-      this.Navigate(AddEditMoviePageViewModel.Name);
+      await this.Navigate(AddEditMoviePageViewModel.Name);
     }
     catch (ex, stack)
     {

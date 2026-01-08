@@ -54,7 +54,7 @@ class MovieDetailPageViewModel extends PageViewModel
     {
       LogMethodStart("OnEditCommand");
 
-      Navigate(AddEditMoviePageViewModel.Name, NavigationParameters().With(MoviesPageViewModel.SELECTED_ITEM, MovieItem));
+      await Navigate(AddEditMoviePageViewModel.Name, NavigationParameters().With(MoviesPageViewModel.SELECTED_ITEM, MovieItem));
     }
     catch (ex, stack)
     {

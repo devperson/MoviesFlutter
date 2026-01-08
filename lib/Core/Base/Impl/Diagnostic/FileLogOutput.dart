@@ -63,12 +63,12 @@ class FileLogOutput extends LogOutput
 
   /// Flushes and closes file resources.
   /// Should be called on app shutdown if possible.
-  void Dispose()
+  void Dispose() async
   {
     try
     {
-      _sink?.flush();
-      _sink?.close();
+      await _sink?.flush();
+      await _sink?.close();
     }
     catch (_)
     {

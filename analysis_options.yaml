@@ -11,6 +11,12 @@
 # packages, and plugins designed to encourage good coding practices.
 include: package:flutter_lints/flutter.yaml
 
+analyzer:
+  errors:
+    unawaited_futures: error
+    discarded_futures: error
+    avoid_void_async: warning
+
 linter:
   # The lint rules applied to this project can be customized in the
   # section below to disable rules from the `package:flutter_lints/flutter.yaml`
@@ -23,10 +29,10 @@ linter:
   # `// ignore_for_file: name_of_lint` syntax on the line or in the file
   # producing the lint.
   rules:
-    - unawaited_futures        # Required: Triggers a lint if a Future in an async block is not awaited
-    - discarded_futures        # Required: Warns when a Future is created in a sync block but not used
-    - avoid_void_async         # Optional: Discourages "fire-and-forget" functions that return void instead of Future<void>
-    - non_constant_identifier_names: false  # Disables lowerCamelCase for variables/functions
+    unawaited_futures: true        # Required: Triggers a lint if a Future in an async block is not awaited
+    discarded_futures: true        # Required: Warns when a Future is created in a sync block but not used
+    avoid_void_async: true         # Optional: Discourages "fire-and-forget" functions that return void instead of Future<void>
+    non_constant_identifier_names: false  # Disables lowerCamelCase for variables/functions
     # avoid_print: false  # Uncomment to disable the `avoid_print` rule
     # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
 

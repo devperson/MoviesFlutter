@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 import 'package:movies_flutter/Core/Abstractions/Common/AppException.dart';
 import 'package:movies_flutter/Core/Abstractions/Diagnostics/CommonTAG.dart';
@@ -24,8 +25,11 @@ class F_PlatformOutput implements IPlatformOutput
         noBoxingByDefault: true
       ),
     );
-    SimpleNativeLogger.init();
-    nativeLogger = SimpleNativeLogger(tag: _TAG);
+    if(!IsUnitTest && !kIsWeb)
+    {
+      SimpleNativeLogger.init();
+      nativeLogger = SimpleNativeLogger(tag: _TAG);
+    }
   }
 
   @override
@@ -93,32 +97,35 @@ class F_PlatformOutput implements IPlatformOutput
   {
     if(blue)
       {
-        if(IsUnitTest)
+        if(kIsWeb || IsUnitTest)
           flutterLogger.i("$_TAG: $message");
         else
           nativeLogger.i(message);
       }
     else if(red)
     {
-      if(IsUnitTest)
+      if(kIsWeb || IsUnitTest)
         flutterLogger.e("$_TAG: $message");
       else
         nativeLogger.e(message);
     }
     else if(yellow)
       {
-        if(IsUnitTest)
+        if(kIsWeb || IsUnitTest)
           flutterLogger.w("$_TAG: $message");
         else
           nativeLogger.w(message);
       }
   }
 
+  // bool get IsUnitTest =>
+  //     !kIsWeb && !kReleaseMode && const bool.fromEnvironment('FLUTTER_TEST');
+
   bool get IsUnitTest
   {
     return const bool.fromEnvironment('dart.vm.product') == false
-        && Platform.environment.containsKey('FLUTTER_TEST');
+        && Platform.environment.containsKey('FLUTTER_TEST')
+        && !kReleaseMode;
   }
-
 
 }

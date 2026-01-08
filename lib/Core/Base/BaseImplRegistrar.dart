@@ -18,6 +18,7 @@ import 'package:movies_flutter/Core/Base/Impl/Platform/F_ZipService.dart';
 import 'package:movies_flutter/Core/Base/Impl/REST/F_AuthTokenService.dart';
 import 'package:movies_flutter/Core/Base/Impl/REST/RequestQueueList.dart';
 import 'package:movies_flutter/Core/Base/Impl/REST/RestClient.dart';
+import 'package:movies_flutter/Core/Domain/AppService/MovieService.dart';
 
 import '../Abstractions/Diagnostics/ILoggingService.dart';
 import '../Abstractions/Essentials/Display/IDisplay.dart';

@@ -23,7 +23,8 @@ class F_LogExporter with LoggableService implements IAppLogExporter
 
             final date = getUtcDateString();
             final fileName = "${KyChat_Logs}_${date}.zip";
-            final filePath = "${directoryService.Value.GetCacheDir()}/$fileName";
+            final cacheDir = await directoryService.Value.GetCacheDir();
+            final filePath = "${cacheDir}/$fileName";
 
             // also include censored database into logs folder.
             //this.CopyCensoredDatabaseAsync()

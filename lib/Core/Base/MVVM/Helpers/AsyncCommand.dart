@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../../../Abstractions/Common/Event.dart';
 import '../../../Abstractions/Diagnostics/ILoggingService.dart';
 import '../../Impl/Utils/LazyInjected.dart';
@@ -43,7 +45,7 @@ class AsyncCommand
 
   void Execute([Object? param])
   {
-    this.ExecuteAsync(param);
+    unawaited(this.ExecuteAsync(param));
   }
 
   void raiseCanExecuteChanged()

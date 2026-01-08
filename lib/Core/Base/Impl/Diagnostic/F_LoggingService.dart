@@ -63,17 +63,14 @@ class F_LoggingService implements ILoggingService
 
             if (handled)
             {
-                // In Dart, async operations don't block, similar to GlobalScope.launch
-                Future(() {
-                    try
-                    {
-                        _errorTrackingService.Value.TrackError(ex, stackTrace, additionalData: null);
-                    }
-                    catch (ex, stackTrace)
-                    {
-                      LogError(ex, stackTrace, "Failed to track error");
-                    }
-                });
+              try
+              {
+                _errorTrackingService.Value.TrackError(ex, stackTrace, additionalData: null);
+              }
+              catch (ex, stackTrace)
+              {
+                LogError(ex, stackTrace, "Failed to track error");
+              }
             }
         });
     }

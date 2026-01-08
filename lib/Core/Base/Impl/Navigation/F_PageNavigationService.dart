@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:get/get.dart';
 
 
@@ -86,7 +88,7 @@ class F_PageNavigationService implements IPageNavigationService
     stack.add(url);
     //we need to put forward slash for route, this is GetX requirement
     final route = "/"+ url;
-    Get.toNamed(route, arguments: parameters);
+    unawaited(Get.toNamed(route, arguments: parameters));//do not need to await
     await Future.delayed(navigationAnimationDuration);
 
     vmStack.last.OnNavigatedTo(parameters);
@@ -160,9 +162,9 @@ class F_PageNavigationService implements IPageNavigationService
      stack.add(targetCtrl);
 
      // now rebuild GetX stack, it will pop until and then push targetCtrl
-     Get.offNamedUntil('/$targetCtrl',
+    unawaited(Get.offNamedUntil('/$targetCtrl',
           (route) => route.settings.name == '/${stack[baseIndex]}',
-      arguments: parameters,);
+      arguments: parameters,));
 
     await Future.delayed(navigationAnimationDuration);
 
@@ -183,7 +185,7 @@ class F_PageNavigationService implements IPageNavigationService
       stack.add(ctrlName);
 
      // 2️⃣ reset GetX navigation
-     Get.offAllNamed('/$ctrlName', arguments: parameters);
+    unawaited(Get.offAllNamed('/$ctrlName', arguments: parameters));
 
      // 3️⃣ wait for animation end
      await Future.delayed(Get.defaultTransitionDuration);
@@ -207,12 +209,12 @@ class F_PageNavigationService implements IPageNavigationService
     stack.addAll(pages);
 
     // 2️⃣ push first page as root
-    Get.offAllNamed('/${pages.first}', arguments: parameters);
+    unawaited(Get.offAllNamed('/${pages.first}', arguments: parameters));
 
     // 3️⃣ push remaining pages
     for (int i = 1; i < pages.length; i++)
     {
-      Get.toNamed('/${pages[i]}', arguments: parameters);
+      unawaited(Get.toNamed('/${pages[i]}', arguments: parameters));
     }
 
     await Future.delayed(Get.defaultTransitionDuration);

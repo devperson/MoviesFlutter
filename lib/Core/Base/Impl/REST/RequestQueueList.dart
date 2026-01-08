@@ -51,9 +51,9 @@ class RequestQueueList extends DelegatingList<RequestQueueItem> with LoggableSer
     {
         super.add(element);
         //run without await
-        Future(() {
+        unawaited(Future(() {
             TryRunNextRequest();
-        });
+        }));
         ResumeTimer();
     }
 
@@ -115,9 +115,7 @@ class RequestQueueList extends DelegatingList<RequestQueueItem> with LoggableSer
                   //start request
                     OnRequestStarted(nextItem);
                     //run in background (run without await)
-                    Future(() {
-                        nextItem.RunRequest();
-                    });
+                    unawaited(nextItem.RunRequest());
                 }
                 else
                 {
@@ -134,17 +132,15 @@ class RequestQueueList extends DelegatingList<RequestQueueItem> with LoggableSer
         return canStart;
     }
 
-    void OnItemCompleted(RequestQueueItem requestQueueItem)
+    void OnItemCompleted(RequestQueueItem requestQueueItem) async
     {
         OnRequestCompleted(requestQueueItem);
-        Future(() async {
-            for (var i = 0; i < _items.length; i++)
-            {
-                final valResult = TryRunNextRequest();
-                if (!valResult)
-                    break;
-            }
-        });
+        for (var i = 0; i < _items.length; i++)
+        {
+          final valResult = await Future(()=>TryRunNextRequest());
+          if (!valResult)
+            break;
+        }
     }
 
     void OnRequestStarted(RequestQueueItem item)
@@ -194,7 +190,7 @@ class RequestQueueList extends DelegatingList<RequestQueueItem> with LoggableSer
         return "$_TAG: Queue total count: $totalCount, running count: $runningCount, high priority count: $highPriorityCount";
     }
 
-    void CheckTimeOutRequest()
+    void CheckTimeOutRequest() async
     {
         if(_items.isEmpty)
         {
@@ -226,7 +222,7 @@ class RequestQueueList extends DelegatingList<RequestQueueItem> with LoggableSer
             else
             {
               loggingService.Value.Log("$_TAG: Calling TryRunNextRequest() to run next item, totalCount: ${_items.length}");
-                Future(() { TryRunNextRequest(); });
+                await Future(()=> TryRunNextRequest());
             }
         }
     }

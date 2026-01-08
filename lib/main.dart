@@ -8,17 +8,19 @@ import 'package:movies_flutter/Core/Abstractions/Essentials/IPreferences.dart';
 import 'package:movies_flutter/Core/Base/Impl/Utils/ContainerLocator.dart';
 
 import 'App/Controllers/LoginPageViewModel.dart';
+import 'App/Utils/Bootstrap/DiRegistration.dart';
 import 'App/Utils/Bootstrap/PageRegistrar.dart';
 import 'Core/Base/BaseImplRegistrar.dart';
 import 'Core/Base/Impl/Utils/ColorConstants.dart';
 
 void main()
 {
+  unawaited(
     runZonedGuarded(() async {
       //init the WidgetsFlutterBinding as it is required for IPreferences, and for similar platform services
       // MUST be inside the same zone as runApp
       WidgetsFlutterBinding.ensureInitialized();
-      await BaseImplRegistrar.RegisterTypes();
+      await DiRegistration.RegisterTypes();
 
       runApp(const MyApp());
     },
@@ -30,7 +32,7 @@ void main()
         console.Init();
       }
        console.Error('Unhandled crash:', error: error, stackTrace: stack);
-    });
+    }));
 }
 
 class MyApp extends StatelessWidget

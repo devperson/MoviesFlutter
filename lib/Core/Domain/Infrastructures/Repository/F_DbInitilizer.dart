@@ -9,9 +9,7 @@ import '../../../Base/Impl/Utils/LazyInjected.dart';
 import 'Tables/Movietb.dart';
 
 
-class F_DbInitilizer
-    with LoggableService
-    implements ILocalDbInitilizer
+class F_DbInitilizer with LoggableService implements ILocalDbInitilizer
 {
   bool _isInited = false;
   Realm? _realmConn;
@@ -40,7 +38,7 @@ class F_DbInitilizer
 
     if (! await _directoryService.Value.IsExistDir(dbFolder))
     {
-      _directoryService.Value.CreateDir(dbFolder);
+      await _directoryService.Value.CreateDir(dbFolder);
     }
 
     return dbFolder;

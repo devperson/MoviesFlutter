@@ -96,7 +96,7 @@ void main()
   test('T1_7ClearAllMovieTest', () async
       {
         final movieRepo = ContainerLocator.Resolve<IRepository<Movie>>();
-        movieRepo.ClearAsync("test clear");
+        await movieRepo.ClearAsync("test clear");
         final list = await movieRepo.GetListAsync();
         expect(list.length == 0, isTrue, reason:  "table still has data after clear()");
       });

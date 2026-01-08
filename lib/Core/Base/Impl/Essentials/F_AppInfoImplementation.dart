@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -16,15 +18,22 @@ class F_AppInfoImplementation with LoggableService implements IAppInfo
   F_AppInfoImplementation()
   {
     InitSpecificlogger(SpecificLoggingKeys.LogEssentialServices);
-    InitializeAsync();
+    unawaited(InitializeAsync());
   }
 
 
   /// Must be called during app startup
   Future<void> InitializeAsync() async
   {
-    SpecificLogMethodStart('InitializeAsync');
-    _packageInfo ??= await PackageInfo.fromPlatform();
+    try
+    {
+      SpecificLogMethodStart('InitializeAsync');
+      _packageInfo ??= await PackageInfo.fromPlatform();
+    }
+    catch(ex, stackTrace)
+    {
+      loggingService.Value.TrackError(ex, stackTrace);
+    }
   }
 
   @override
