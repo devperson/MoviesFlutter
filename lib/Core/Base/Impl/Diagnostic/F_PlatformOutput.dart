@@ -97,21 +97,21 @@ class F_PlatformOutput implements IPlatformOutput
   {
     if(blue)
       {
-        if(kIsWeb || IsUnitTest)
+        if(!kReleaseMode)
           flutterLogger.i("$_TAG: $message");
         else
           nativeLogger.i(message);
       }
     else if(red)
     {
-      if(kIsWeb || IsUnitTest)
+      if(!kReleaseMode)
         flutterLogger.e("$_TAG: $message");
       else
         nativeLogger.e(message);
     }
     else if(yellow)
       {
-        if(kIsWeb || IsUnitTest)
+        if(!kReleaseMode)
           flutterLogger.w("$_TAG: $message");
         else
           nativeLogger.w(message);
