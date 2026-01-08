@@ -87,8 +87,11 @@ class MoviesPage extends StatelessWidget
                       fit: BoxFit.fitHeight,
                       placeholder: (context, url) =>
                       const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-                      errorWidget: (context, url, error) =>
-                      const Icon(Icons.broken_image),
+                      errorWidget: (context, url, error)
+                      {
+                          controller.loggingService.Value.LogWarning(error.toString());
+                          return const Icon(Icons.broken_image);
+                      }
                     ),
                   ),
                 ),
