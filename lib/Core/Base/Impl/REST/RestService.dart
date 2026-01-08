@@ -122,7 +122,7 @@ class RestService with LoggableService
         final response = await _restClient.Value.DoHttpRequest(method, httpRequest);
         final safeContent = _hideSensitiveData(response);
 
-        loggingService.Value.LogMethodFinished('$requestSummary with result: $safeContent');
+        this.LogMethodFinished('$requestSummary with result: $safeContent');
 
         return response;
       };

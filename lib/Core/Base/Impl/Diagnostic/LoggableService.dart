@@ -22,6 +22,19 @@ mixin LoggableService
         }
     }
 
+    void LogMethodFinished(String methodName, [Map<String, Object?>? args])
+    {
+      try
+      {
+        final className = this.runtimeType.toString();
+        loggingService.Value.LogMethodFinished(className, methodName, args);
+      }
+      catch (ex, stackTrace)
+      {
+        consoleImpl.PrintException(ex, stackTrace);
+      }
+    }
+
     void InitSpecificlogger(String key)
     {
         if(specificLoggerInitialized == false)

@@ -9,109 +9,131 @@ import '../MockData.dart';
 import 'Controls/SideMenuView.dart';
 
 
-class MoviesPage extends GetView<MoviesPageViewModel> {
+class MoviesPage extends StatelessWidget
+{
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: F_PageHeaderView(
-        title: "Movies",
-        leftIcon: Icons.menu,
-        onLeftPressed: () {
-          _scaffoldKey.currentState?.openDrawer();
-        },
-        rightIcon: Icons.add,
-        onRightPressed: () {
-          controller.AddCommand.Execute();
-        },
-        viewModel: controller,
-      ),
-      drawer: Drawer(
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.zero,
-        ),
-        child: SideMenuView(
-          onShareLogs: () { controller.ShareLogsCommand.Execute(); },
-          onLogout: () { controller.LogoutCommand.Execute(); },
-        ),
-      ),
-      body: GetBuilder<MoviesPageViewModel>(
-        builder: (_) => AnimatedListView<MovieItemModel>(
-          items: controller.Movies,
-          isSameItem: (oldItem, newItem) => oldItem.id == newItem.id,
-          // Correct: itemBuilder only takes context and index
-          itemBuilder: (context, index) {
-            return BuildMovieCell(index);
-          },
-          enterTransition: [FadeIn(), ScaleIn()],
-          exitTransition: [SlideInLeft()],
-          insertDuration: const Duration(milliseconds: 300),
-          removeDuration: const Duration(milliseconds: 300),
-        ),
-      ),
-    );
+    return GetBuilder<MoviesPageViewModel>(
+        builder: (controller) {
+          return Scaffold(
+            key: _scaffoldKey,
+            appBar: F_PageHeaderView(
+              title: "Movies",
+              leftIcon: Icons.menu,
+              onLeftPressed: () {
+                _scaffoldKey.currentState?.openDrawer();
+              },
+              rightIcon: Icons.add,
+              onRightPressed: () {
+                controller.AddCommand.Execute();
+              },
+              viewModel: controller,
+            ),
+            drawer: Drawer(
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.zero,
+              ),
+              child: SideMenuView(
+                onShareLogs: () {
+                  controller.ShareLogsCommand.Execute();
+                },
+                onLogout: () {
+                  controller.LogoutCommand.Execute();
+                },
+              ),
+            ),
+            body: AnimatedListView<MovieItemModel>(
+              items: controller.Movies,
+              isSameItem: (oldItem, newItem) => oldItem.id == newItem.id,
+              // Correct: itemBuilder only takes context and index
+              itemBuilder: (context, index) {
+                return BuildMovieCell(index, controller);
+              },
+              enterTransition: [FadeIn(), ScaleIn()],
+              exitTransition: [SlideInLeft()],
+              insertDuration: const Duration(milliseconds: 300),
+              removeDuration: const Duration(milliseconds: 300),
+            ),
+          );
+        });
   }
 
-  Widget BuildMovieCell(int index) {
+  Widget BuildMovieCell(int index, MoviesPageViewModel controller)
+  {
     final movie = controller.Movies[index];
+    final isLast = index == controller.Movies.length - 1;
 
-    return InkWell(
+    return Column(
       key: ValueKey(movie.id),
-      onTap: () {
-        controller.ItemTappedCommand.Execute(index);
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 15),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 15),
-              child: SizedBox(
-                width: 100,
-                height: 120,
-                child: CachedNetworkImage(
-                  imageUrl: movie.posterPath,
-                  fit: BoxFit.fitHeight,
-                  placeholder: (context, url) =>
-                  const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-                  errorWidget: (context, url, error) =>
-                  const Icon(Icons.broken_image),
-                ),
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(10, 0, 20, 15),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      movie.title,
-                      style: const TextStyle(
-                        fontFamily: FontConstants.RegularFont,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
+      children: [
+        InkWell(
+          onTap: () {
+            controller.ItemTappedCommand.Execute(index);
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 15),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 15),
+                  child: SizedBox(
+                    width: 100,
+                    height: 120,
+                    child: CachedNetworkImage(
+                      imageUrl: movie.posterPath,
+                      fit: BoxFit.fitHeight,
+                      placeholder: (context, url) =>
+                      const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                      errorWidget: (context, url, error) =>
+                      const Icon(Icons.broken_image),
                     ),
-                    const SizedBox(height: 5),
-                    Text(
-                      movie.overview,
-                      style: const TextStyle(
-                        fontFamily: FontConstants.RegularFont,
-                        fontWeight: FontWeight.normal,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 0, 20, 15),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          movie.title,
+                          style: const TextStyle(
+                            fontFamily: FontConstants.RegularFont,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          movie.overview,
+                          style: const TextStyle(
+                            fontFamily: FontConstants.RegularFont,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
+
+        /// 🔹 Separator
+        if (!isLast)
+          const Padding(
+            padding: EdgeInsets.only(left: 0, right: 0),
+            child: Divider(
+              height: 1,
+              thickness: 0.6,
+            ),
+          ),
+      ],
     );
   }
+
 }

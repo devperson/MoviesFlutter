@@ -93,9 +93,9 @@ class MockLoggingService implements ILoggingService
   }
 
   @override
-  void LogMethodFinished(String methodName)
+  void LogMethodFinished(String className,String methodName, [Map<String, Object?>? args])
   {
-    _platformOutput.Value.Info("${_getFormattedDate()}_$EXIT_TAG $methodName");
+    _platformOutput.Value.Info("${_getFormattedDate()}_$EXIT_TAG $className.$methodName()");
   }
 
   @override
@@ -146,10 +146,5 @@ class MockLoggingService implements ILoggingService
   Future<void> InitAsync() async
   {
 
-  }
-
-  @override
-  void LogMethodFinished(String ClassName, String MethodName, [Map<String, Object?>? args]) {
-    // TODO: implement LogMethodFinished
   }
 }

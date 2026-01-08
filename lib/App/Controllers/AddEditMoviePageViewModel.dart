@@ -141,7 +141,7 @@ class AddEditMoviePageViewModel extends PageViewModel
 
     try
     {
-      final deleteText = (MovieItem.posterPath.isNotEmpty ?? false) ? "Delete" : null;
+      final deleteText = MovieItem.posterPath.isNotEmpty ? "Delete" : null;
 
       final buttons = ["Pick Photo", "Take Photo"];
 
@@ -178,6 +178,8 @@ class AddEditMoviePageViewModel extends PageViewModel
       {
         MovieItem.posterPath = "";
       }
+
+      this.update();
     }
     catch (ex, stack)
     {

@@ -23,6 +23,7 @@ class PageViewModel extends NavigatingBaseViewModel
 
    Rx<String> Title = "".obs;
    late final AsyncCommand BackCommand = AsyncCommand(OnBackCommand);
+   late final AsyncCommand DeviceBackCommand = AsyncCommand(DoDeviceBackCommand);
    final IsPageVisable = false.obs;
    final IsFirstTimeAppears = true.obs;
    final BusyLoading = false.obs;
@@ -34,7 +35,8 @@ class PageViewModel extends NavigatingBaseViewModel
     this.NavigateBack(NavigationParameters());
   }
 
-   Future<void> DoDeviceBackCommand() async
+  // this method will be called when user click system bar back in Android and swipe back gesture in iOS
+   Future<void> DoDeviceBackCommand(Object? param) async
    {
      this.LogVirtualBaseMethod("DoDeviceBackCommand()");
 
@@ -44,7 +46,7 @@ class PageViewModel extends NavigatingBaseViewModel
        return;
      }
 
-     await BackCommand?.ExecuteAsync();
+     await OnBackCommand(param);
    }
 
    Future<void> ShowLoading(Future<void> Function() AsyncAction, void Function(bool)? OnComplete) async

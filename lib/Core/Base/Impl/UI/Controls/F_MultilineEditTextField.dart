@@ -77,6 +77,7 @@ class _F_MultilineEditTextFieldState
 
     return ConstrainedBox(
       constraints: BoxConstraints(
+        maxHeight: widget.minHeight,
         minHeight: widget.minHeight,
       ),
       child: Container(
