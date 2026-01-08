@@ -81,7 +81,7 @@ class MockLoggingService implements ILoggingService
   }
 
   @override
-  void LogMethodStarted(String className, String methodName, [List<Object?>? args])
+  void LogMethodStarted(String className, String methodName, [Map<String, Object?>? args])
   {
     _platformOutput.Value.Info("${_getFormattedDate()}_$ENTER_TAG $className.$methodName()");
   }
@@ -93,9 +93,9 @@ class MockLoggingService implements ILoggingService
   }
 
   @override
-  void LogMethodFinished(String methodName)
+  void LogMethodFinished(String className,String methodName, [Map<String, Object?>? args])
   {
-    _platformOutput.Value.Info("${_getFormattedDate()}_$EXIT_TAG $methodName");
+    _platformOutput.Value.Info("${_getFormattedDate()}_$EXIT_TAG $className.$methodName()");
   }
 
   @override

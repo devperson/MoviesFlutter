@@ -2,7 +2,8 @@ abstract interface class ILogging
 {
   void Log(String Message);
   void LogWarning(String Message);
-  void LogMethodStarted(String ClassName, String MethodName, [ List<Object?>? Args ]);
+  void LogMethodStarted(String ClassName, String MethodName, [Map<String, Object?>? args]);
+  void LogMethodFinished(String ClassName, String MethodName, [Map<String, Object?>? args]);
 }
 
 abstract interface class ILoggingService extends ILogging
@@ -14,7 +15,6 @@ abstract interface class ILoggingService extends ILogging
   Future<void> InitAsync();
   void LogMethodStarted2(String MethodName);
   void Header(String HeaderMessage);
-  void LogMethodFinished(String MethodName);
   void LogIndicator(String Name, String Message);
   void LogError(Object Ex, StackTrace stackTrace, [String Message = "", bool Handled = true ]);
   void TrackError(Object Ex, StackTrace stackTrace, [Map<String, String>? Data]);

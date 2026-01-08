@@ -35,7 +35,7 @@ abstract class BaseRepository<TEntity extends IEntity, Tb extends RealmObject, T
   @override
   Future<List<TEntity>> GetListAsync({int count = -1, int skip = 0}) async
   {
-    LogMethodStart('GetListAsync', [count, skip]);
+    LogMethodStart('GetListAsync', {'count': count, 'skip': skip,});
     _ensureInitialized();
 
     late Iterable<Tb> results;
@@ -55,7 +55,7 @@ abstract class BaseRepository<TEntity extends IEntity, Tb extends RealmObject, T
   @override
   Future<int> AddAllAsync(List<TEntity> entities) async
   {
-    LogMethodStart('AddAllAsync', entities);
+    LogMethodStart('AddAllAsync', {'entities': entities});
     _ensureInitialized();
 
     var lastId = -1;
@@ -86,7 +86,7 @@ abstract class BaseRepository<TEntity extends IEntity, Tb extends RealmObject, T
   @override
   Future<TEntity?> FindById(int id) async
   {
-    LogMethodStart('FindById', [id]);
+    LogMethodStart('FindById', {'id': id});
     _ensureInitialized();
 
     final tb = _realm!.query<Tb>('Id == \$0', [id]).firstOrNull;
@@ -97,7 +97,7 @@ abstract class BaseRepository<TEntity extends IEntity, Tb extends RealmObject, T
   @override
   Future<int> AddAsync(TEntity entity) async
   {
-    LogMethodStart('AddAsync', [entity]);
+    LogMethodStart('AddAsync', {'entity': entity});
     _ensureInitialized();
 
     entity.Id = _getNextId();
@@ -114,7 +114,7 @@ abstract class BaseRepository<TEntity extends IEntity, Tb extends RealmObject, T
   @override
   Future<int> UpdateAsync(TEntity entity) async
   {
-    LogMethodStart('UpdateAsync', [entity]);
+    LogMethodStart('UpdateAsync', {'entity': entity});
     _ensureInitialized();
 
     var hasValue = false;
@@ -138,7 +138,7 @@ abstract class BaseRepository<TEntity extends IEntity, Tb extends RealmObject, T
   @override
   Future<int> RemoveAsync(TEntity entity) async
   {
-    LogMethodStart('RemoveAsync', [entity]);
+    LogMethodStart('RemoveAsync', {'entity': entity});
     _ensureInitialized();
 
     var hasValue = false;
@@ -162,7 +162,7 @@ abstract class BaseRepository<TEntity extends IEntity, Tb extends RealmObject, T
   @override
   Future<int> ClearAsync(String reason) async
   {
-    LogMethodStart('ClearAsync', [reason]);
+    LogMethodStart('ClearAsync', {'reason': reason});
     _ensureInitialized();
 
     var deletedCount = 0;

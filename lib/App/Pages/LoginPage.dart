@@ -8,41 +8,47 @@ import '../Controllers/LoginPageViewModel.dart';
 
 
 
-class LoginPage extends GetView<LoginPageViewModel>
+class LoginPage extends StatelessWidget
 {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text('Login'),
-      // ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: NumConstants.pageHMargin),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            spacing: 16, // Flutter 3.22+
-            children: [
-              F_EditTextField(
-                placeholder: 'Login',
-                onChanged: (v) => controller.login = v
-              ),
+    return GetBuilder<LoginPageViewModel>(
+        builder: (controller) {
+          return Scaffold(
+            // appBar: AppBar(
+            //   title: const Text('Login'),
+            // ),
+            body: Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: NumConstants.pageHMargin),
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  spacing: 16, // Flutter 3.22+
+                  children: [
+                    F_EditTextField(
+                        placeholder: 'Login',
+                        onChanged: (v) => controller.login = v
+                    ),
 
-              F_EditTextField(
-                placeholder: 'Password',
-                isPassword: true,
-                onChanged: (v) => controller.password = v,
-              ),
+                    F_EditTextField(
+                      placeholder: 'Password',
+                      isPassword: true,
+                      onChanged: (v) => controller.password = v,
+                    ),
 
-              F_PrimaryButton(
-                text: 'Submit',
-                onTap: (){ controller.SubmitCommand.Execute(); },
+                    F_PrimaryButton(
+                      text: 'Submit',
+                      onTap: () {
+                        controller.SubmitCommand.Execute();
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
-      ),
-    );
+            ),
+          );
+        });
   }
 }

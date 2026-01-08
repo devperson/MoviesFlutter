@@ -120,13 +120,13 @@ class F_VersionTrackingImplementation with LoggableService implements IVersionTr
 
     @override
     bool IsFirstLaunchForVersion(String version) {
-        LogMethodStart("IsFirstLaunchForVersion", [version]);
+        LogMethodStart("IsFirstLaunchForVersion", {'version':version, });
         return CurrentVersion == version && IsFirstLaunchForCurrentVersion;
     }
 
     @override
     bool IsFirstLaunchForBuild(String build) {
-        LogMethodStart("IsFirstLaunchForBuild", [build]);
+        LogMethodStart("IsFirstLaunchForBuild", {'build': build, });
         return CurrentBuild == build && IsFirstLaunchForCurrentBuild;
     }
 
@@ -153,18 +153,18 @@ class F_VersionTrackingImplementation with LoggableService implements IVersionTr
     }
 
     List<String> ReadHistory(String key) {
-        LogMethodStart("ReadHistory", [key]);
+        LogMethodStart("ReadHistory",  {'key': key, });
         return preferences.Value.Get<String?>(key, null)?.split('|').where((it) => it.isNotEmpty).toList() ?? [];
     }
 
     void WriteHistory(String key, List<String> history) {
-        LogMethodStart("WriteHistory", [key, history]);
+        LogMethodStart("WriteHistory", {'key': key, 'history': history});
         preferences.Value.Set(key, history.join("|"));
     }
 
     String? GetPrevious(String key)
     {
-        LogMethodStart("GetPrevious", [key]);
+        LogMethodStart("GetPrevious", {'key': key, });
         final trail = versionTrail[key]!;
         return (trail.length >= 2) ? trail[trail.length - 2] : null;
     }

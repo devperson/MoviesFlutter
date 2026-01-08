@@ -15,7 +15,7 @@ class F_ShareImplementation with LoggableService implements IShare
   @override
   Future<void> RequestShareFile(String title, String fullPath) async
   {
-    SpecificLogMethodStart('RequestShareFile', [title, fullPath]);
+    SpecificLogMethodStart('RequestShareFile', {'title': title, 'fullPath': fullPath});
 
     final file = File(fullPath);
 

@@ -4,7 +4,7 @@ class Mockdata {
 
  static final List<MovieItemModel> MockMovies = [
    MovieItemModel(
-     id: 83533,
+     id: 1,
      title: 'Avatar: Fire and Ash',
      overview:
      'In the wake of the devastating war against the RDA, Jake Sully and Neytiri struggle to hold their family together while Pandora itself begins to change. '
@@ -17,7 +17,7 @@ class Mockdata {
    ),
 
    MovieItemModel(
-     id: 1084242,
+     id: 2,
      title: 'Zootopia 2',
      overview:
      'After solving the biggest case in Zootopia’s history, Judy Hopps believes she has finally proven herself as a real cop. '
@@ -30,7 +30,7 @@ class Mockdata {
    ),
 
    MovieItemModel(
-     id: 1511417,
+     id: 3,
      title: 'Bāhubali: The Epic',
      overview:
      'Raised far from the world of kings, a young man grows up unaware of his true heritage while feeling an irresistible pull toward destiny. '
@@ -43,7 +43,7 @@ class Mockdata {
    ),
 
    MovieItemModel(
-     id: 1131759,
+     id: 4,
      title: 'Omniscient Reader: The Prophecy',
      overview:
      'Kim Dok-ja has lived a quiet, unremarkable life, finding solace only in an obscure web novel no one else bothered to read. '
@@ -56,7 +56,7 @@ class Mockdata {
    ),
 
    MovieItemModel(
-     id: 1311031,
+     id: 5,
      title: 'Demon Slayer: Infinity Castle',
      overview:
      'The Demon Slayer Corps is drawn into the Infinity Castle, a nightmarish realm where space itself bends to Muzan’s will. '
@@ -69,7 +69,7 @@ class Mockdata {
    ),
 
    MovieItemModel(
-     id: 1228246,
+     id: 6,
      title: 'Five Nights at Freddy\'s 2',
      overview:
      'One year after the horrors of Freddy Fazbear’s Pizza, the town attempts to turn tragedy into celebration through a bizarre local festival. '
@@ -82,7 +82,7 @@ class Mockdata {
    ),
 
    MovieItemModel(
-     id: 755898,
+     id: 7,
      title: 'War of the Worlds',
      overview:
      'Will Radford is a seasoned Homeland Security analyst who believes every threat can be predicted through data and surveillance. '
@@ -95,7 +95,7 @@ class Mockdata {
    ),
 
    MovieItemModel(
-     id: 982843,
+     id: 8,
      title: 'The Great Flood',
      overview:
      'When a catastrophic flood engulfs the city, a scientist and her young son find themselves trapped in a rapidly collapsing environment. '
@@ -108,7 +108,7 @@ class Mockdata {
    ),
 
    MovieItemModel(
-     id: 1137179,
+     id: 9,
      title: 'Yadang: The Snitch',
      overview:
      'Operating in the shadows between criminals and law enforcement, professional informants known as yadangs walk a deadly line. '
@@ -121,7 +121,7 @@ class Mockdata {
    ),
 
    MovieItemModel(
-     id: 425274,
+     id: 10,
      title: 'Now You See Me: Now You Don\'t',
      overview:
      'The legendary Four Horsemen reunite when a powerful criminal empire challenges their reputation and unity. '
@@ -134,7 +134,7 @@ class Mockdata {
    ),
 
    MovieItemModel(
-     id: 1512623,
+     id: 11,
      title: 'Risqué',
      overview:
      'After being fired from her job, a determined dancer refuses to fade into obscurity. '
@@ -147,7 +147,7 @@ class Mockdata {
    ),
 
    MovieItemModel(
-     id: 1439112,
+     id: 12,
      title: 'Muzzle: City of Wolves',
      overview:
      'Jake Rosser dreams of a peaceful life after years of violence on the streets of Los Angeles. '
@@ -160,7 +160,7 @@ class Mockdata {
    ),
 
    MovieItemModel(
-     id: 1368166,
+     id: 13,
      title: 'The Housemaid',
      overview:
      'Seeking a fresh start, Millie accepts a live-in job with a wealthy family whose lifestyle seems almost too perfect. '
@@ -173,7 +173,7 @@ class Mockdata {
    ),
 
    MovieItemModel(
-     id: 1247002,
+     id: 14,
      title: 'The Old Woman with the Knife',
      overview:
      'Hornclaw is a legendary assassin who has survived countless battles and betrayals. '
@@ -186,7 +186,7 @@ class Mockdata {
    ),
 
    MovieItemModel(
-     id: 1491902,
+     id: 15,
      title: 'Bang',
      overview:
      'A ruthless hitman narrowly survives an assassination attempt orchestrated by his own organization. '
@@ -198,7 +198,6 @@ class Mockdata {
      popularity: 130.3288,
    ),
  ];
-
 }
 
 
@@ -218,4 +217,22 @@ class MovieItemModel
     this.releaseDate = "",
     this.popularity = 0,
   });
+
+  MovieItemModel CreateCopy()
+  {
+    return MovieItemModel(id: this.id,
+        title: this.title,
+        overview: this.overview,
+        posterPath: this.posterPath,
+        releaseDate: this.releaseDate,
+        popularity: this.popularity);
+  }
+}
+
+class IntIdGenerator {
+  int _current = 200;
+
+  int next() {
+    return ++_current;
+  }
 }

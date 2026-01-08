@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:movies_flutter/Core/Abstractions/Essentials/IMediaPickerService.dart';
 
 import '../../Core/Abstractions/AppServices/Some.dart';
@@ -21,23 +23,40 @@ class AddEditMoviePageViewModel extends PageViewModel
   late final DeleteCommand = AsyncCommand(OnDeleteCommand);
   bool IsEdit = false;
 
+  final titleController = TextEditingController();
+  final descriptionController = TextEditingController();
+  final intGenerator = IntIdGenerator();
+
   @override
   void Initialize(NavigationParameters parameters)
   {
-    LogMethodStart("Initialize");
     super.Initialize(parameters);
 
     if (parameters.ContainsKey(MoviesPageViewModel.SELECTED_ITEM))
     {
+      this.Title.value = "Edit";
       this.IsEdit = true;
       this.MovieItem = parameters.GetValue<MovieItemModel>(MoviesPageViewModel.SELECTED_ITEM)!;
-      this.Title.value = "Edit";
     }
     else
     {
+      this.Title.value = "Create new";
       this.MovieItem = MovieItemModel();
-      this.Title.value = "Add new";
+      this.MovieItem.id = intGenerator.next();
     }
+
+    // Prefill from model
+    titleController.text = MovieItem.title;
+    descriptionController.text = MovieItem.overview;
+
+    // Keep model in sync
+    titleController.addListener(() {
+      MovieItem.title = titleController.text;
+    });
+
+    descriptionController.addListener(() {
+      MovieItem.overview = descriptionController.text;
+    });
   }
 
 
@@ -45,6 +64,9 @@ class AddEditMoviePageViewModel extends PageViewModel
   void Destroy()
   {
     super.Destroy();
+
+    titleController.dispose();
+    descriptionController.dispose();
   }
 
   Future<void> OnSaveCommand(Object? param) async
@@ -64,9 +86,16 @@ class AddEditMoviePageViewModel extends PageViewModel
         return;
       }
 
-
-      final key = IsEdit ? UPDATE_ITEM : NEW_ITEM;
-      await NavigateBack(NavigationParameters().With(key, MovieItem));
+      if(IsEdit)
+      {
+        //use new instance for update
+        MovieItem = MovieItem.CreateCopy();
+        NavigateBack(NavigationParameters().With(UPDATE_ITEM, MovieItem));
+      }
+      else
+      {
+        NavigateBack(NavigationParameters().With(NEW_ITEM, MovieItem));
+      }
 
       // Some<MovieDto>? Result;
       //
@@ -112,7 +141,7 @@ class AddEditMoviePageViewModel extends PageViewModel
 
     try
     {
-      final deleteText = (MovieItem.posterPath.isNotEmpty ?? false) ? "Delete" : null;
+      final deleteText = MovieItem.posterPath.isNotEmpty ? "Delete" : null;
 
       final buttons = ["Pick Photo", "Take Photo"];
 
@@ -149,6 +178,8 @@ class AddEditMoviePageViewModel extends PageViewModel
       {
         MovieItem.posterPath = "";
       }
+
+      this.update();
     }
     catch (ex, stack)
     {
@@ -176,7 +207,7 @@ class AddEditMoviePageViewModel extends PageViewModel
 
         // if (result.Success)
         // {
-          await NavigateToRoot(NavigationParameters().With(REMOVE_ITEM, MovieItem));
+          await NavigateToRoot(NavigationParameters().With(REMOVE_ITEM, MovieItem),);
         // }
         // else
         // {

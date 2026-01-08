@@ -103,7 +103,7 @@ class F_DbInitilizer with LoggableService implements ILocalDbInitilizer
   @override
   Future<void> Release({bool closeConnection = false}) async
   {
-    LogMethodStart("Release", [closeConnection]);
+    LogMethodStart("Release", {'closeConnection': closeConnection, });
 
     _isInited = false;
 

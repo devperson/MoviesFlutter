@@ -146,7 +146,7 @@ class F_LoggingService implements ILoggingService
     }
 
     @override
-    void LogMethodStarted(String className, String methodName, [List<Object?>? args])
+    void LogMethodStarted(String className, String methodName, [Map<String, Object?>? args])
     {
         SafeCall(() {
             final debugMethodName = GetMethodNameWithParameters(className, methodName, args);
@@ -155,9 +155,12 @@ class F_LoggingService implements ILoggingService
     }
 
     @override
-    void LogMethodFinished(String methodName)
+    void LogMethodFinished(String className, String methodName, [Map<String, Object?>? args])
     {
-        Log("$EXIT_TAG $methodName");
+      SafeCall(() {
+        final debugMethodName = GetMethodNameWithResult(className, methodName, args);
+        Log("$EXIT_TAG $debugMethodName");
+      });
     }
 
     @override
@@ -252,28 +255,47 @@ class F_LoggingService implements ILoggingService
         }
     }
 
-    String GetMethodNameWithParameters(String className, String? funcName, [List<Object?>? args])
+    String GetMethodNameWithParameters(String className, String funcName, Map<String, Object?>? args)
     {
-        final itemsCount = 10;
-        final argsString = args?.map((arg) {
-            if (arg == null) return "null";
+      final itemsCount = 10;
 
-            if (arg is Iterable) // List, Set, etc.
-            {
-                final typeName = arg.runtimeType.toString();
-                final preview = arg.take(itemsCount).join(", ");
-                return "$typeName[${arg.length}] { $preview }";
-            }
-            // Array in Dart is List mostly, or specific TypedData, treated as Iterable usually
-            else
-            {
-                final typeName = arg.runtimeType.toString();
-                final valueString = arg.toString();
-                return "$typeName: $valueString";
-            }
-        }).join(", ");
+      final argsString = args?.entries.map((e) {
+        final value = e.value;
 
-        return "$className.${funcName ?? "?"}($argsString)";
+        if (value == null) {
+          return '${e.key}: null';
+        }
+
+        if (value is Iterable) {
+          final preview = value.take(itemsCount).join(', ');
+          return '${e.key}: ${value.runtimeType}[${value.length}] { $preview }';
+        }
+
+        return '${e.key}: $value';
+      }).join(', ');
+
+      return '$className.$funcName($argsString)';
+    }
+
+    String GetMethodNameWithResult(String className, String funcName, Map<String, Object?>? args)
+    {
+      final itemsCount = 10;
+      final argsString = args?.entries.map((e) {
+        final value = e.value;
+
+        if (value == null) {
+          return '${e.key}: null';
+        }
+
+        if (value is Iterable) {
+          final preview = value.take(itemsCount).join(', ');
+          return '${e.key}: ${value.runtimeType}[${value.length}] { $preview }';
+        }
+
+        return '${e.key}: $value';
+      }).join(', ');
+
+      return "$className.$funcName(); $argsString";
     }
 }
 
@@ -308,11 +330,20 @@ class ConditionalLogger implements ILogging
     }
 
     @override
-    void LogMethodStarted(String className, String methodName, [List<Object?>? args])
+    void LogMethodStarted(String className, String methodName, [Map<String, Object?>? args])
     {
         if (canLog)
         {
             logger.LogMethodStarted(className, methodName, args);
         }
     }
+
+  @override
+  void LogMethodFinished(String className, String methodName, [Map<String, Object?>? args])
+  {
+    if (canLog)
+    {
+      logger.LogMethodFinished(className, methodName, args);
+    }
+  }
 }
