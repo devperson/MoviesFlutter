@@ -90,11 +90,11 @@ class AddEditMoviePageViewModel extends PageViewModel
       {
         //use new instance for update
         MovieItem = MovieItem.CreateCopy();
-        NavigateBack(NavigationParameters().With(UPDATE_ITEM, MovieItem));
+        await NavigateBack(NavigationParameters().With(UPDATE_ITEM, MovieItem));
       }
       else
       {
-        NavigateBack(NavigationParameters().With(NEW_ITEM, MovieItem));
+        await NavigateBack(NavigationParameters().With(NEW_ITEM, MovieItem));
       }
 
       // Some<MovieDto>? Result;
