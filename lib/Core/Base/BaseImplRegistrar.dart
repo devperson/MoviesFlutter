@@ -23,6 +23,7 @@ import 'package:movies_flutter/Core/Domain/AppService/MovieService.dart';
 import '../Abstractions/Diagnostics/ILoggingService.dart';
 import '../Abstractions/Essentials/Display/IDisplay.dart';
 import '../Abstractions/Essentials/IAppInfo.dart';
+import '../Abstractions/Essentials/IMediaPickerService.dart';
 import '../Abstractions/Essentials/IPreferences.dart';
 import '../Abstractions/Essentials/IShare.dart';
 import '../Abstractions/Messaging/SimpleMessagingCenter.dart';
@@ -34,6 +35,7 @@ import 'Impl/Essentials/F_AppInfoImplementation.dart';
 import 'Impl/Essentials/F_DeviceInfoImplementation.dart';
 import 'Impl/Essentials/F_DirectoryService.dart';
 import 'Impl/Essentials/F_DisplayImplementation.dart';
+import 'Impl/Essentials/F_MediaPickerService.dart';
 import 'Impl/Essentials/F_PreferencesImplementation.dart';
 import 'Impl/Essentials/F_ShareImplementation.dart';
 import 'Impl/UI/F_AlertDialogService.dart';
@@ -72,6 +74,7 @@ class BaseImplRegistrar
       //Essentials
       Get.put<IAppInfo>(F_AppInfoImplementation(), permanent: true);
       Get.put<IDeviceInfo>(F_DeviceInfoImplementation(), permanent: true);
+      Get.lazyPut<IMediaPickerService>(() => F_MediaPickerService(), fenix: true);
 
       Get.put<IDisplay>(F_DisplayImplementation(), permanent: true);
       Get.put<IShare>(F_ShareImplementation(), permanent: true);

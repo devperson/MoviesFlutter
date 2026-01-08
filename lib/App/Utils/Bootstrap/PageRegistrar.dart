@@ -15,15 +15,15 @@ class PageRegistrar
   static final pages = [
     GetPage(
       name: "/" + LoginPageViewModel.Name,
-      page: () => LoginPage(),
+      page: () => const LoginPage(),
       binding: BindingsBuilder(()
       {
-        Get.put<LoginPageViewModel>(LoginPageViewModel());
+        Get.put<LoginPageViewModel>(LoginPageViewModel()); //do not use putLazy here, it will not create viewModel with
       }),
     ),
     GetPage(
       name: "/" + MoviesPageViewModel.Name,
-      page: () => MoviesPage(),
+      page: () => const MoviesPage(),
       binding: BindingsBuilder(()
       {
         Get.put<MoviesPageViewModel>(MoviesPageViewModel());
@@ -31,7 +31,7 @@ class PageRegistrar
     ),
     GetPage(
       name: "/" + MovieDetailPageViewModel.Name,
-      page: () => MovieDetailPage(),
+      page: () => const MovieDetailPage(),
       binding: BindingsBuilder(()
       {
         Get.put(MovieDetailPageViewModel());
@@ -39,7 +39,7 @@ class PageRegistrar
     ),
     GetPage(
       name: "/" + AddEditMoviePageViewModel.Name,
-      page: () => AddEditMoviePage(),
+      page: () => const AddEditMoviePage(),
       binding: BindingsBuilder(()
       {
         Get.put(AddEditMoviePageViewModel());

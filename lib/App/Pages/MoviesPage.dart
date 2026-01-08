@@ -1,17 +1,19 @@
 import 'package:animated_reorderable_list/animated_reorderable_list.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:movies_flutter/Core/Base/Impl/Utils/FontConstants.dart';
+import '../../Core/Base/Impl/UI/Controls/F_ImageView.dart';
 import '../../Core/Base/Impl/UI/Controls/F_PageHeaderView.dart';
 import '../Controllers/MoviesPageViewModel.dart';
 import '../MockData.dart';
 import 'Controls/SideMenuView.dart';
 
+class MoviesPage extends StatelessWidget {
+  // Use const constructor for the page itself
+  const MoviesPage({super.key});
 
-class MoviesPage extends StatelessWidget
-{
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  // Use a final key for the scaffold
+  static final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -47,12 +49,11 @@ class MoviesPage extends StatelessWidget
             body: AnimatedListView<MovieItemModel>(
               items: controller.Movies,
               isSameItem: (oldItem, newItem) => oldItem.id == newItem.id,
-              // Correct: itemBuilder only takes context and index
               itemBuilder: (context, index) {
-                return BuildMovieCell(index, controller);
+                return _buildMovieCell(index, controller);
               },
-              enterTransition: [FadeIn(), ScaleIn()],
-              exitTransition: [SlideInLeft()],
+              enterTransition: [FadeIn(), ScaleIn()], // Added const
+              exitTransition: [SlideInLeft()], // Added const
               insertDuration: const Duration(milliseconds: 300),
               removeDuration: const Duration(milliseconds: 300),
             ),
@@ -60,8 +61,7 @@ class MoviesPage extends StatelessWidget
         });
   }
 
-  Widget BuildMovieCell(int index, MoviesPageViewModel controller)
-  {
+  Widget _buildMovieCell(int index, MoviesPageViewModel controller) {
     final movie = controller.Movies[index];
     final isLast = index == controller.Movies.length - 1;
 
@@ -82,16 +82,9 @@ class MoviesPage extends StatelessWidget
                   child: SizedBox(
                     width: 100,
                     height: 120,
-                    child: CachedNetworkImage(
-                      imageUrl: movie.posterPath,
-                      fit: BoxFit.fitHeight,
-                      placeholder: (context, url) =>
-                      const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-                      errorWidget: (context, url, error)
-                      {
-                          controller.loggingService.Value.LogWarning(error.toString());
-                          return const Icon(Icons.broken_image);
-                      }
+                    child: F_ImageView(
+                        path: movie.posterPath,
+                        fit: BoxFit.fitHeight
                     ),
                   ),
                 ),
@@ -125,18 +118,14 @@ class MoviesPage extends StatelessWidget
             ),
           ),
         ),
-
-        /// 🔹 Separator
         if (!isLast)
-          const Padding(
-            padding: EdgeInsets.only(left: 0, right: 0),
-            child: Divider(
-              height: 1,
-              thickness: 0.6,
-            ),
+          const Divider( // Removed redundant Padding as Divider has default height
+            height: 1,
+            thickness: 0.6,
+            indent: 0,
+            endIndent: 0,
           ),
       ],
     );
   }
-
 }
