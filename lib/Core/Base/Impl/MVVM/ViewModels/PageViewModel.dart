@@ -3,6 +3,7 @@ import 'package:movies_flutter/Core/Abstractions/Messaging/IMessagesCenter.dart'
 import 'package:movies_flutter/Core/Abstractions/UI/IAlertDialogService.dart';
 import 'package:movies_flutter/Core/Abstractions/UI/ISnackbarService.dart';
 
+import '../../../../Abstractions/MVVM/IPageLifecycleAware.dart';
 import '../../../../Abstractions/MVVM/NavigationParameters.dart';
 import '../../../../Abstractions/REST/Enums.dart';
 import '../../../../Abstractions/REST/Exceptions/AuthExpiredException.dart';
@@ -10,24 +11,71 @@ import '../../../../Abstractions/REST/Exceptions/HttpConnectionException.dart';
 import '../../../../Abstractions/REST/Exceptions/HttpRequestException.dart';
 import '../../../../Abstractions/REST/Exceptions/ServerApiException.dart';
 import '../../Utils/LazyInjected.dart';
+import '../Events/AppPausedEvent.dart';
+import '../Events/AppResumedEvent.dart';
 import '../Helpers/AsyncCommand.dart';
 import 'NavigatingBaseViewModel.dart';
 
-class PageViewModel extends NavigatingBaseViewModel
+class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAware
 {
    final snackbarService = LazyInjected<ISnackbarService>();
    final alertService = LazyInjected<IAlertDialogService>();
    final eventAggregator = LazyInjected<IMessagesCenter>();
+   late final AppResumedEvent appResumedEvent;
+   late final AppPausedEvent appPausedEvent;
+
+   PageViewModel()
+   {
+       appResumedEvent = eventAggregator.Value.GetOrCreateEvent(()=>AppResumedEvent());
+       appPausedEvent = eventAggregator.Value.GetOrCreateEvent(()=>AppPausedEvent());
+       
+       appResumedEvent.Subscribe((_) => ResumedFromBackground());
+       appResumedEvent.Subscribe((_) => PausedToBackground());
+   }
 
    String get vmName => runtimeType.toString();
-
    Rx<String> Title = "".obs;
    late final AsyncCommand BackCommand = AsyncCommand(OnBackCommand);
    late final AsyncCommand DeviceBackCommand = AsyncCommand(DoDeviceBackCommand);
-   final IsPageVisable = false.obs;
-   final IsFirstTimeAppears = true.obs;
-   final BusyLoading = false.obs;
-   final DisableDeviceBackButton = false;
+   var BusyLoading = false.obs;
+   var IsPageVisable = false;
+   var IsFirstTimeAppears = true;
+   var DisableDeviceBackButton = false;
+
+   @override void OnAppearing()
+   {
+     LogVirtualBaseMethod();
+     IsPageVisable = true;
+
+     if (IsFirstTimeAppears)
+     {
+       IsFirstTimeAppears = false;
+       OnFirstTimeAppears();
+     }
+   }
+
+   void OnFirstTimeAppears()
+   {
+     LogVirtualBaseMethod();
+   }
+
+   @override void OnDisappearing()
+   {
+     LogVirtualBaseMethod();
+     IsPageVisable = false;
+   }
+
+   @override
+   void PausedToBackground()
+   {
+     // TODO: implement PausedToBackground
+   }
+
+   @override
+   void ResumedFromBackground()
+   {
+     // TODO: implement ResumedFromBackground
+   }
 
   Future<void> OnBackCommand(Object? param)
   {
@@ -208,5 +256,7 @@ class PageViewModel extends NavigatingBaseViewModel
        loggingService.Value.TrackError(error, stack);
      }
    }
+
+
 
 }

@@ -3,6 +3,6 @@ abstract interface class IPageLifecycleAware
   void OnAppearing();
   void OnDisappearing();
 
-  void ResumedFromBackground();
-  void PausedToBackground();
+  void ResumedFromBackground(Object? arg);
+  void PausedToBackground(Object? arg);
 }
