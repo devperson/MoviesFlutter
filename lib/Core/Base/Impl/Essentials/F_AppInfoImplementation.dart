@@ -18,7 +18,6 @@ class F_AppInfoImplementation with LoggableService implements IAppInfo
   F_AppInfoImplementation()
   {
     InitSpecificlogger(SpecificLoggingKeys.LogEssentialServices);
-    unawaited(InitializeAsync());
   }
 
 

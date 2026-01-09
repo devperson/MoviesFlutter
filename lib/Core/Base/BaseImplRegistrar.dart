@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:get/get.dart';
+import 'package:movies_flutter/Core/Abstractions/Diagnostics/IAppLogExporter.dart';
 import 'package:movies_flutter/Core/Abstractions/Diagnostics/IErrorTrackingService.dart';
 import 'package:movies_flutter/Core/Abstractions/Diagnostics/IFileLogger.dart';
 import 'package:movies_flutter/Core/Abstractions/Diagnostics/IPlatformOutput.dart';
@@ -29,6 +30,7 @@ import '../Abstractions/Essentials/IShare.dart';
 import '../Abstractions/Messaging/SimpleMessagingCenter.dart';
 import '../Abstractions/UI/IAlertDialogService.dart';
 import 'Impl/Diagnostic/F_ErrorTrackingService.dart';
+import 'Impl/Diagnostic/F_LogExporter.dart';
 import 'Impl/Diagnostic/F_LoggingService.dart';
 import 'Impl/Diagnostic/F_PlatformOutput.dart';
 import 'Impl/Essentials/F_AppInfoImplementation.dart';
@@ -63,6 +65,8 @@ class BaseImplRegistrar
       await logger.InitAsync();
       Get.put<ILoggingService>(logger, permanent: true);
 
+      Get.lazyPut<IAppLogExporter>(()=>F_LogExporter(), fenix: true);
+
       Get.put<IPageNavigationService>(F_PageNavigationService(), permanent: true);
       Get.lazyPut<IZipService>(() => F_ZipService(), fenix: true);
       Get.put<IMessagesCenter>(SimpleMessageCenter(), permanent: true);
@@ -72,8 +76,14 @@ class BaseImplRegistrar
       Get.lazyPut<ISnackbarService>(() => F_SnackbarService(), fenix: true);
       Get.put<IPageNavigationService>(F_PageNavigationService(), permanent: true);
       //Essentials
-      Get.put<IAppInfo>(F_AppInfoImplementation(), permanent: true);
-      Get.put<IDeviceInfo>(F_DeviceInfoImplementation(), permanent: true);
+
+      final appInfo = F_AppInfoImplementation();
+      await appInfo.InitializeAsync();
+      Get.put<IAppInfo>(appInfo, permanent: true);
+
+      final deviceInfo = F_DeviceInfoImplementation();
+      await deviceInfo.InitializeAsync();
+      Get.put<IDeviceInfo>(deviceInfo, permanent: true);
       Get.lazyPut<IMediaPickerService>(() => F_MediaPickerService(), fenix: true);
 
       Get.put<IDisplay>(F_DisplayImplementation(), permanent: true);

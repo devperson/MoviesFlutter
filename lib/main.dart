@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:movies_flutter/App/Controllers/MoviesPageViewModel.dart';
 import 'package:movies_flutter/Core/Abstractions/Diagnostics/IPlatformOutput.dart';
+import 'package:movies_flutter/Core/Abstractions/Essentials/Device/IDeviceInfo.dart';
+import 'package:movies_flutter/Core/Abstractions/Essentials/IAppInfo.dart';
 import 'package:movies_flutter/Core/Abstractions/Essentials/IPreferences.dart';
 import 'package:movies_flutter/Core/Abstractions/Navigation/IPageNavigationService.dart';
 import 'package:movies_flutter/Core/Base/Impl/Navigation/F_PageNavigationService.dart';
@@ -46,11 +48,13 @@ class MyApp extends StatelessWidget
   @override
   Widget build(BuildContext context)
   {
+    this.LogAppDeviceInfo();
+    
     //Resove initial page from preferences
     final pref = ContainerLocator.Resolve<IPreferences>();
     final isLoggedIn = pref.Get(LoginPageViewModel.IsLoggedIn, false);
     final initialPage = isLoggedIn ? MoviesPageViewModel.Name : LoginPageViewModel.Name;
-
+    
     // The initial page is set by GetX, not by NavService.
     // NavService needs to be informed about the initial page.
     // All subsequent navigation is handled by NavService.
@@ -73,5 +77,38 @@ class MyApp extends StatelessWidget
                           centerTitle: true,),
                        scaffoldBackgroundColor: ColorConstants.BgColor,),
     );
+  }
+
+  void LogAppDeviceInfo() 
+  {
+    final loggingService = ContainerLocator.Resolve<ILoggingService>();
+    final appInfo = ContainerLocator.Resolve<IAppInfo>();
+    final deviceService = ContainerLocator.Resolve<IDeviceInfo>();
+    loggingService.Log("####################################################- APPLICATION STARTED -####################################################");
+
+    //print date
+    final now = DateTime.now();
+    final offset = now.timeZoneOffset;
+    final sign = offset.isNegative ? '-' : '+';
+    final hh = offset.inHours.abs().toString().padLeft(2, '0');
+    final mm = (offset.inMinutes.abs() % 60).toString().padLeft(2, '0');
+
+    loggingService.Header('''*********************************************************
+                    DATE: ${now.toString().split('.').first} $sign$hh:$mm
+     *********************************************************\n'''); //should print something like DATE: 01/09/2026 16:05:32 +05:00
+
+    loggingService.Header('''*********************************************************
+                    APP BUILD VERSION: ${appInfo.VersionString} (${appInfo.BuildString}) 
+     *********************************************************\n''');
+
+    loggingService.Header('''*********************************************************
+                    DEVICE NAME: ${deviceService.Name}
+                    PLATFORM: ${deviceService.Platform}
+                    OS VERSION: ${deviceService.VersionString}
+                    MODEL: ${deviceService.Model}
+                    MANUFACTURER: ${deviceService.Manufacturer}
+                    IDIOM: ${deviceService.Idiom}
+                    DEVICE TYPE: ${deviceService.DeviceType}      
+     *********************************************************\n''');
   }
 }

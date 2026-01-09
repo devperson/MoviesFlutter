@@ -26,7 +26,6 @@ class F_DeviceInfoImplementation with LoggableService implements IDeviceInfo
   F_DeviceInfoImplementation()
   {
     InitSpecificlogger(SpecificLoggingKeys.LogEssentialServices);
-    unawaited(InitializeAsync());
   }
 
   // ----------------------------------------------------------

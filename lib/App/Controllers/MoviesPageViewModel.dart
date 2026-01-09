@@ -5,7 +5,6 @@ import 'package:movies_flutter/Core/Base/Impl/Utils/LazyInjected.dart';
 
 import '../../Core/Abstractions/Navigation/NavigationParameters.dart';
 import '../../Core/Base/MVVM/Helpers/AsyncCommand.dart';
-import '../../Core/Base/MVVM/Helpers/ObservableCollection.dart';
 import '../../Core/Base/MVVM/ViewModels/PageViewModel.dart';
 import '../Utils/Events/MovieCellItemUpdatedEvent.dart';
 import 'AddEditMoviePageViewModel.dart';
