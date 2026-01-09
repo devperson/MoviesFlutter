@@ -1,12 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:movies_flutter/Core/Abstractions/Essentials/IMediaPickerService.dart';
+import 'package:flutter/cupertino.dart';
 
-import '../../Core/Abstractions/AppServices/Some.dart';
-import '../../Core/Abstractions/Navigation/NavigationParameters.dart';
+import '../../Core/Abstractions/Essentials/IMediaPickerService.dart';
+import '../../Core/Abstractions/MVVM/NavigationParameters.dart';
+import '../../Core/Base/Impl/MVVM/Helpers/AsyncCommand.dart';
+import '../../Core/Base/Impl/MVVM/ViewModels/PageViewModel.dart';
 import '../../Core/Base/Impl/Utils/LazyInjected.dart';
-import '../../Core/Base/MVVM/Helpers/AsyncCommand.dart';
-import '../../Core/Base/MVVM/ViewModels/PageViewModel.dart';
 import '../MockData.dart';
 import 'MoviesPageViewModel.dart';
 

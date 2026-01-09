@@ -5,15 +5,13 @@ import 'package:get/get.dart';
 import 'package:movies_flutter/App/Controllers/MoviesPageViewModel.dart';
 import 'package:movies_flutter/Core/Abstractions/Diagnostics/IPlatformOutput.dart';
 import 'package:movies_flutter/Core/Abstractions/Essentials/IPreferences.dart';
-import 'package:movies_flutter/Core/Abstractions/Navigation/IPageNavigationService.dart';
-import 'package:movies_flutter/Core/Base/Impl/Navigation/F_PageNavigationService.dart';
 import 'package:movies_flutter/Core/Base/Impl/Utils/ContainerLocator.dart';
 
 import 'App/Controllers/LoginPageViewModel.dart';
 import 'App/Utils/Bootstrap/DiRegistration.dart';
 import 'App/Utils/Bootstrap/PageRegistrar.dart';
-import 'Core/Abstractions/Diagnostics/ILoggingService.dart';
-import 'Core/Base/BaseImplRegistrar.dart';
+import 'Core/Abstractions/MVVM/IPageNavigationService.dart';
+import 'Core/Base/Impl/MVVM/Navigation/F_PageNavigationService.dart';
 import 'Core/Base/Impl/Utils/ColorConstants.dart';
 
 void main()

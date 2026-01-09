@@ -2,13 +2,13 @@
 import 'dart:async';
 
 import 'package:get/get.dart';
-
-import '../../../Abstractions/Diagnostics/ILoggingService.dart';
-import '../../../Abstractions/Navigation/IPageNavigationService.dart';
-import '../../../Abstractions/Navigation/NavigationParameters.dart';
-import '../../../Abstractions/Navigation/UrlNavigationHelper.dart';
+import '../../../../Abstractions/Diagnostics/ILoggingService.dart';
+import '../../../../Abstractions/MVVM/IPageNavigationService.dart';
+import '../../../../Abstractions/MVVM/NavigationParameters.dart';
+import '../../../../Abstractions/MVVM/UrlNavigationHelper.dart';
+import '../../Diagnostic/LoggableService.dart';
 import '../../MVVM/ViewModels/PageViewModel.dart';
-import '../Diagnostic/LoggableService.dart';
+
 
 
 class F_PageNavigationService with LoggableService implements IPageNavigationService

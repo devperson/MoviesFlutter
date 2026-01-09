@@ -1,12 +1,11 @@
 
 import 'package:get/get.dart';
 
-import '../../../Abstractions/Navigation/IPageNavigationService.dart';
-import '../../Impl/Navigation/F_PageNavigationService.dart';
-import '../../Impl/Utils/LazyInjected.dart';
-import '../../../Abstractions/Navigation/NavigationParameters.dart';
-import '../../Impl/Diagnostic/LoggableService.dart';
-import 'NavigatingBaseViewModel.dart';
+import '../../../../Abstractions/MVVM/IPageNavigationService.dart';
+import '../../../../Abstractions/MVVM/NavigationParameters.dart';
+import '../../Diagnostic/LoggableService.dart';
+import '../../Utils/LazyInjected.dart';
+import '../Navigation/F_PageNavigationService.dart';
 import 'PageViewModel.dart';
 
 
@@ -16,13 +15,13 @@ class BaseViewModel extends GetxController with LoggableService
 
    void Initialize(NavigationParameters parameters)
    {
-      this.LogVirtualBaseMethod("Initialize(...)");
+      this.LogVirtualBaseMethod();
      //Initialized.Invoke();
    }
 
    void Destroy()
    {
-     this.LogVirtualBaseMethod("Destroy()");
+     this.LogVirtualBaseMethod();
      //OnDestroyed.Invoke();
    }
 
@@ -57,8 +56,5 @@ class BaseViewModel extends GetxController with LoggableService
       this.Destroy();
     }
 
-   void LogVirtualBaseMethod(String methodName)
-   {
-     this.loggingService.Value.Log('${runtimeType}.$methodName (from base)');
-   }
+
 }

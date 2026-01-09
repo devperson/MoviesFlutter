@@ -1,9 +1,8 @@
 import 'package:movies_flutter/Core/Abstractions/Essentials/IPreferences.dart';
-import 'package:movies_flutter/Core/Base/MVVM/Helpers/AsyncCommand.dart';
-
-import '../../Core/Abstractions/Navigation/NavigationParameters.dart';
+import '../../Core/Abstractions/MVVM/NavigationParameters.dart';
+import '../../Core/Base/Impl/MVVM/Helpers/AsyncCommand.dart';
+import '../../Core/Base/Impl/MVVM/ViewModels/PageViewModel.dart';
 import '../../Core/Base/Impl/Utils/LazyInjected.dart';
-import '../../Core/Base/MVVM/ViewModels/PageViewModel.dart';
 import 'MoviesPageViewModel.dart';
 
 
@@ -22,7 +21,6 @@ class LoginPageViewModel extends PageViewModel
     @override
     void Initialize(NavigationParameters parameters)
     {
-      //LogMethodStart("Initialize");
       super.Initialize(parameters);
 
       if(parameters.ContainsKey(LogoutRequest))
@@ -33,9 +31,9 @@ class LoginPageViewModel extends PageViewModel
 
     Future<void> OnSubmitCommand(Object? obj) async
     {
-        LogMethodStart("OnSubmitCommand");
+        LogMethodStart();
         preferenceServices.Value.Set(IsLoggedIn, true);
-        await this.Navigate("/"+MoviesPageViewModel.Name);
+        await this.Navigate("/${nameof<MoviesPageViewModel>()}");
     }
 
     @override

@@ -2,9 +2,9 @@
 
 import 'package:movies_flutter/App/MockData.dart';
 
-import '../../Core/Abstractions/Navigation/NavigationParameters.dart';
-import '../../Core/Base/MVVM/Helpers/AsyncCommand.dart';
-import '../../Core/Base/MVVM/ViewModels/PageViewModel.dart';
+import '../../Core/Abstractions/MVVM/NavigationParameters.dart';
+import '../../Core/Base/Impl/MVVM/Helpers/AsyncCommand.dart';
+import '../../Core/Base/Impl/MVVM/ViewModels/PageViewModel.dart';
 import '../Utils/Events/MovieCellItemUpdatedEvent.dart';
 import 'AddEditMoviePageViewModel.dart';
 import 'MoviesPageViewModel.dart';

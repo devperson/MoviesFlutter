@@ -1,17 +1,17 @@
 import 'package:get/get.dart';
 import 'package:movies_flutter/Core/Abstractions/Messaging/IMessagesCenter.dart';
-import 'package:movies_flutter/Core/Abstractions/Navigation/NavigationParameters.dart';
 import 'package:movies_flutter/Core/Abstractions/UI/IAlertDialogService.dart';
 import 'package:movies_flutter/Core/Abstractions/UI/ISnackbarService.dart';
-import 'package:movies_flutter/Core/Base/MVVM/ViewModels/NavigatingBaseViewModel.dart';
 
-import '../../../Abstractions/REST/Enums.dart';
-import '../../../Abstractions/REST/Exceptions/AuthExpiredException.dart';
-import '../../../Abstractions/REST/Exceptions/HttpConnectionException.dart';
-import '../../../Abstractions/REST/Exceptions/HttpRequestException.dart';
-import '../../../Abstractions/REST/Exceptions/ServerApiException.dart';
-import '../../Impl/Utils/LazyInjected.dart';
+import '../../../../Abstractions/MVVM/NavigationParameters.dart';
+import '../../../../Abstractions/REST/Enums.dart';
+import '../../../../Abstractions/REST/Exceptions/AuthExpiredException.dart';
+import '../../../../Abstractions/REST/Exceptions/HttpConnectionException.dart';
+import '../../../../Abstractions/REST/Exceptions/HttpRequestException.dart';
+import '../../../../Abstractions/REST/Exceptions/ServerApiException.dart';
+import '../../Utils/LazyInjected.dart';
 import '../Helpers/AsyncCommand.dart';
+import 'NavigatingBaseViewModel.dart';
 
 class PageViewModel extends NavigatingBaseViewModel
 {

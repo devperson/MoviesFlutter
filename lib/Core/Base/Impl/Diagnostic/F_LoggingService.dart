@@ -259,7 +259,7 @@ class F_LoggingService implements ILoggingService
     {
       final itemsCount = 10;
 
-      final argsString = args?.entries.map((e) {
+      var argsString = args?.entries.map((e) {
         final value = e.value;
 
         if (value == null) {
@@ -273,6 +273,9 @@ class F_LoggingService implements ILoggingService
 
         return '${e.key}: $value';
       }).join(', ');
+
+      if(argsString == null)
+        argsString = '';
 
       return '$className.$funcName($argsString)';
     }

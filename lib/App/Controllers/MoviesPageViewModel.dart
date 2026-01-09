@@ -1,14 +1,12 @@
-import 'package:movies_flutter/App/Controllers/LoginPageViewModel.dart';
-import 'package:movies_flutter/App/MockData.dart';
-import 'package:movies_flutter/Core/Abstractions/Diagnostics/IAppLogExporter.dart';
-import 'package:movies_flutter/Core/Base/Impl/Utils/LazyInjected.dart';
-
-import '../../Core/Abstractions/Navigation/NavigationParameters.dart';
-import '../../Core/Base/MVVM/Helpers/AsyncCommand.dart';
-import '../../Core/Base/MVVM/Helpers/ObservableCollection.dart';
-import '../../Core/Base/MVVM/ViewModels/PageViewModel.dart';
+import '../../Core/Abstractions/Diagnostics/IAppLogExporter.dart';
+import '../../Core/Abstractions/MVVM/NavigationParameters.dart';
+import '../../Core/Base/Impl/MVVM/Helpers/AsyncCommand.dart';
+import '../../Core/Base/Impl/MVVM/ViewModels/PageViewModel.dart';
+import '../../Core/Base/Impl/Utils/LazyInjected.dart';
+import '../MockData.dart';
 import '../Utils/Events/MovieCellItemUpdatedEvent.dart';
 import 'AddEditMoviePageViewModel.dart';
+import 'LoginPageViewModel.dart';
 import 'MovieDetailPageViewModel.dart';
 
 class MoviesPageViewModel extends PageViewModel

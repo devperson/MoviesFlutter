@@ -1,5 +1,5 @@
 
-import '../../../Abstractions/Navigation/NavigationParameters.dart';
+import '../../../../Abstractions/MVVM/NavigationParameters.dart';
 import 'BaseViewModel.dart';
 
 class NavigatingBaseViewModel extends BaseViewModel

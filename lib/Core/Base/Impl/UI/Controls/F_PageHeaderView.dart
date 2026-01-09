@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movies_flutter/Core/Base/Impl/Utils/NumConstants.dart';
-
-import '../../../MVVM/ViewModels/PageViewModel.dart';
+import '../../MVVM/ViewModels/PageViewModel.dart';
 import 'F_CircleIconButton.dart';
 
 

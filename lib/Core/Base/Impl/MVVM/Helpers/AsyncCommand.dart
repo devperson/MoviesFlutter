@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import '../../../Abstractions/Common/Event.dart';
-import '../../../Abstractions/Diagnostics/ILoggingService.dart';
-import '../../Impl/Utils/LazyInjected.dart';
+import '../../../../Abstractions/Common/Event.dart';
+import '../../../../Abstractions/Diagnostics/ILoggingService.dart';
+import '../../Utils/LazyInjected.dart';
 import 'ClickUtil.dart';
 
 typedef AsyncExecuteFunc = Future<void> Function(Object? param);
