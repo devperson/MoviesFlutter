@@ -29,8 +29,8 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
        appResumedEvent = eventAggregator.Value.GetOrCreateEvent(()=>AppResumedEvent());
        appPausedEvent = eventAggregator.Value.GetOrCreateEvent(()=>AppPausedEvent());
        
-       appResumedEvent.Subscribe((_) => ResumedFromBackground());
-       appResumedEvent.Subscribe((_) => PausedToBackground());
+       appResumedEvent.Subscribe(ResumedFromBackground);
+       appPausedEvent.Subscribe(PausedToBackground);
    }
 
    String get vmName => runtimeType.toString();
@@ -66,16 +66,25 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
    }
 
    @override
-   void PausedToBackground()
+   void PausedToBackground(Object? arg)
    {
      // TODO: implement PausedToBackground
    }
 
    @override
-   void ResumedFromBackground()
+   void ResumedFromBackground(Object? arg)
    {
      // TODO: implement ResumedFromBackground
    }
+
+   @override
+  void Destroy()
+  {
+    super.Destroy();
+
+    appResumedEvent.Unsubscribe(ResumedFromBackground);
+    appPausedEvent.Unsubscribe(PausedToBackground);
+  }
 
   Future<void> OnBackCommand(Object? param)
   {
