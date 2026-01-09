@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:movies_flutter/Core/Abstractions/Messaging/IMessagesCenter.dart';
 import 'package:movies_flutter/Core/Abstractions/UI/IAlertDialogService.dart';
@@ -23,14 +24,17 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
    final eventAggregator = LazyInjected<IMessagesCenter>();
    late final AppResumedEvent appResumedEvent;
    late final AppPausedEvent appPausedEvent;
+   late final AppLifecycleListener _listener;
 
    PageViewModel()
    {
-       appResumedEvent = eventAggregator.Value.GetOrCreateEvent(()=>AppResumedEvent());
-       appPausedEvent = eventAggregator.Value.GetOrCreateEvent(()=>AppPausedEvent());
-       
-       appResumedEvent.Subscribe(ResumedFromBackground);
-       appPausedEvent.Subscribe(PausedToBackground);
+       _listener = AppLifecycleListener(
+         // Triggered when app moves to foreground (WillEnterForeground / onResume)
+         onResume: () => ResumedFromBackground(),
+
+         // Triggered when app is backgrounded (DidEnterBackground / onPause)
+         onPause: () => PausedToBackground(),
+       );
    }
 
    String get vmName => runtimeType.toString();
@@ -66,15 +70,15 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
    }
 
    @override
-   void PausedToBackground(Object? arg)
+   void PausedToBackground()
    {
-     // TODO: implement PausedToBackground
+     LogVirtualBaseMethod();
    }
 
    @override
-   void ResumedFromBackground(Object? arg)
+   void ResumedFromBackground()
    {
-     // TODO: implement ResumedFromBackground
+     LogVirtualBaseMethod();
    }
 
    @override
@@ -82,8 +86,7 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
   {
     super.Destroy();
 
-    appResumedEvent.Unsubscribe(ResumedFromBackground);
-    appPausedEvent.Unsubscribe(PausedToBackground);
+    _listener.dispose();
   }
 
   Future<void> OnBackCommand(Object? param)
