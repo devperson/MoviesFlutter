@@ -44,6 +44,19 @@ mixin LoggableService
         }
     }
 
+    void SpecificLogMessage(String message)
+    {
+      try
+      {
+        final className = this.runtimeType.toString();
+        specificLogger.Log("$className.$message");
+      }
+      catch (ex, stackTrace)
+      {
+        consoleImpl.PrintException(ex, stackTrace);
+      }
+    }
+
     void SpecificLogMethodStart(String methodName, [Map<String, Object?>? args])
     {
         try
