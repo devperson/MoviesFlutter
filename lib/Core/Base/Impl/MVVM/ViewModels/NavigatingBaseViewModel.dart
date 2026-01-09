@@ -43,7 +43,7 @@ class NavigatingBaseViewModel extends BaseViewModel
   {
     // try
     // {
-      LogVirtualBaseMethod('NavigateToRoot()');
+      LogVirtualBaseMethod("NavigateToRoot()");
 
       await navigationService.Value.NavigateToRoot(parameters: parameters);
     // }
@@ -74,7 +74,7 @@ class NavigatingBaseViewModel extends BaseViewModel
 
   Future<void> NavigateBack([NavigationParameters? parameters]) async
   {
-    LogVirtualBaseMethod('NavigateBack()');
+    LogVirtualBaseMethod();
     await Navigate('../', parameters);
   }
 
