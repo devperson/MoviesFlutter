@@ -18,14 +18,14 @@ class BaseViewModel extends GetxController with LoggableService implements IDest
    @override
    void Initialize(NavigationParameters parameters)
    {
-      this.LogVirtualBaseMethod();
+      this.LogVirtualBaseMethod("Initialize()");
      //Initialized.Invoke();
    }
 
    @override
    void Destroy()
    {
-     this.LogVirtualBaseMethod();
+     this.LogVirtualBaseMethod("Destroy()");
      //OnDestroyed.Invoke();
    }
 

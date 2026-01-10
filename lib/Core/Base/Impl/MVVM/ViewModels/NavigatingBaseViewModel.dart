@@ -46,7 +46,7 @@ class NavigatingBaseViewModel extends BaseViewModel implements INavigationAware
   {
     try
     {
-      LogVirtualBaseMethod('NavigateToRoot()');
+      LogVirtualBaseMethod("NavigateToRoot()");
 
       await navigationService.Value.NavigateToRoot(parameters: parameters);
     }

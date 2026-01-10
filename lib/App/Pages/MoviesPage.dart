@@ -13,7 +13,8 @@ class MoviesPage extends StatelessWidget {
   const MoviesPage({super.key});
 
   // Use a final key for the scaffold
-  static final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  static final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<
+      ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -46,16 +47,25 @@ class MoviesPage extends StatelessWidget {
                 },
               ),
             ),
-            body: AnimatedListView<MovieItemModel>(
-              items: controller.Movies,
-              isSameItem: (oldItem, newItem) => oldItem.id == newItem.id,
-              itemBuilder: (context, index) {
-                return _buildMovieCell(index, controller);
-              },
-              enterTransition: [FadeIn(), ScaleIn()], // Added const
-              exitTransition: [SlideInLeft()], // Added const
-              insertDuration: const Duration(milliseconds: 300),
-              removeDuration: const Duration(milliseconds: 300),
+            body: RefreshIndicator(
+                onRefresh: () async
+                {
+                  await Future.delayed(const Duration(seconds: 4));
+                },
+                child: AnimatedListView<MovieItemModel>(
+                  items: controller.Movies,
+                  isSameItem: (oldItem, newItem) => oldItem.id == newItem.id,
+                  itemBuilder: (context, index) {
+                    return _buildMovieCell(index, controller);
+                  },
+                  physics: const AlwaysScrollableScrollPhysics(), // Forces the list to be scrollable even when content is short or empty, so pull-to-refresh (RefreshIndicator) can always be triggered.
+                  enterTransition: [FadeIn(), ScaleIn()],
+                  // Added const
+                  exitTransition: [SlideInLeft()],
+                  // Added const
+                  insertDuration: const Duration(milliseconds: 300),
+                  removeDuration: const Duration(milliseconds: 300),
+                )
             ),
           );
         });

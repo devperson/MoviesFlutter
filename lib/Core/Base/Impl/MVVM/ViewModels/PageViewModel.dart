@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:movies_flutter/Core/Abstractions/AppServices/Some.dart';
 import 'package:movies_flutter/Core/Abstractions/Common/AppException.dart';
@@ -5,16 +6,18 @@ import 'package:movies_flutter/Core/Abstractions/Messaging/IMessagesCenter.dart'
 import 'package:movies_flutter/Core/Abstractions/UI/IAlertDialogService.dart';
 import 'package:movies_flutter/Core/Abstractions/UI/ISnackbarService.dart';
 
+
 import '../../../../Abstractions/MVVM/IPageLifecycleAware.dart';
 import '../../../../Abstractions/MVVM/NavigationParameters.dart';
+import '../../../../Abstractions/Messaging/IMessagesCenter.dart';
 import '../../../../Abstractions/REST/Enums.dart';
 import '../../../../Abstractions/REST/Exceptions/AuthExpiredException.dart';
 import '../../../../Abstractions/REST/Exceptions/HttpConnectionException.dart';
 import '../../../../Abstractions/REST/Exceptions/HttpRequestException.dart';
 import '../../../../Abstractions/REST/Exceptions/ServerApiException.dart';
+import '../../../../Abstractions/UI/IAlertDialogService.dart';
+import '../../../../Abstractions/UI/ISnackbarService.dart';
 import '../../Utils/LazyInjected.dart';
-import '../Events/AppPausedEvent.dart';
-import '../Events/AppResumedEvent.dart';
 import '../Helpers/AsyncCommand.dart';
 import 'NavigatingBaseViewModel.dart';
 
@@ -23,16 +26,18 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
    final snackbarService = LazyInjected<ISnackbarService>();
    final alertService = LazyInjected<IAlertDialogService>();
    final eventAggregator = LazyInjected<IMessagesCenter>();
-   late final AppResumedEvent appResumedEvent;
-   late final AppPausedEvent appPausedEvent;
+
+   late final AppLifecycleListener _listener;
 
    PageViewModel()
    {
-       appResumedEvent = eventAggregator.Value.GetOrCreateEvent(()=>AppResumedEvent());
-       appPausedEvent = eventAggregator.Value.GetOrCreateEvent(()=>AppPausedEvent());
-       
-       appResumedEvent.Subscribe(ResumedFromBackground);
-       appPausedEvent.Subscribe(PausedToBackground);
+       _listener = AppLifecycleListener(
+         // Triggered when app moves to foreground (WillEnterForeground / onResume)
+         onResume: () => ResumedFromBackground(),
+
+         // Triggered when app is backgrounded (DidEnterBackground / onPause)
+         onPause: () => PausedToBackground(),
+       );
    }
 
    String get vmName => runtimeType.toString();
@@ -46,7 +51,7 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
 
    @override void OnAppearing()
    {
-     LogVirtualBaseMethod();
+     LogVirtualBaseMethod("OnAppearing()");
      IsPageVisable = true;
 
      if (IsFirstTimeAppears)
@@ -58,25 +63,25 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
 
    void OnFirstTimeAppears()
    {
-     LogVirtualBaseMethod();
+     LogVirtualBaseMethod("OnFirstTimeAppears()");
    }
 
    @override void OnDisappearing()
    {
-     LogVirtualBaseMethod();
+     LogVirtualBaseMethod("OnDisappearing()");
      IsPageVisable = false;
    }
 
    @override
-   void PausedToBackground(Object? arg)
+   void PausedToBackground()
    {
-     LogVirtualBaseMethod();
+     LogVirtualBaseMethod("PausedToBackground()");
    }
 
    @override
-   void ResumedFromBackground(Object? arg)
+   void ResumedFromBackground()
    {
-     LogVirtualBaseMethod();
+     LogVirtualBaseMethod("ResumedFromBackground()");
    }
 
    @override
@@ -84,8 +89,7 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
   {
     super.Destroy();
 
-    appResumedEvent.Unsubscribe(ResumedFromBackground);
-    appPausedEvent.Unsubscribe(PausedToBackground);
+    _listener.dispose();
   }
 
   Future<void> OnBackCommand(Object? param)
@@ -112,7 +116,7 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
    {
      try
      {
-       LogMethodStart();
+       LogMethodStart("ShowLoading()");
        BusyLoading.value = true;
 
        // Run in background isolate queue
@@ -132,7 +136,7 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
    {
      try
      {
-       LogMethodStart();
+       LogMethodStart("ShowLoadingWithResult()");
        BusyLoading.value = SetIsBusy;
 
        final result = await Future(() async {
@@ -176,7 +180,7 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
 
    Future<void> ShowLoadingAndHandleErrorInBackground(Future<void> Function() BackgroundActionAsync, {bool SetIsBusy = true}) async
    {
-     LogMethodStart();
+     LogMethodStart("ShowLoadingAndHandleErrorInBackground()");
 
      try
      {
@@ -198,7 +202,7 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
 
    Future<T?> GetWithLoadingAndHandleError<T>(Future<T> Function() backgroundActionAsync, {bool setIsBusy = true}) async
    {
-     LogMethodStart();
+     LogMethodStart("GetWithLoadingAndHandleError()");
 
      try
      {
@@ -299,7 +303,4 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
        loggingService.Value.TrackError(error, stack);
      }
    }
-
-
-
 }
