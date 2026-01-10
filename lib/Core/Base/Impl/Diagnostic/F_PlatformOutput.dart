@@ -25,6 +25,7 @@ class F_PlatformOutput implements IPlatformOutput
         noBoxingByDefault: true
       ),
     );
+
     if(!IsUnitTest && !kIsWeb)
     {
       SimpleNativeLogger.init();
@@ -95,6 +96,9 @@ class F_PlatformOutput implements IPlatformOutput
   ///
   void _print(String message, { bool red = false, yellow = false, blue= false})
   {
+    // In Release builds, use a native logger because `print()`-based logging
+    // is unreliable and may be stripped by the compiler.
+
     if(blue)
       {
         if(!kReleaseMode)

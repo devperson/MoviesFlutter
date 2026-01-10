@@ -9,20 +9,10 @@ mixin LoggableService
     late ILogging specificLogger;
     bool specificLoggerInitialized = false;
 
-    // void LogMethodStartAuto([Map<String, Object?>? args])
-    // {
-    //   final calledMethodName = _getPreviousMethodName();
-    //   LogMethodStart(calledMethodName, args);
-    // }
-
     void LogMethodStart(String methodName, {Map<String, Object?>? args})
     {
         try
         {
-          // if(methodName == null)
-          //   {
-          //     methodName = _getPreviousMethodName();
-          //   }
             final className = this.runtimeType.toString();
             loggingService.Value.LogMethodStarted(className, methodName, args);
         }
@@ -45,11 +35,8 @@ mixin LoggableService
       }
     }
 
-    void LogVirtualBaseMethod([String? methodName = null])
+    void LogVirtualBaseMethod(String methodName)
     {
-      if(methodName == null)
-        methodName = _getPreviousMethodName();
-
       final className = this.runtimeType.toString();
       this.loggingService.Value.LogMethodStarted2('$className.$methodName() (from base)');
     }
@@ -104,6 +91,15 @@ mixin LoggableService
 
     String nameof<T>() => T.toString();
 
+
+    // **************************************
+// * ⚠️ WARNING:
+// * _getPreviousMethodName() and _getMethodName()
+// * are unreliable in Release builds.
+// * Due to compiler optimizations (inlining,
+// * tree shaking, symbol stripping), these
+// * methods may return incorrect method names.
+// **************************************
 
     /// Returns the name of the *previous* (calling) method by parsing the current StackTrace.
     ///

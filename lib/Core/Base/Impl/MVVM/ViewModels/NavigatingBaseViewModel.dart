@@ -13,13 +13,13 @@ class NavigatingBaseViewModel extends BaseViewModel implements INavigationAware
   @override
   void OnNavigatedTo(NavigationParameters parameters)
   {
-      this.LogVirtualBaseMethod();
+      this.LogVirtualBaseMethod("OnNavigatedTo");
   }
 
   @override
   void OnNavigatedFrom()
   {
-     this.LogVirtualBaseMethod();
+     this.LogVirtualBaseMethod("OnNavigatedFrom");
   }
 
   // NavigatingBaseViewModel? GetCurrentPageViewModel()
@@ -32,7 +32,7 @@ class NavigatingBaseViewModel extends BaseViewModel implements INavigationAware
   {
     try
     {
-      LogVirtualBaseMethod('Navigate(url=$url)');
+      LogVirtualBaseMethod('Navigate');
 
       await navigationService.Value.Navigate(url, parameters: parameters);
     }
@@ -46,7 +46,7 @@ class NavigatingBaseViewModel extends BaseViewModel implements INavigationAware
   {
     try
     {
-      LogVirtualBaseMethod("NavigateToRoot()");
+      LogVirtualBaseMethod("NavigateToRoot");
 
       await navigationService.Value.NavigateToRoot(parameters: parameters);
     }
@@ -58,7 +58,7 @@ class NavigatingBaseViewModel extends BaseViewModel implements INavigationAware
 
   Future<void> SkipAndNavigate(int skipCount, String route, [NavigationParameters? parameters]) async
   {
-    LogVirtualBaseMethod('SkipAndNavigate(skipCount=$skipCount, route=$route)',);
+    LogVirtualBaseMethod('SkipAndNavigate',);
 
     final skip = '../' * skipCount;
     final newRoute = '$skip$route';
@@ -68,7 +68,7 @@ class NavigatingBaseViewModel extends BaseViewModel implements INavigationAware
 
   Future<void> NavigateAndMakeRoot(String name, [NavigationParameters? parameters]) async
   {
-    LogVirtualBaseMethod('NavigateAndMakeRoot(name=$name)');
+    LogVirtualBaseMethod('NavigateAndMakeRoot');
 
     final newRoot = '/$name';
 
@@ -77,13 +77,13 @@ class NavigatingBaseViewModel extends BaseViewModel implements INavigationAware
 
   Future<void> NavigateBack([NavigationParameters? parameters]) async
   {
-    LogVirtualBaseMethod();
+    LogVirtualBaseMethod("NavigateBack");
     await Navigate('../', parameters);
   }
 
   Future<void> BackToRootAndNavigate(String name, [NavigationParameters? parameters]) async
   {
-    LogVirtualBaseMethod('BackToRootAndNavigate(name=$name)');
+    LogVirtualBaseMethod('BackToRootAndNavigate');
 
     final navStack = navigationService.Value.GetNavStack();
 
@@ -106,7 +106,7 @@ class NavigatingBaseViewModel extends BaseViewModel implements INavigationAware
 
   T? GetParameter<T>(NavigationParameters parameters, String key,)
   {
-    LogVirtualBaseMethod('GetParameter(key=$key)');
+    LogVirtualBaseMethod('GetParameter');
 
     if (parameters.ContainsKey(key))
     {
@@ -118,7 +118,7 @@ class NavigatingBaseViewModel extends BaseViewModel implements INavigationAware
 
   void GetParameterWithSetter<T>(NavigationParameters parameters, String key, void Function(T?) setter)
   {
-    LogVirtualBaseMethod('GetParameter(key=$key, setter)');
+    LogVirtualBaseMethod('GetParameter');
 
     if (parameters.ContainsKey(key))
     {

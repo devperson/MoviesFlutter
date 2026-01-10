@@ -119,14 +119,14 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
 
   Future<void> OnBackCommand(Object? param)
   {
-    LogVirtualBaseMethod();
+    LogVirtualBaseMethod("OnBackCommand");
     return NavigateBack(NavigationParameters());
   }
 
   // this method will be called when user click system bar back in Android and swipe back gesture in iOS
    Future<void> DoDeviceBackCommand(Object? param) async
    {
-     LogVirtualBaseMethod();
+     LogVirtualBaseMethod("DoDeviceBackCommand");
 
      if (DisableDeviceBackButton)
      {
