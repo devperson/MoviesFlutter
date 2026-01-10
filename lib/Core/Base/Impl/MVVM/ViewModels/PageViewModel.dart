@@ -9,14 +9,11 @@ import 'package:movies_flutter/Core/Abstractions/UI/ISnackbarService.dart';
 
 import '../../../../Abstractions/MVVM/IPageLifecycleAware.dart';
 import '../../../../Abstractions/MVVM/NavigationParameters.dart';
-import '../../../../Abstractions/Messaging/IMessagesCenter.dart';
 import '../../../../Abstractions/REST/Enums.dart';
 import '../../../../Abstractions/REST/Exceptions/AuthExpiredException.dart';
 import '../../../../Abstractions/REST/Exceptions/HttpConnectionException.dart';
 import '../../../../Abstractions/REST/Exceptions/HttpRequestException.dart';
 import '../../../../Abstractions/REST/Exceptions/ServerApiException.dart';
-import '../../../../Abstractions/UI/IAlertDialogService.dart';
-import '../../../../Abstractions/UI/ISnackbarService.dart';
 import '../../Utils/LazyInjected.dart';
 import '../Helpers/AsyncCommand.dart';
 import 'NavigatingBaseViewModel.dart';
@@ -41,13 +38,40 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
    }
 
    String get vmName => runtimeType.toString();
-   Rx<String> Title = "".obs;
+   //Rx<String> Title = "".obs;
    late final AsyncCommand BackCommand = AsyncCommand(OnBackCommand);
    late final AsyncCommand DeviceBackCommand = AsyncCommand(DoDeviceBackCommand);
-   var BusyLoading = false.obs;
+   late final AsyncCommand RefreshCommand = AsyncCommand(OnRefreshCommand);
+
    var IsPageVisable = false;
    var IsFirstTimeAppears = true;
    var DisableDeviceBackButton = false;
+
+   String _title = "";
+   get Title => _title;
+   set Title(String value)
+   {
+     _title = value;
+     NotifyUpdate();
+   }
+
+   bool _busyLoading = false;
+   bool get BusyLoading => _busyLoading;
+   set BusyLoading(bool value)
+   {
+     _busyLoading = value;
+     NotifyUpdate();
+   }
+
+   bool _isRefreshing = false;
+   bool get IsRefreshing => _isRefreshing;
+   set IsRefreshing(bool value)
+   {
+     _isRefreshing = value;
+     NotifyUpdate();
+   }
+
+
 
    @override void OnAppearing()
    {
@@ -84,6 +108,7 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
      LogVirtualBaseMethod("ResumedFromBackground()");
    }
 
+   ///Must be called in child class when overriding
    @override
   void Destroy()
   {
@@ -112,12 +137,17 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
      await OnBackCommand(param);
    }
 
+   Future<void> OnRefreshCommand(Object? param) async
+   {
+     LogMethodStart();
+   }
+
    Future<void> ShowLoading(Future<void> Function() AsyncAction, void Function(bool)? OnComplete) async
    {
      try
      {
        LogMethodStart();
-       BusyLoading.value = true;
+       BusyLoading = true;
 
        // Run in background isolate queue
        await Future(() async {
@@ -128,7 +158,7 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
      }
      finally
      {
-       BusyLoading.value = false;
+       BusyLoading = false;
      }
    }
 
@@ -137,7 +167,7 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
      try
      {
        LogMethodStart();
-       BusyLoading.value = SetIsBusy;
+       BusyLoading = SetIsBusy;
 
        final result = await Future(() async {
          return await AsyncAction();
@@ -172,7 +202,7 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
      }
      finally
      {
-       BusyLoading.value = false;
+       BusyLoading = false;
      }
    }
 
@@ -184,7 +214,7 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
 
      try
      {
-       BusyLoading.value = SetIsBusy;
+       BusyLoading = SetIsBusy;
 
        await Future(() async {
          await BackgroundActionAsync();
@@ -196,7 +226,7 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
      }
      finally
      {
-       BusyLoading.value = false;
+       BusyLoading = false;
      }
    }
 
@@ -206,7 +236,7 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
 
      try
      {
-       BusyLoading.value = setIsBusy;
+       BusyLoading = setIsBusy;
 
        final result = await Future(() async {
          return await backgroundActionAsync();
@@ -221,7 +251,7 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
      }
      finally
      {
-       BusyLoading.value = false;
+       BusyLoading = false;
      }
    }
 

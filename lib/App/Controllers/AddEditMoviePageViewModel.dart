@@ -177,7 +177,7 @@ class AddEditMoviePageViewModel extends PageViewModel
         MovieItem.posterPath = "";
       }
 
-      this.update();
+      this.NotifyUpdate();
     }
     catch (ex, stack)
     {

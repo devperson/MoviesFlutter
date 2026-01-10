@@ -50,7 +50,7 @@ class MoviesPage extends StatelessWidget {
             body: RefreshIndicator(
                 onRefresh: () async
                 {
-                  await Future.delayed(const Duration(seconds: 4));
+                  await controller.RefreshCommand.ExecuteAsync();
                 },
                 child: AnimatedListView<MovieItemModel>(
                   items: controller.Movies,

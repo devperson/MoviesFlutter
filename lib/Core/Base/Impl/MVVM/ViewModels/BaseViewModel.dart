@@ -60,5 +60,10 @@ class BaseViewModel extends GetxController with LoggableService implements IDest
       this.Destroy();
     }
 
+    void NotifyUpdate()
+    {
+      this.update();
+    }
+
 
 }

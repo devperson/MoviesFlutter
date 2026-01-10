@@ -35,7 +35,7 @@ class MovieDetailPageViewModel extends PageViewModel
       updateCellEvent.Publish(this.MovieItem);
 
       //refresh UI
-      this.update();
+      this.NotifyUpdate();
     }
   }
 

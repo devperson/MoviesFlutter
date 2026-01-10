@@ -1,12 +1,9 @@
 import 'dart:async';
-
-import 'package:get/get.dart';
 import 'package:movies_flutter/Core/Abstractions/AppServices/IInfrastructureServices.dart';
 
 import '../../Core/Abstractions/Diagnostics/IAppLogExporter.dart';
 import '../../Core/Abstractions/MVVM/NavigationParameters.dart';
 import '../../Core/Base/Impl/Diagnostic/Extensions.dart';
-import '../../Core/Base/Impl/InfrastructureService.dart';
 import '../../Core/Base/Impl/MVVM/Helpers/AsyncCommand.dart';
 import '../../Core/Base/Impl/MVVM/ViewModels/PageViewModel.dart';
 import '../../Core/Base/Impl/Utils/LazyInjected.dart';
@@ -27,13 +24,19 @@ class MoviesPageViewModel extends PageViewModel
   final _infrastructureService = LazyInjected<IInfrastructureServices>();
   final movieService = LazyInjected<IMovieService>();
 
-
-  List<MovieItemModel> Movies = <MovieItemModel>[]; //= ObservableCollection<MovieItemModel>();
+  List<MovieItemModel> _movies = <MovieItemModel>[];
+  List<MovieItemModel> get Movies => _movies;
+  set Movies(List<MovieItemModel> value)
+  {
+    _movies = value;
+    NotifyUpdate();
+  }
   late final ItemTappedCommand = AsyncCommand(OnItemTappedCommand);
   late final AddCommand = AsyncCommand(OnAddCommand);
   late final ShareLogsCommand = AsyncCommand(OnShareLogsCommand);
   late final LogoutCommand = AsyncCommand(OnLogoutCommand);
   late final MovieCellItemUpdatedEvent movieCellUpdatedEvent;
+
   @override
   void Initialize(NavigationParameters parameters)
   {
@@ -63,7 +66,7 @@ class MoviesPageViewModel extends PageViewModel
         Movies.insert(0,newProduct!);
 
         //update ui
-        this.update();
+        this.NotifyUpdate();
       }
       else if(parameters.ContainsKey(AddEditMoviePageViewModel.REMOVE_ITEM))
       {
@@ -71,7 +74,7 @@ class MoviesPageViewModel extends PageViewModel
         Movies.remove(removedItem!);
 
         //update ui
-        this.update();
+        this.NotifyUpdate();
       }
     }
     catch (ex, stack)
@@ -81,11 +84,60 @@ class MoviesPageViewModel extends PageViewModel
   }
 
   @override
+  ResumedFromBackground()
+  {
+    unawaited(Future(() async
+    {
+      try
+      {
+        LogMethodStart();
+        await _infrastructureService.Value.Resume();
+      }
+      catch(ex, stackTrace)
+      {
+        loggingService.Value.TrackError(ex, stackTrace);
+      }
+    }));
+
+  }
+
+  @override
+  void PausedToBackground()
+  {
+    unawaited(Future(() async
+    {
+      try
+      {
+        LogMethodStart();
+        await _infrastructureService.Value.Pause();
+      }
+      catch(ex, stackTrace)
+      {
+        loggingService.Value.TrackError(ex, stackTrace);
+      }
+    }));
+  }
+
+
+  @override
   void Destroy()
   {
-    super.Destroy();
+    unawaited(Future(() async
+    {
+      try
+      {
+        super.Destroy();
 
-    movieCellUpdatedEvent.Unsubscribe(OnMovieCellUpdatedEvent);
+        LogMethodStart();
+        await _infrastructureService.Value.Stop();
+        movieCellUpdatedEvent.Unsubscribe(OnMovieCellUpdatedEvent);
+      }
+      catch(ex, stackTrace)
+      {
+        loggingService.Value.TrackError(ex, stackTrace);
+      }
+    }));
+
   }
 
   void OnMovieCellUpdatedEvent(Object? obj)
@@ -102,7 +154,7 @@ class MoviesPageViewModel extends PageViewModel
       {
         Movies[index] = movieItem;
         //update ui
-        this.update();
+        this.NotifyUpdate();
       }
     }
     catch (ex, stack)
@@ -125,6 +177,25 @@ class MoviesPageViewModel extends PageViewModel
     catch (ex, stack)
     {
       HandleUIError(ex, stack);
+    }
+  }
+
+  @override
+  Future<void> OnRefreshCommand(Object? param) async
+  {
+    try
+    {
+      IsRefreshing = true;
+
+      await _loadData(getFromServer: true, showError: true);
+    }
+    catch (ex, stackTrace)
+    {
+       loggingService.Value.TrackError(ex, stackTrace);
+    }
+    finally
+    {
+      IsRefreshing = false;
     }
   }
 
@@ -201,8 +272,7 @@ class MoviesPageViewModel extends PageViewModel
   void _setMovieList(List<MovieDto> list)
   {
     loggingService.Value.Log("${TAG}: setting data to Movies property result: ${list.ToDebugString()}");
-    Movies = list.map((e) => MovieItemModel.fromDto(e)).toList().obs;
-    this.update();
+    Movies = list.map((e) => MovieItemModel.fromDto(e)).toList();
   }
 
 
