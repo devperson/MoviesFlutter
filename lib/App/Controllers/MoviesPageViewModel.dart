@@ -1,11 +1,20 @@
+import 'dart:async';
+
+import 'package:get/get.dart';
+import 'package:movies_flutter/Core/Abstractions/AppServices/IInfrastructureServices.dart';
+
 import '../../Core/Abstractions/Diagnostics/IAppLogExporter.dart';
 import '../../Core/Abstractions/MVVM/NavigationParameters.dart';
+import '../../Core/Base/Impl/Diagnostic/Extensions.dart';
+import '../../Core/Base/Impl/InfrastructureService.dart';
 import '../../Core/Base/Impl/MVVM/Helpers/AsyncCommand.dart';
 import '../../Core/Base/Impl/MVVM/ViewModels/PageViewModel.dart';
 import '../../Core/Base/Impl/Utils/LazyInjected.dart';
-import '../MockData.dart';
+import '../../Core/Domain/AppService/IMovieService.dart';
+import '../../Core/Domain/Dto/MovieDto.dart';
 import '../Utils/Events/MovieCellItemUpdatedEvent.dart';
 import 'AddEditMoviePageViewModel.dart';
+import 'Items/MovieItemModel.dart';
 import 'LoginPageViewModel.dart';
 import 'MovieDetailPageViewModel.dart';
 
@@ -13,9 +22,13 @@ class MoviesPageViewModel extends PageViewModel
 {
   static const Name = 'MoviesPageViewModel';
   static const SELECTED_ITEM = 'SELECTED_ITEM';
-
+  late final String TAG = "${nameof<MoviesPageViewModel>()}";
   final appLogExporter = LazyInjected<IAppLogExporter>();
-  late final List<MovieItemModel> Movies; //= ObservableCollection<MovieItemModel>();
+  final _infrastructureService = LazyInjected<IInfrastructureServices>();
+  final movieService = LazyInjected<IMovieService>();
+
+
+  List<MovieItemModel> Movies = <MovieItemModel>[]; //= ObservableCollection<MovieItemModel>();
   late final ItemTappedCommand = AsyncCommand(OnItemTappedCommand);
   late final AddCommand = AsyncCommand(OnAddCommand);
   late final ShareLogsCommand = AsyncCommand(OnShareLogsCommand);
@@ -28,9 +41,13 @@ class MoviesPageViewModel extends PageViewModel
 
     movieCellUpdatedEvent = eventAggregator.Value.GetOrCreateEvent(()=>MovieCellItemUpdatedEvent());
     movieCellUpdatedEvent.Subscribe(OnMovieCellUpdatedEvent);
-    this.Movies = Mockdata.MockMovies;
-    //this.Movies.AddRange(Mockdata.MockMovies);
-    //this.update();
+
+
+    unawaited( Future(() async
+    {
+      await _infrastructureService.Value.Start();
+      await _loadData();
+    }));
   }
 
   @override
@@ -67,11 +84,13 @@ class MoviesPageViewModel extends PageViewModel
   void Destroy()
   {
     super.Destroy();
+
+    movieCellUpdatedEvent.Unsubscribe(OnMovieCellUpdatedEvent);
   }
 
   void OnMovieCellUpdatedEvent(Object? obj)
   {
-    LogMethodStart("OnMovieCellItemUpdatedEvent", {'item': obj});
+    LogMethodStart(args: {'item': obj});
 
     try
     {
@@ -96,7 +115,7 @@ class MoviesPageViewModel extends PageViewModel
   {
     try
     {
-      LogMethodStart("OnItemTappedCommand", {'index': param});
+      LogMethodStart(args: {'index': param});
       final index = param as int;
       final item = this.Movies[index];
 
@@ -112,7 +131,7 @@ class MoviesPageViewModel extends PageViewModel
   Future<void> OnShareLogsCommand(Object? param) async
   {
     try {
-      LogMethodStart("OnShareLogsCommand");
+      LogMethodStart();
 
       final res = await appLogExporter.Value.ShareLogs();
       if(!res.Success)
@@ -130,7 +149,7 @@ class MoviesPageViewModel extends PageViewModel
   Future<void> OnLogoutCommand(Object? param) async
   {
     try {
-      LogMethodStart("OnLogoutCommand");
+      LogMethodStart();
 
       final confirmed = await alertService.Value.ConfirmAlert("Confirm Action", "Are you sure want to log out?", "Yes", "No");
 
@@ -148,13 +167,42 @@ class MoviesPageViewModel extends PageViewModel
   Future<void> OnAddCommand(Object? param) async
   {
     try {
-      LogMethodStart("OnAddCommand");
+      LogMethodStart();
       await this.Navigate(AddEditMoviePageViewModel.Name);
     }
     catch (ex, stack)
     {
       HandleUIError(ex, stack);
     }
+  }
+
+
+  Future<void> _loadData({bool getFromServer = false, bool showError = false}) async
+  {
+    try {
+      LogMethodStart(args: {"getFromServer": getFromServer, "showError": showError});
+
+      final result = await ShowLoadingWithResult(() async
+      {
+        return movieService.Value.GetListAsync(remoteList: getFromServer);
+      }, SetIsBusy: getFromServer);
+
+      if (result.Success)
+      {
+        _setMovieList(result.ValueOrThrow);
+      }
+    }
+    catch(ex, stackTrace)
+    {
+      loggingService.Value.TrackError(ex, stackTrace);
+    }
+  }
+
+  void _setMovieList(List<MovieDto> list)
+  {
+    loggingService.Value.Log("${TAG}: setting data to Movies property result: ${list.ToDebugString()}");
+    Movies = list.map((e) => MovieItemModel.fromDto(e)).toList().obs;
+    this.update();
   }
 
 

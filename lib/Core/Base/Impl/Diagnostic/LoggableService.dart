@@ -15,7 +15,7 @@ mixin LoggableService
     //   LogMethodStart(calledMethodName, args);
     // }
 
-    void LogMethodStart([String? methodName = null, Map<String, Object?>? args])
+    void LogMethodStart({String? methodName = null, Map<String, Object?>? args})
     {
         try
         {
@@ -51,7 +51,7 @@ mixin LoggableService
         methodName = _getPreviousMethodName();
 
       final className = this.runtimeType.toString();
-      this.loggingService.Value.LogMethodStarted2('$className.$methodName (from base)');
+      this.loggingService.Value.LogMethodStarted2('$className.$methodName() (from base)');
     }
 
     void InitSpecificlogger(String key)

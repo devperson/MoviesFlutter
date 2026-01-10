@@ -1,6 +1,8 @@
 
 import 'package:get/get.dart';
 
+import '../../../../Abstractions/MVVM/IDestructible.dart';
+import '../../../../Abstractions/MVVM/IInitialize.dart';
 import '../../../../Abstractions/MVVM/IPageNavigationService.dart';
 import '../../../../Abstractions/MVVM/NavigationParameters.dart';
 import '../../Diagnostic/LoggableService.dart';
@@ -9,16 +11,18 @@ import '../Navigation/F_PageNavigationService.dart';
 import 'PageViewModel.dart';
 
 
-class BaseViewModel extends GetxController with LoggableService
+class BaseViewModel extends GetxController with LoggableService implements IDestructible, IInitialize
 {
    final navigationService = LazyInjected<IPageNavigationService>();
 
+   @override
    void Initialize(NavigationParameters parameters)
    {
       this.LogVirtualBaseMethod();
      //Initialized.Invoke();
    }
 
+   @override
    void Destroy()
    {
      this.LogVirtualBaseMethod();

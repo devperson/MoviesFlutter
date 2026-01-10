@@ -16,7 +16,7 @@ class F_LogExporter with LoggableService implements IAppLogExporter
     @override
     Future<LogSharingResult> ShareLogs() async
     {
-        LogMethodStart("ShareLogs");
+        LogMethodStart();
         try
         {
             this.removeOldFilesFromCache();
@@ -56,7 +56,7 @@ class F_LogExporter with LoggableService implements IAppLogExporter
 
     void removeOldFilesFromCache() async
     {
-      LogMethodStart("removeOldFilesFromCache");
+      LogMethodStart();
       try
       {
         final cacheFilePath = await directoryService.Value.GetCacheDir();
@@ -80,7 +80,6 @@ class F_LogExporter with LoggableService implements IAppLogExporter
 
     String getUtcDateString()
     {
-        LogMethodStart("getUtcDateString");
         final now = DateTime.now().toUtc();
         final buffer = StringBuffer();
         buffer.write(now.year.toString().padLeft(4, '0'));

@@ -28,7 +28,7 @@ class F_VersionTrackingImplementation with LoggableService implements IVersionTr
     @override
     void Track()
     {
-        LogMethodStart("Track");
+        LogMethodStart();
         // In Dart, checking for late initialization isn't straightforward like Kotlin's ::prop.isInitialized
         // But since we call this in constructor, we can just run Init.
         // If we need to protect against re-init, we can check a flag.
@@ -45,7 +45,7 @@ class F_VersionTrackingImplementation with LoggableService implements IVersionTr
     /// For internal use. Usually only called once in production code, but multiple times in unit tests
     void InitVersionTracking()
     {
-        LogMethodStart("InitVersionTracking");
+        LogMethodStart();
         IsFirstLaunchEver = !preferences.Value.ContainsKey(versionsKey) || !preferences.Value.ContainsKey(buildsKey);
         if (IsFirstLaunchEver)
         {
@@ -120,19 +120,19 @@ class F_VersionTrackingImplementation with LoggableService implements IVersionTr
 
     @override
     bool IsFirstLaunchForVersion(String version) {
-        LogMethodStart("IsFirstLaunchForVersion", {'version':version, });
+        LogMethodStart(args:  {'version':version, });
         return CurrentVersion == version && IsFirstLaunchForCurrentVersion;
     }
 
     @override
     bool IsFirstLaunchForBuild(String build) {
-        LogMethodStart("IsFirstLaunchForBuild", {'build': build, });
+        LogMethodStart(args: {'build': build, });
         return CurrentBuild == build && IsFirstLaunchForCurrentBuild;
     }
 
     String GetStatus()
     {
-        LogMethodStart("GetStatus");
+        LogMethodStart();
         final sb = StringBuffer();
         sb.writeln();
         sb.writeln("VersionTracking");
@@ -153,18 +153,18 @@ class F_VersionTrackingImplementation with LoggableService implements IVersionTr
     }
 
     List<String> ReadHistory(String key) {
-        LogMethodStart("ReadHistory",  {'key': key, });
+        LogMethodStart(args: {'key': key, });
         return preferences.Value.Get<String?>(key, null)?.split('|').where((it) => it.isNotEmpty).toList() ?? [];
     }
 
     void WriteHistory(String key, List<String> history) {
-        LogMethodStart("WriteHistory", {'key': key, 'history': history});
+        LogMethodStart(args: {'key': key, 'history': history});
         preferences.Value.Set(key, history.join("|"));
     }
 
     String? GetPrevious(String key)
     {
-        LogMethodStart("GetPrevious", {'key': key, });
+        LogMethodStart(args: {'key': key, });
         final trail = versionTrail[key]!;
         return (trail.length >= 2) ? trail[trail.length - 2] : null;
     }

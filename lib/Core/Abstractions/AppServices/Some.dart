@@ -2,15 +2,22 @@ import 'dart:core';
 
 import 'package:movies_flutter/Core/Abstractions/Common/AppException.dart';
 
-class Some<T>
+abstract interface class ISome
+{
+  bool get Success;
+  AppException? get Error;
+}
+
+class Some<T> implements ISome
 {
   final T? _Value;
-  final AppException? Error;
+  final AppException? _error;
 
-  bool get Success
-  {
-    return _Value != null;
-  }
+  @override
+  AppException? get Error => _error;
+
+  @override
+  bool get Success=>_Value != null;
 
   T get ValueOrThrow
   {
@@ -22,7 +29,7 @@ class Some<T>
     return _Value as T;
   }
 
-  Some._(this._Value, [ this.Error ]);
+  Some._(this._Value, [ this._error ]);
 
   static Some<T> FromValue<T>(T? Value)
   {

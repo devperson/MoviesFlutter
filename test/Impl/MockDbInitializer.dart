@@ -21,7 +21,7 @@ class MockDbInitializer with LoggableService implements ILocalDbInitilizer
   @override
   Future<void> Init()
   {
-    LogMethodStart("Init");
+    LogMethodStart();
 
     if (!_isInited)
     {
@@ -40,7 +40,7 @@ class MockDbInitializer with LoggableService implements ILocalDbInitilizer
   @override
   Realm GetDbConnection()
   {
-    LogMethodStart("GetDbConnection");
+    LogMethodStart();
 
     if (_realmConn == null)
     {
@@ -69,7 +69,7 @@ class MockDbInitializer with LoggableService implements ILocalDbInitilizer
   @override
   Future<void> Release({bool closeConnection = false}) async
   {
-    LogMethodStart("Release", {"closeConnection": closeConnection});
+    LogMethodStart(args: {"closeConnection": closeConnection});
 
     _isInited = false;
 

@@ -5,7 +5,7 @@ import '../../Core/Abstractions/MVVM/NavigationParameters.dart';
 import '../../Core/Base/Impl/MVVM/Helpers/AsyncCommand.dart';
 import '../../Core/Base/Impl/MVVM/ViewModels/PageViewModel.dart';
 import '../../Core/Base/Impl/Utils/LazyInjected.dart';
-import '../MockData.dart';
+import 'Items/MovieItemModel.dart';
 import 'MoviesPageViewModel.dart';
 
 class AddEditMoviePageViewModel extends PageViewModel
@@ -71,7 +71,7 @@ class AddEditMoviePageViewModel extends PageViewModel
   {
     try
     {
-      LogMethodStart("OnSaveCommand");
+      LogMethodStart();
 
       if (MovieItem.title.isEmpty)
       {
@@ -135,7 +135,7 @@ class AddEditMoviePageViewModel extends PageViewModel
 
   Future<void> OnChangePhotoCommand(Object? param) async
   {
-    LogMethodStart("OnChangePhotoCommand");
+    LogMethodStart();
 
     try
     {
@@ -189,7 +189,7 @@ class AddEditMoviePageViewModel extends PageViewModel
   {
     try
     {
-      LogMethodStart("OnDeleteCommand");
+      LogMethodStart();
 
       final res = await alertService.Value.ConfirmAlert(
         "Confirm",

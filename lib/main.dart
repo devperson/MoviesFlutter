@@ -9,8 +9,8 @@ import 'package:movies_flutter/Core/Abstractions/Essentials/IPreferences.dart';
 import 'package:movies_flutter/Core/Base/Impl/Utils/ContainerLocator.dart';
 
 import 'App/Controllers/LoginPageViewModel.dart';
-import 'App/Utils/Bootstrap/DiRegistration.dart';
-import 'App/Utils/Bootstrap/PageRegistrar.dart';
+import 'Bootstrap/DiRegistration.dart';
+import 'Bootstrap/PageRegistrar.dart';
 import 'Core/Abstractions/Diagnostics/ILoggingService.dart';
 import 'Core/Abstractions/MVVM/IPageNavigationService.dart';
 import 'Core/Base/Impl/MVVM/Navigation/F_PageNavigationService.dart';

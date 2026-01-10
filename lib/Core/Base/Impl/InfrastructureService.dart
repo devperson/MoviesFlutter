@@ -3,7 +3,7 @@ import 'package:movies_flutter/Core/Base/Impl/Utils/LazyInjected.dart';
 import '../../Abstractions/AppServices/IInfrastructureServices.dart';
 import 'REST/RequestQueueList.dart';
 
-class InfrastructureService implements IInfrastructureServices
+abstract class BaseInfrastructureService implements IInfrastructureServices
 {
   final restQueueService = LazyInjected<RequestQueueList>();
 

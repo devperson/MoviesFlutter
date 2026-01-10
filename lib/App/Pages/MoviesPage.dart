@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'package:movies_flutter/Core/Base/Impl/Utils/FontConstants.dart';
 import '../../Core/Base/Impl/UI/Controls/F_ImageView.dart';
 import '../../Core/Base/Impl/UI/Controls/F_PageHeaderView.dart';
+import '../Controllers/Items/MovieItemModel.dart';
 import '../Controllers/MoviesPageViewModel.dart';
-import '../MockData.dart';
 import 'Controls/SideMenuView.dart';
 
 class MoviesPage extends StatelessWidget {

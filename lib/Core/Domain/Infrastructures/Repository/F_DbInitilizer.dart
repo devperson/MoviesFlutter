@@ -58,7 +58,7 @@ class F_DbInitilizer with LoggableService implements ILocalDbInitilizer
   @override
   Realm GetDbConnection()
   {
-    LogMethodStart("GetDbConnection");
+    LogMethodStart();
 
     if (_realmConn == null)
     {
@@ -75,7 +75,7 @@ class F_DbInitilizer with LoggableService implements ILocalDbInitilizer
   @override
   Future<void> Init() async
   {
-    LogMethodStart("Init");
+    LogMethodStart();
 
     if (!_isInited)
     {
@@ -103,7 +103,7 @@ class F_DbInitilizer with LoggableService implements ILocalDbInitilizer
   @override
   Future<void> Release({bool closeConnection = false}) async
   {
-    LogMethodStart("Release", {'closeConnection': closeConnection, });
+    LogMethodStart(args: {'closeConnection': closeConnection, });
 
     _isInited = false;
 

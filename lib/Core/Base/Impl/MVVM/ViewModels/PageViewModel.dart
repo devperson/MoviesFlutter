@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:movies_flutter/Core/Abstractions/AppServices/Some.dart';
+import 'package:movies_flutter/Core/Abstractions/Common/AppException.dart';
 import 'package:movies_flutter/Core/Abstractions/Messaging/IMessagesCenter.dart';
 import 'package:movies_flutter/Core/Abstractions/UI/IAlertDialogService.dart';
 import 'package:movies_flutter/Core/Abstractions/UI/ISnackbarService.dart';
@@ -68,13 +70,13 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
    @override
    void PausedToBackground(Object? arg)
    {
-     // TODO: implement PausedToBackground
+     LogVirtualBaseMethod();
    }
 
    @override
    void ResumedFromBackground(Object? arg)
    {
-     // TODO: implement ResumedFromBackground
+     LogVirtualBaseMethod();
    }
 
    @override
@@ -88,14 +90,14 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
 
   Future<void> OnBackCommand(Object? param)
   {
-    LogVirtualBaseMethod("OnBackCommand()");
+    LogVirtualBaseMethod();
     return NavigateBack(NavigationParameters());
   }
 
   // this method will be called when user click system bar back in Android and swipe back gesture in iOS
    Future<void> DoDeviceBackCommand(Object? param) async
    {
-     LogVirtualBaseMethod("DoDeviceBackCommand()");
+     LogVirtualBaseMethod();
 
      if (DisableDeviceBackButton)
      {
@@ -110,7 +112,7 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
    {
      try
      {
-       LogMethodStart("ShowLoading");
+       LogMethodStart();
        BusyLoading.value = true;
 
        // Run in background isolate queue
@@ -126,16 +128,41 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
      }
    }
 
-   Future<T> ShowLoadingWithResult<T>(Future<T> Function() AsyncAction, {bool SetIsBusy = true}) async
+   Future<T> ShowLoadingWithResult<T>(Future<T> Function() AsyncAction, {bool SetIsBusy = true, bool handleError = true}) async
    {
      try
      {
-       LogMethodStart("ShowLoadingWithResult");
+       LogMethodStart();
        BusyLoading.value = SetIsBusy;
 
        final result = await Future(() async {
          return await AsyncAction();
        });
+
+       if(result is! ISome)
+         {
+           loggingService.Value.LogWarning("ShowLoadingWithResult(): the result is not ISome (result: ${result.runtimeType}) thus can not check result");
+           return result;
+         }
+
+       if(!result.Success)
+         {
+           loggingService.Value.LogWarning("ShowLoadingWithResult(): failed try to check error.");
+           if(handleError)
+           {
+             if(result.Error != null)
+               HandleUIErrorFromException(result.Error!);
+             else
+               loggingService.Value.LogWarning("ShowLoadingWithResult(): can not handle error");
+           }
+           else
+           {
+             if(result.Error != null)
+               loggingService.Value.TrackError(result.Error!, result.Error!.ErrorStackTrace);
+             else
+               loggingService.Value.LogWarning("ShowLoadingWithResult(): can not log error");
+           }
+         }
 
        return result;
      }
@@ -145,9 +172,11 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
      }
    }
 
+
+
    Future<void> ShowLoadingAndHandleErrorInBackground(Future<void> Function() BackgroundActionAsync, {bool SetIsBusy = true}) async
    {
-     LogMethodStart("ShowLoadingAndHandleErrorInBackground");
+     LogMethodStart();
 
      try
      {
@@ -169,7 +198,7 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
 
    Future<T?> GetWithLoadingAndHandleError<T>(Future<T> Function() backgroundActionAsync, {bool setIsBusy = true}) async
    {
-     LogMethodStart("GetWithLoadingAndHandleError");
+     LogMethodStart();
 
      try
      {
@@ -192,9 +221,14 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
      }
    }
 
+   void HandleUIErrorFromException(AppException ex)
+   {
+     HandleUIError(ex, ex.ErrorStackTrace);
+   }
+
    void HandleUIError(Object error, StackTrace stack)
    {
-     LogMethodStart("HandleUIError");
+     LogMethodStart();
 
      var KnownError = true;
 

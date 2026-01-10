@@ -1,14 +1,12 @@
 import 'package:get/get.dart';
 import 'package:movies_flutter/App/Controllers/AddEditMoviePageViewModel.dart';
 import 'package:movies_flutter/App/Pages/AddEditMoviePage.dart';
-
-
-import '../../Controllers/LoginPageViewModel.dart';
-import '../../Controllers/MovieDetailPageViewModel.dart';
-import '../../Controllers/MoviesPageViewModel.dart';
-import '../../Pages/LoginPage.dart';
-import '../../Pages/MovieDetailPage.dart';
-import '../../Pages/MoviesPage.dart';
+import '../App/Controllers/LoginPageViewModel.dart';
+import '../App/Controllers/MovieDetailPageViewModel.dart';
+import '../App/Controllers/MoviesPageViewModel.dart';
+import '../App/Pages/LoginPage.dart';
+import '../App/Pages/MovieDetailPage.dart';
+import '../App/Pages/MoviesPage.dart';
 
 class PageRegistrar
 {

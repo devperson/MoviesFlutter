@@ -1,22 +1,25 @@
 
+import '../../../../Abstractions/MVVM/INavigationAware.dart';
 import '../../../../Abstractions/MVVM/NavigationParameters.dart';
 import 'BaseViewModel.dart';
 
-class NavigatingBaseViewModel extends BaseViewModel
+class NavigatingBaseViewModel extends BaseViewModel implements INavigationAware
 {
   bool get CanGoBack
   {
     return navigationService.Value.CanNavigateBack;
   }
 
+  @override
   void OnNavigatedTo(NavigationParameters parameters)
   {
-      this.LogVirtualBaseMethod("OnNavigatedTo()");
+      this.LogVirtualBaseMethod();
   }
 
+  @override
   void OnNavigatedFrom()
   {
-     this.LogVirtualBaseMethod("OnNavigatedFrom()");
+     this.LogVirtualBaseMethod();
   }
 
   // NavigatingBaseViewModel? GetCurrentPageViewModel()
@@ -27,30 +30,30 @@ class NavigatingBaseViewModel extends BaseViewModel
 
   Future<void> Navigate(String url, [NavigationParameters? parameters]) async
   {
-    // try
-    // {
+    try
+    {
       LogVirtualBaseMethod('Navigate(url=$url)');
 
       await navigationService.Value.Navigate(url, parameters: parameters);
-    // }
-    // on Exception catch (ex, stackTrace)
-    // {
-    //   this.loggingService.Value.TrackError(ex);
-    // }
+    }
+    catch (ex, stackTrace)
+    {
+      this.loggingService.Value.TrackError(ex, stackTrace);
+    }
   }
 
   Future<void> NavigateToRoot([NavigationParameters? parameters]) async
   {
-    // try
-    // {
+    try
+    {
       LogVirtualBaseMethod('NavigateToRoot()');
 
       await navigationService.Value.NavigateToRoot(parameters: parameters);
-    // }
-    // on Exception catch (ex, stackTrace)
-    // {
-    //   //this.loggingService.Value.TrackError(ex);
-    // }
+    }
+    catch (ex, stackTrace)
+    {
+      this.loggingService.Value.TrackError(ex, stackTrace);
+    }
   }
 
   Future<void> SkipAndNavigate(int skipCount, String route, [NavigationParameters? parameters]) async
@@ -74,7 +77,7 @@ class NavigatingBaseViewModel extends BaseViewModel
 
   Future<void> NavigateBack([NavigationParameters? parameters]) async
   {
-    LogVirtualBaseMethod('NavigateBack()');
+    LogVirtualBaseMethod();
     await Navigate('../', parameters);
   }
 
@@ -96,8 +99,7 @@ class NavigatingBaseViewModel extends BaseViewModel
     loggingService.Value.Log('BackToRootAndNavigate(): '
           'Current navigation stack: /$currentNavStack, '
           'pop count: $popCount, '
-          'resultUri: $resultUri',
-    );
+          'resultUri: $resultUri');
 
     await Navigate(resultUri, parameters);
   }

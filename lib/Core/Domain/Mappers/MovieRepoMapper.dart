@@ -11,7 +11,7 @@ class MovieRepoMapper implements IRepoMapper<Movie, Movietb>
       entity.Id,
       entity.Name,
       entity.Overview,
-      PostUrl: entity.PosterUrl != null ? '' : entity.PosterUrl);
+      PostUrl: entity.PosterUrl ?? '');
 
     return tb;
   }

@@ -12,7 +12,7 @@ class MovieRestService extends RestService implements IMovieRestService
   @override
   Future<List<Movie>> GetMovieRestlist() async
   {
-    LogMethodStart("GetMovieRestlist");
+    LogMethodStart();
 
     final result = await Get<MovieListResponse>(
       RestRequest(

@@ -1,12 +1,9 @@
-
-
-import 'package:movies_flutter/App/MockData.dart';
-
 import '../../Core/Abstractions/MVVM/NavigationParameters.dart';
 import '../../Core/Base/Impl/MVVM/Helpers/AsyncCommand.dart';
 import '../../Core/Base/Impl/MVVM/ViewModels/PageViewModel.dart';
 import '../Utils/Events/MovieCellItemUpdatedEvent.dart';
 import 'AddEditMoviePageViewModel.dart';
+import 'Items/MovieItemModel.dart';
 import 'MoviesPageViewModel.dart';
 
 class MovieDetailPageViewModel extends PageViewModel
@@ -42,17 +39,13 @@ class MovieDetailPageViewModel extends PageViewModel
     }
   }
 
-  @override
-  void Destroy()
-  {
-    super.Destroy();
-  }
+
 
   Future<void> OnEditCommand(Object? param) async
   {
     try
     {
-      LogMethodStart("OnEditCommand");
+      LogMethodStart();
 
       await Navigate(AddEditMoviePageViewModel.Name, NavigationParameters().With(MoviesPageViewModel.SELECTED_ITEM, MovieItem));
     }
