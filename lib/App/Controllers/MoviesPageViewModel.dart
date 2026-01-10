@@ -90,7 +90,7 @@ class MoviesPageViewModel extends PageViewModel
     {
       try
       {
-        LogMethodStart();
+        LogMethodStart("ResumedFromBackground");
         await _infrastructureService.Value.Resume();
       }
       catch(ex, stackTrace)
@@ -108,7 +108,7 @@ class MoviesPageViewModel extends PageViewModel
     {
       try
       {
-        LogMethodStart();
+        LogMethodStart("PausedToBackground");
         await _infrastructureService.Value.Pause();
       }
       catch(ex, stackTrace)
@@ -128,7 +128,7 @@ class MoviesPageViewModel extends PageViewModel
       {
         super.Destroy();
 
-        LogMethodStart();
+        LogMethodStart("Destroy");
         await _infrastructureService.Value.Stop();
         movieCellUpdatedEvent.Unsubscribe(OnMovieCellUpdatedEvent);
       }
@@ -142,7 +142,7 @@ class MoviesPageViewModel extends PageViewModel
 
   void OnMovieCellUpdatedEvent(Object? obj)
   {
-    LogMethodStart(args: {'item': obj});
+    LogMethodStart("OnMovieCellUpdatedEvent", args: {'item': obj});
 
     try
     {
@@ -167,7 +167,7 @@ class MoviesPageViewModel extends PageViewModel
   {
     try
     {
-      LogMethodStart(args: {'index': param});
+      LogMethodStart("OnItemTappedCommand", args: {'index': param});
       final index = param as int;
       final item = this.Movies[index];
 
@@ -202,7 +202,7 @@ class MoviesPageViewModel extends PageViewModel
   Future<void> OnShareLogsCommand(Object? param) async
   {
     try {
-      LogMethodStart();
+      LogMethodStart("OnShareLogsCommand");
 
       final res = await appLogExporter.Value.ShareLogs();
       if(!res.Success)
@@ -220,7 +220,7 @@ class MoviesPageViewModel extends PageViewModel
   Future<void> OnLogoutCommand(Object? param) async
   {
     try {
-      LogMethodStart();
+      LogMethodStart("OnLogoutCommand");
 
       final confirmed = await alertService.Value.ConfirmAlert("Confirm Action", "Are you sure want to log out?", "Yes", "No");
 
@@ -238,7 +238,7 @@ class MoviesPageViewModel extends PageViewModel
   Future<void> OnAddCommand(Object? param) async
   {
     try {
-      LogMethodStart();
+      LogMethodStart("OnAddCommand");
       await this.Navigate(AddEditMoviePageViewModel.Name);
     }
     catch (ex, stack)
@@ -251,7 +251,7 @@ class MoviesPageViewModel extends PageViewModel
   Future<void> _loadData({bool getFromServer = false, bool showError = false}) async
   {
     try {
-      LogMethodStart(args: {"getFromServer": getFromServer, "showError": showError});
+      LogMethodStart("_loadData", args: {"getFromServer": getFromServer, "showError": showError});
 
       final result = await ShowLoadingWithResult(() async
       {

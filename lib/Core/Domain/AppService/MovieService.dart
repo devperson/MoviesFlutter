@@ -21,7 +21,7 @@ class MoviesService with LoggableService implements IMovieService
   {
     try
     {
-      LogMethodStart(args: {"count": count, "skip": skip, "remoteList": remoteList});
+      LogMethodStart("GetListAsync", args: {"count": count, "skip": skip, "remoteList": remoteList});
       bool canLoadLocal = true;
       List<Movie>? localList;
       if (remoteList)
@@ -72,7 +72,7 @@ class MoviesService with LoggableService implements IMovieService
   {
     try
     {
-      LogMethodStart(args: {"id": id});
+      LogMethodStart("GetById", args: {"id": id});
       final movie = await movieRepository.Value.FindById(id);
       final dtoMovie = movie!.ToDto<MovieDto>();
       return Some.FromValue(dtoMovie);
@@ -88,7 +88,7 @@ class MoviesService with LoggableService implements IMovieService
   {
     try
     {
-      LogMethodStart(args: {"name": name, "overview": overview, "posterUrl": posterUrl});
+      LogMethodStart("AddAsync", args: {"name": name, "overview": overview, "posterUrl": posterUrl});
       final movie = Movie.Create(name, overview, posterUrl);
       await movieRepository.Value.AddAsync(movie);
       final dtoMovie = movie.ToDto<MovieDto>();
@@ -105,7 +105,7 @@ class MoviesService with LoggableService implements IMovieService
   {
     try
     {
-      LogMethodStart(args: {"dtoModel": dtoModel});
+      LogMethodStart("UpdateAsync", args: {"dtoModel": dtoModel});
       final movie = dtoModel.ToEntity<Movie>();
       await movieRepository.Value.UpdateAsync(movie);
 
@@ -122,7 +122,7 @@ class MoviesService with LoggableService implements IMovieService
   {
     try
     {
-      LogMethodStart(args: {"dtoModel": dtoModel});
+      LogMethodStart("RemoveAsync", args: {"dtoModel": dtoModel});
 
       final movie = dtoModel.ToEntity<Movie>();
       final res = await movieRepository.Value.RemoveAsync(movie);

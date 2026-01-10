@@ -12,7 +12,7 @@ class AppInfrastructureService extends BaseInfrastructureService with LoggableSe
   @override
   Future<void> Start() async
   {
-    LogMethodStart();
+    LogMethodStart("Start");
     await super.Start();
     await dbInitilizer.Value.Init();
   }
@@ -20,23 +20,22 @@ class AppInfrastructureService extends BaseInfrastructureService with LoggableSe
   @override
   Future<void> Pause() async
   {
-    LogMethodStart();
+    LogMethodStart("Pause");
     await super.Pause();
   }
 
   @override
   Future<void> Resume() async
   {
-    LogMethodStart();
+    LogMethodStart("Resume");
     await super.Resume();
   }
 
   @override
   Future<void> Stop() async
   {
-    LogMethodStart();
+    LogMethodStart("Stop");
     await super.Stop();
     await dbInitilizer.Value.Release();
   }
-
 }

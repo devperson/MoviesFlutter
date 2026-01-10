@@ -31,7 +31,7 @@ class LoginPageViewModel extends PageViewModel
 
     Future<void> OnSubmitCommand(Object? obj) async
     {
-        LogMethodStart();
+        LogMethodStart("OnSubmitCommand");
         preferenceServices.Value.Set(IsLoggedIn, true);
         await this.Navigate("/${nameof<MoviesPageViewModel>()}");
     }

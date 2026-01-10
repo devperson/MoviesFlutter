@@ -15,14 +15,14 @@ mixin LoggableService
     //   LogMethodStart(calledMethodName, args);
     // }
 
-    void LogMethodStart({String? methodName = null, Map<String, Object?>? args})
+    void LogMethodStart(String methodName, {Map<String, Object?>? args})
     {
         try
         {
-          if(methodName == null)
-            {
-              methodName = _getPreviousMethodName();
-            }
+          // if(methodName == null)
+          //   {
+          //     methodName = _getPreviousMethodName();
+          //   }
             final className = this.runtimeType.toString();
             loggingService.Value.LogMethodStarted(className, methodName, args);
         }

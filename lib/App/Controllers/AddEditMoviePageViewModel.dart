@@ -71,7 +71,7 @@ class AddEditMoviePageViewModel extends PageViewModel
   {
     try
     {
-      LogMethodStart();
+      LogMethodStart("OnSaveCommand");
 
       if (MovieItem.title.isEmpty)
       {
@@ -135,7 +135,7 @@ class AddEditMoviePageViewModel extends PageViewModel
 
   Future<void> OnChangePhotoCommand(Object? param) async
   {
-    LogMethodStart();
+    LogMethodStart("OnChangePhotoCommand");
 
     try
     {
@@ -189,7 +189,7 @@ class AddEditMoviePageViewModel extends PageViewModel
   {
     try
     {
-      LogMethodStart();
+      LogMethodStart("OnDeleteCommand");
 
       final res = await alertService.Value.ConfirmAlert(
         "Confirm",

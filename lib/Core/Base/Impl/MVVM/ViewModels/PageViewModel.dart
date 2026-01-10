@@ -139,14 +139,14 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
 
    Future<void> OnRefreshCommand(Object? param) async
    {
-     LogMethodStart();
+     LogMethodStart("OnRefreshCommand");
    }
 
    Future<void> ShowLoading(Future<void> Function() AsyncAction, void Function(bool)? OnComplete) async
    {
      try
      {
-       LogMethodStart();
+       LogMethodStart("ShowLoading");
        BusyLoading = true;
 
        // Run in background isolate queue
@@ -166,7 +166,7 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
    {
      try
      {
-       LogMethodStart();
+       LogMethodStart("ShowLoadingWithResult");
        BusyLoading = SetIsBusy;
 
        final result = await Future(() async {
@@ -210,7 +210,7 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
 
    Future<void> ShowLoadingAndHandleErrorInBackground(Future<void> Function() BackgroundActionAsync, {bool SetIsBusy = true}) async
    {
-     LogMethodStart();
+     LogMethodStart("ShowLoadingAndHandleErrorInBackground");
 
      try
      {
@@ -232,7 +232,7 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
 
    Future<T?> GetWithLoadingAndHandleError<T>(Future<T> Function() backgroundActionAsync, {bool setIsBusy = true}) async
    {
-     LogMethodStart();
+     LogMethodStart("GetWithLoadingAndHandleError");
 
      try
      {
@@ -262,7 +262,7 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
 
    void HandleUIError(Object error, StackTrace stack)
    {
-     LogMethodStart();
+     LogMethodStart("HandleUIError");
 
      var KnownError = true;
 

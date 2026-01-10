@@ -16,7 +16,7 @@ class F_LogExporter with LoggableService implements IAppLogExporter
     @override
     Future<LogSharingResult> ShareLogs() async
     {
-        LogMethodStart();
+        LogMethodStart("ShareLogs");
         try
         {
             this.removeOldFilesFromCache();
@@ -56,7 +56,7 @@ class F_LogExporter with LoggableService implements IAppLogExporter
 
     void removeOldFilesFromCache() async
     {
-      LogMethodStart();
+      LogMethodStart("removeOldFilesFromCache");
       try
       {
         final cacheFilePath = await directoryService.Value.GetCacheDir();
