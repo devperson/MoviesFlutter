@@ -116,7 +116,7 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
    {
      try
      {
-       LogMethodStart("ShowLoading()");
+       LogMethodStart();
        BusyLoading.value = true;
 
        // Run in background isolate queue
@@ -136,7 +136,7 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
    {
      try
      {
-       LogMethodStart("ShowLoadingWithResult()");
+       LogMethodStart();
        BusyLoading.value = SetIsBusy;
 
        final result = await Future(() async {
@@ -180,7 +180,7 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
 
    Future<void> ShowLoadingAndHandleErrorInBackground(Future<void> Function() BackgroundActionAsync, {bool SetIsBusy = true}) async
    {
-     LogMethodStart("ShowLoadingAndHandleErrorInBackground()");
+     LogMethodStart();
 
      try
      {
@@ -202,7 +202,7 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
 
    Future<T?> GetWithLoadingAndHandleError<T>(Future<T> Function() backgroundActionAsync, {bool setIsBusy = true}) async
    {
-     LogMethodStart("GetWithLoadingAndHandleError()");
+     LogMethodStart();
 
      try
      {
