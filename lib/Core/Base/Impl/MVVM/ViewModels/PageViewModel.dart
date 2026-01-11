@@ -154,10 +154,11 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
    {
      try
      {
-       LogMethodStart("ShowLoadingWithResult");
+       LogMethodStart("ShowLoadingWithResult", args: {"SetIsBusy": SetIsBusy, "handleError": handleError});
        BusyLoading = SetIsBusy;
 
-       final result = await Future(() async {
+       final result = await Future(() async
+       {
          return await AsyncAction();
        });
 
@@ -169,20 +170,17 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
 
        if(!result.Success)
          {
-           loggingService.Value.LogWarning("ShowLoadingWithResult(): failed try to check error.");
+           loggingService.Value.LogWarning("ShowLoadingWithResult(): failed! App will try to show error to user.");
            if(handleError)
            {
              if(result.Error != null)
                HandleUIErrorFromException(result.Error!);
              else
-               loggingService.Value.LogWarning("ShowLoadingWithResult(): can not handle error");
+               loggingService.Value.LogWarning("ShowLoadingWithResult(): can not show error because result.Error: null");
            }
            else
            {
-             if(result.Error != null)
-               loggingService.Value.TrackError(result.Error!, result.Error!.ErrorStackTrace);
-             else
-               loggingService.Value.LogWarning("ShowLoadingWithResult(): can not log error");
+             loggingService.Value.LogWarning("ShowLoadingWithResult(): skip show error because handleError: false");
            }
          }
 

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:movies_flutter/App/Controllers/MoviesPageViewModel.dart';
@@ -95,8 +96,14 @@ class MyApp extends StatelessWidget
                     DATE: ${now.toString().split('.').first} $sign$hh:$mm
      *********************************************************\n'''); //should print something like DATE: 01/09/2026 16:05:32 +05:00
 
+    var mode = '';
+    if(kDebugMode)
+      mode = "DEBUG";
+    if(kReleaseMode)
+      mode = "RELEASE";
+
     loggingService.Header('''*********************************************************
-                    APP BUILD VERSION: ${appInfo.VersionString} (${appInfo.BuildString}) 
+                    APP BUILD VERSION: ${appInfo.VersionString} (${appInfo.BuildString}), ($mode)
      *********************************************************\n''');
 
     loggingService.Header('''*********************************************************

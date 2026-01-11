@@ -40,26 +40,32 @@ class MoviesPageViewModel extends PageViewModel
   @override
   void Initialize(NavigationParameters parameters)
   {
-    super.Initialize(parameters);
-
-    movieCellUpdatedEvent = eventAggregator.Value.GetOrCreateEvent(()=>MovieCellItemUpdatedEvent());
-    movieCellUpdatedEvent.Subscribe(OnMovieCellUpdatedEvent);
-
-
-    unawaited( Future(() async
+    try
     {
-      await _infrastructureService.Value.Start();
-      await _loadData();
-    }));
+      LogMethodStart("Initialize");
+      movieCellUpdatedEvent = eventAggregator.Value.GetOrCreateEvent(() => MovieCellItemUpdatedEvent());
+      movieCellUpdatedEvent.Subscribe(OnMovieCellUpdatedEvent);
+
+
+      unawaited(Future(() async
+      {
+        await _infrastructureService.Value.Start();
+        await _loadData();
+      }));
+    }
+    catch(ex, stackTrace)
+    {
+      loggingService.Value.TrackError(ex, stackTrace);
+    }
   }
 
   @override
   void OnNavigatedTo(NavigationParameters parameters)
   {
-    super.OnNavigatedTo(parameters);
-
     try
     {
+      LogMethodStart("Initialize");
+
       if(parameters.ContainsKey(AddEditMoviePageViewModel.NEW_ITEM))
       {
         final newProduct = GetParameter<MovieItemModel>(parameters, AddEditMoviePageViewModel.NEW_ITEM);
@@ -127,7 +133,7 @@ class MoviesPageViewModel extends PageViewModel
     {
       try
       {
-        super.Destroy();
+        super.Destroy();//need to be called to release parent resources
 
         LogMethodStart("Destroy");
         await _infrastructureService.Value.Stop();
@@ -186,6 +192,8 @@ class MoviesPageViewModel extends PageViewModel
   {
     try
     {
+      LogMethodStart("OnRefreshCommand");
+
       IsRefreshing = true;
 
       await _loadData(getFromServer: true, showError: true);
@@ -202,7 +210,8 @@ class MoviesPageViewModel extends PageViewModel
 
   Future<void> OnShareLogsCommand(Object? param) async
   {
-    try {
+    try
+    {
       LogMethodStart("OnShareLogsCommand");
 
       final res = await appLogExporter.Value.ShareLogs();
@@ -220,7 +229,8 @@ class MoviesPageViewModel extends PageViewModel
 
   Future<void> OnLogoutCommand(Object? param) async
   {
-    try {
+    try
+    {
       LogMethodStart("OnLogoutCommand");
 
       final confirmed = await alertService.Value.ConfirmAlert("Confirm Action", "Are you sure want to log out?", "Yes", "No");
@@ -238,7 +248,8 @@ class MoviesPageViewModel extends PageViewModel
 
   Future<void> OnAddCommand(Object? param) async
   {
-    try {
+    try
+    {
       LogMethodStart("OnAddCommand");
       await this.Navigate(AddEditMoviePageViewModel.Name);
     }
@@ -251,7 +262,8 @@ class MoviesPageViewModel extends PageViewModel
 
   Future<void> _loadData({bool getFromServer = false, bool showError = false}) async
   {
-    try {
+    try
+    {
       LogMethodStart("_loadData", args: {"getFromServer": getFromServer, "showError": showError});
 
       final result = await ShowLoadingWithResult(() async

@@ -32,7 +32,7 @@ class NavigatingBaseViewModel extends BaseViewModel implements INavigationAware
   {
     try
     {
-      LogVirtualBaseMethod('Navigate');
+      LogMethodStart('Navigate', args: {"url": url});
 
       await navigationService.Value.Navigate(url, parameters: parameters);
     }
@@ -46,7 +46,7 @@ class NavigatingBaseViewModel extends BaseViewModel implements INavigationAware
   {
     try
     {
-      LogVirtualBaseMethod("NavigateToRoot");
+      LogMethodStart("NavigateToRoot");
 
       await navigationService.Value.NavigateToRoot(parameters: parameters);
     }
@@ -58,7 +58,7 @@ class NavigatingBaseViewModel extends BaseViewModel implements INavigationAware
 
   Future<void> SkipAndNavigate(int skipCount, String route, [NavigationParameters? parameters]) async
   {
-    LogVirtualBaseMethod('SkipAndNavigate',);
+    LogMethodStart('SkipAndNavigate',);
 
     final skip = '../' * skipCount;
     final newRoute = '$skip$route';
@@ -68,7 +68,7 @@ class NavigatingBaseViewModel extends BaseViewModel implements INavigationAware
 
   Future<void> NavigateAndMakeRoot(String name, [NavigationParameters? parameters]) async
   {
-    LogVirtualBaseMethod('NavigateAndMakeRoot');
+    LogMethodStart('NavigateAndMakeRoot');
 
     final newRoot = '/$name';
 
@@ -77,13 +77,13 @@ class NavigatingBaseViewModel extends BaseViewModel implements INavigationAware
 
   Future<void> NavigateBack([NavigationParameters? parameters]) async
   {
-    LogVirtualBaseMethod("NavigateBack");
+    LogMethodStart("NavigateBack");
     await Navigate('../', parameters);
   }
 
   Future<void> BackToRootAndNavigate(String name, [NavigationParameters? parameters]) async
   {
-    LogVirtualBaseMethod('BackToRootAndNavigate');
+    LogMethodStart('BackToRootAndNavigate');
 
     final navStack = navigationService.Value.GetNavStack();
 
@@ -106,8 +106,6 @@ class NavigatingBaseViewModel extends BaseViewModel implements INavigationAware
 
   T? GetParameter<T>(NavigationParameters parameters, String key,)
   {
-    LogVirtualBaseMethod('GetParameter');
-
     if (parameters.ContainsKey(key))
     {
       return parameters.GetValue<T>(key);
@@ -118,8 +116,6 @@ class NavigatingBaseViewModel extends BaseViewModel implements INavigationAware
 
   void GetParameterWithSetter<T>(NavigationParameters parameters, String key, void Function(T?) setter)
   {
-    LogVirtualBaseMethod('GetParameter');
-
     if (parameters.ContainsKey(key))
     {
       final value = parameters.GetValue<T>(key);
