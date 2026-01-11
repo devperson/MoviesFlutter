@@ -63,6 +63,7 @@ class MoviesService with LoggableService implements IMovieService
     }
     catch (ex, stackTrace)
     {
+      loggingService.Value.LogError(ex, stackTrace);
       return Some.FromError(ex.ToAppException(stackTrace));
     }
   }
@@ -79,6 +80,7 @@ class MoviesService with LoggableService implements IMovieService
     }
     catch (ex, stackTrace)
     {
+      loggingService.Value.LogError(ex, stackTrace);
       return Some.FromError(ex.ToAppException(stackTrace));
     }
   }
@@ -96,6 +98,7 @@ class MoviesService with LoggableService implements IMovieService
     }
     catch (ex, stackTrace)
     {
+      loggingService.Value.LogError(ex, stackTrace);
       return Some.FromError(ex.ToAppException(stackTrace));
     }
   }
@@ -113,6 +116,7 @@ class MoviesService with LoggableService implements IMovieService
     }
     catch (ex, stackTrace)
     {
+      loggingService.Value.LogError(ex, stackTrace);
       return Some.FromError(ex.ToAppException(stackTrace));
     }
   }
@@ -131,6 +135,7 @@ class MoviesService with LoggableService implements IMovieService
     }
     catch (ex, stackTrace)
     {
+      loggingService.Value.LogError(ex, stackTrace);
       return Some.FromError(ex.ToAppException(stackTrace));
     }
   }

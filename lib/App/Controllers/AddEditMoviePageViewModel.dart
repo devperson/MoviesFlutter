@@ -1,16 +1,21 @@
 import 'package:flutter/cupertino.dart';
+import 'package:movies_flutter/Core/Domain/AppService/IMovieService.dart';
 
+import '../../Core/Abstractions/AppServices/Some.dart';
 import '../../Core/Abstractions/Essentials/IMediaPickerService.dart';
 import '../../Core/Abstractions/MVVM/NavigationParameters.dart';
 import '../../Core/Base/Impl/MVVM/Helpers/AsyncCommand.dart';
 import '../../Core/Base/Impl/MVVM/ViewModels/PageViewModel.dart';
 import '../../Core/Base/Impl/Utils/LazyInjected.dart';
+import '../../Core/Domain/Dto/MovieDto.dart';
+import '../Utils/CommonStrings.dart';
 import 'Items/MovieItemModel.dart';
 import 'MoviesPageViewModel.dart';
 
 class AddEditMoviePageViewModel extends PageViewModel
 {
   final mediaPickerService = LazyInjected<IMediaPickerService>();
+  final movieService = LazyInjected<IMovieService>();
   static const Name = 'AddEditMoviePageViewModel';
   static const NEW_ITEM = 'NEW_ITEM';
   static const UPDATE_ITEM = 'UPDATE_ITEM';
@@ -32,13 +37,14 @@ class AddEditMoviePageViewModel extends PageViewModel
 
     if (parameters.ContainsKey(MoviesPageViewModel.SELECTED_ITEM))
     {
-      this.Title.value = "Edit";
+      this.Title = "Edit";
       this.IsEdit = true;
-      this.MovieItem = parameters.GetValue<MovieItemModel>(MoviesPageViewModel.SELECTED_ITEM)!;
+      final item = parameters.GetValue<MovieItemModel>(MoviesPageViewModel.SELECTED_ITEM)!;
+      this.MovieItem = item.CreateCopy();
     }
     else
     {
-      this.Title.value = "Create new";
+      this.Title = "Create new";
       this.MovieItem = MovieItemModel();
       this.MovieItem.id = intGenerator.next();
     }
@@ -84,48 +90,33 @@ class AddEditMoviePageViewModel extends PageViewModel
         return;
       }
 
-      if(IsEdit)
+      Some<MovieDto>? Result;
+      if (IsEdit)
       {
-        //use new instance for update
-        MovieItem = MovieItem.CreateCopy();
-        await NavigateBack(NavigationParameters().With(UPDATE_ITEM, MovieItem));
+        // TODO: use mapper
+        final dtoModel = MovieItem.toDto();
+        Result = await movieService.Value.UpdateAsync(dtoModel);
       }
       else
       {
-        await NavigateBack(NavigationParameters().With(NEW_ITEM, MovieItem));
+        Result = await movieService.Value.AddAsync(
+          MovieItem.title,
+          MovieItem.overview,
+          MovieItem.posterPath,
+        );
       }
 
-      // Some<MovieDto>? Result;
-      //
-      // if (IsEdit)
-      // {
-      //   // TODO: use mapper
-      //   final dtoModel = Model!.ToDto();
-      //   Result = await movieService.UpdateAsync(dtoModel);
-      // }
-      // else
-      // {
-      //   Result = await movieService.AddAsync(
-      //     Model!.Name!,
-      //     Model!.Overview!,
-      //     Model!.PosterUrl,
-      //   );
-      // }
+      if (Result.Success)
+      {
+        final item = MovieItemModel.fromDto(Result.ValueOrThrow);
+        final key = IsEdit ? UPDATE_ITEM : NEW_ITEM;
 
-      // if (Result.Success)
-      // {
-      //   final item = MovieItemViewModel(Result.ValueOrThrow);
-      //   final key = IsEdit ? UPDATE_ITEM : NEW_ITEM;
-      //
-      //   NavigateBack(
-      //     NavigationParameters()
-      //       ..add(key, item),
-      //   );
-      // }
-      // else
-      // {
-      //   snackbarService.Value.ShowError(CommonStrings.GeneralError);
-      // }
+        await NavigateBack(NavigationParameters().With(key, item));
+      }
+      else
+      {
+        snackbarService.Value.ShowError(CommonStrings.GeneralError);
+      }
     }
     catch (ex, stack)
     {
@@ -200,17 +191,17 @@ class AddEditMoviePageViewModel extends PageViewModel
 
       if (res == true)
       {
-        // final dtoModel = MovieItem!.ToDto();
-        // final result = await movieService.RemoveAsync(dtoModel);
+        final dtoModel = MovieItem.toDto();
+        final result = await movieService.Value.RemoveAsync(dtoModel);
 
-        // if (result.Success)
-        // {
-          await NavigateToRoot(NavigationParameters().With(REMOVE_ITEM, MovieItem),);
-        // }
-        // else
-        // {
-        //   snackbarService.Value.ShowError(CommonStrings.GeneralError);
-        // }
+        if (result.Success)
+        {
+          await NavigateToRoot(NavigationParameters().With(REMOVE_ITEM, MovieItem));
+        }
+        else
+        {
+          snackbarService.Value.ShowError(CommonStrings.GeneralError);
+        }
       }
     }
     catch (ex, stack)

@@ -20,7 +20,7 @@ class AddEditMoviePage extends StatelessWidget {
           onSystemBack: () => controller.DeviceBackCommand.Execute(),
           child: Scaffold(
             appBar: F_PageHeaderView(
-              title: controller.Title.value,
+              title: controller.Title,
               rightIcon: controller.IsEdit ? Icons.delete : null,
               onRightPressed: () {
                 controller.DeleteCommand.Execute();
@@ -146,7 +146,7 @@ class AddEditMoviePage extends StatelessWidget {
                   // Save button
                   // =========================
                   F_PrimaryButton(
-                    text: 'Submit',
+                    text: 'Save',
                     onTap: () {
                       controller.SaveCommand.Execute();
                     },

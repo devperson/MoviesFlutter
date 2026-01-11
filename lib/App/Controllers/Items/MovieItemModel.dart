@@ -210,17 +210,13 @@ class MovieItemModel
   int id;
   String title, overview, posterPath, releaseDate;
   double popularity;
-  late MovieDto _movieDto;
 
-  MovieItemModel() : id = 0,
-                     title = "",
-                     overview = "",
-                     posterPath = "",
-                     releaseDate = "",
-                     popularity = 0
-  {
-    _movieDto = MovieDto(0, "", "", "");
-  }
+  MovieItemModel({this.id = 0,
+                 this.title = "",
+                  this.overview = "",
+                  this.posterPath = "",
+                  this.releaseDate = "",
+                  this.popularity = 0});
 
   MovieItemModel.fromDto(MovieDto dto)
       : id = dto.Id,
@@ -230,13 +226,12 @@ class MovieItemModel
         popularity = 1,
         releaseDate = DateTime.now().add(Duration(days: -10)).toString()
   {
-    _movieDto = dto;
   }
 
 
   MovieItemModel CreateCopy()
   {
-    return MovieItemModel.fromDto(_movieDto);
+    return MovieItemModel(id: this.id, title: this.title, overview: this.overview, posterPath: this.posterPath, releaseDate: this.releaseDate, popularity: this.popularity);
   }
 
 

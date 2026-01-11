@@ -38,7 +38,7 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
    }
 
    String get vmName => runtimeType.toString();
-   //Rx<String> Title = "".obs;
+
    late final AsyncCommand BackCommand = AsyncCommand(OnBackCommand);
    late final AsyncCommand DeviceBackCommand = AsyncCommand(DoDeviceBackCommand);
    late final AsyncCommand RefreshCommand = AsyncCommand(OnRefreshCommand);
@@ -46,14 +46,8 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
    var IsPageVisable = false;
    var IsFirstTimeAppears = true;
    var DisableDeviceBackButton = false;
-
-   String _title = "";
-   get Title => _title;
-   set Title(String value)
-   {
-     _title = value;
-     NotifyUpdate();
-   }
+   var Title = "";
+   bool IsRefreshing = false;
 
    bool _busyLoading = false;
    bool get BusyLoading => _busyLoading;
@@ -63,13 +57,7 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
      NotifyUpdate();
    }
 
-   bool _isRefreshing = false;
-   bool get IsRefreshing => _isRefreshing;
-   set IsRefreshing(bool value)
-   {
-     _isRefreshing = value;
-     NotifyUpdate();
-   }
+
 
 
 

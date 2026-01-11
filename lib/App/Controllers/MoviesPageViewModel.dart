@@ -71,7 +71,8 @@ class MoviesPageViewModel extends PageViewModel
       else if(parameters.ContainsKey(AddEditMoviePageViewModel.REMOVE_ITEM))
       {
         final removedItem = GetParameter<MovieItemModel>(parameters, AddEditMoviePageViewModel.REMOVE_ITEM);
-        Movies.remove(removedItem!);
+        final item = Movies.firstWhere((x) => x.id == removedItem!.id);
+        Movies.remove(item);
 
         //update ui
         this.NotifyUpdate();
