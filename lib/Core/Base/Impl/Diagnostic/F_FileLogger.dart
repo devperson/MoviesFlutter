@@ -63,8 +63,10 @@ class F_FileLogger with ConsoleService implements IFileLogger
 
       _output = FileLogOutput(_currentLogPath);
 
-      // 💬 Exact "%msg%n" equivalent
+      //set ProductionFilter() so it can log in release mode as well
+      // otherwise default value (DevelopmentFilter()) logs only in debug mode
       _logger = Logger(
+        filter: ProductionFilter(), //enable logging in release mode as well
         level: Level.debug,
         printer: SimplePrinter(printTime: false, colors: false),
         output: _output,
@@ -79,7 +81,7 @@ class F_FileLogger with ConsoleService implements IFileLogger
   }
 
   @override
-  void Info(String message) async
+  void Info(String message)
   {
     try
     {
@@ -92,7 +94,7 @@ class F_FileLogger with ConsoleService implements IFileLogger
   }
 
   @override
-  void Warn(String message) async
+  void Warn(String message)
   {
     try
     {
@@ -105,7 +107,7 @@ class F_FileLogger with ConsoleService implements IFileLogger
   }
 
   @override
-  void Error(String message) async
+  void Error(String message)
   {
     try
     {
