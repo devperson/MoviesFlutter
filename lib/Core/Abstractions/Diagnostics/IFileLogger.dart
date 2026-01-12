@@ -8,7 +8,7 @@ abstract interface class IFileLogger
 
   void Error(String Message);
 
-  Future<List<int>?> GetCompressedLogsSync(bool GetOnlyLastSession);
+  Future<List<int>?> GetCompressedLogsSync(bool getOnlyLastSession);
 
   Future<List<String>> GetLogListAsync();
 

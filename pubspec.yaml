@@ -73,6 +73,8 @@ dependencies:
 
   #JsonDeserializer
   dart_mappable: ^4.6.1
+  #Error tracking
+  sentry_flutter: ^9.9.2
 
 dev_dependencies:
   flutter_test:
@@ -89,6 +91,8 @@ dev_dependencies:
   dart_mappable_builder: ^4.5.0
   #mock for unittest
   mocktail: ^1.0.4
+  #upload symbols to sentry:
+  sentry_dart_plugin: ^3.2.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -115,3 +119,16 @@ flutter:
           weight: 600
         - asset: assets/fonts/Sen-Bold.ttf
           weight: 700
+
+#upload symbols to Sentry project
+#Build on Release mode and the run:
+# flutter pub run sentry_dart_plugin
+sentry:
+  project: flutter-bestapp
+  org: freelance-6m
+  auth_token: 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
+  # Absolute or relative path to the Dart symbol map file
+  # Used to make obfuscated Flutter issue titles readable on iOS and Android
+  # See the "Building Your Application" section below for more details on how to generate the symbol map file
+  # Available since version 3.2.0 of the Sentry Dart Plugin
+  #dart_symbol_map_path: build/app/obfuscation.map.json

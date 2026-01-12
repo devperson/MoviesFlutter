@@ -7,6 +7,7 @@ import 'package:movies_flutter/Core/Abstractions/Diagnostics/IPlatformOutput.dar
 import 'package:movies_flutter/Core/Abstractions/Essentials/Device/IDeviceInfo.dart';
 import 'package:movies_flutter/Core/Abstractions/Essentials/IAppInfo.dart';
 import 'package:movies_flutter/Core/Abstractions/Essentials/IPreferences.dart';
+import 'package:movies_flutter/Core/Base/Impl/Diagnostic/F_ErrorTrackingService.dart';
 import 'package:movies_flutter/Core/Base/Impl/Utils/ContainerLocator.dart';
 
 import 'App/Controllers/LoginPageViewModel.dart';
@@ -17,26 +18,27 @@ import 'Core/Abstractions/MVVM/IPageNavigationService.dart';
 import 'Core/Base/Impl/MVVM/Navigation/F_PageNavigationService.dart';
 import 'Core/Base/Impl/Utils/ColorConstants.dart';
 
-void main()
+void main() async
 {
-  unawaited(
-    runZonedGuarded(() async {
-      //init the WidgetsFlutterBinding as it is required for IPreferences, and for similar platform services
-      // MUST be inside the same zone as runApp
-      WidgetsFlutterBinding.ensureInitialized();
-      await DiRegistration.RegisterTypes();
+  final errorTrackingService = F_ErrorTrackingService();
 
-      runApp(const MyApp());
-    },
-    (error, stack)
-    {
-      final console = ContainerLocator.Resolve<IPlatformOutput>();
-      if(console.IsInited == false)
-      {
-        console.Init();
-      }
-       console.Error('Unhandled crash:', error: error, stackTrace: stack);
-    }));
+  await runZonedGuarded(() async {
+    //init the WidgetsFlutterBinding as it is required for IPreferences, and for similar platform services
+    // MUST be inside the same zone as runApp
+    WidgetsFlutterBinding.ensureInitialized();
+    await errorTrackingService.InitializeAsync();
+    await DiRegistration.RegisterTypes(errorTrackingService);
+
+    runApp(const MyApp());
+  },
+  (error, stack) async
+  {
+    final logger = ContainerLocator.Resolve<ILoggingService>();
+    if(!logger.IsInited)
+       await logger.InitAsync();
+
+    logger.TrackError(error, stack);
+  });
 }
 
 class MyApp extends StatelessWidget

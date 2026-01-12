@@ -147,4 +147,8 @@ class MockLoggingService implements ILoggingService
   {
 
   }
+
+  @override
+  // TODO: implement IsInited
+  bool get IsInited => throw UnimplementedError();
 }
