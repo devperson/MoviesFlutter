@@ -83,7 +83,7 @@ class MyApp extends StatelessWidget
     final loggingService = ContainerLocator.Resolve<ILoggingService>();
     final appInfo = ContainerLocator.Resolve<IAppInfo>();
     final deviceService = ContainerLocator.Resolve<IDeviceInfo>();
-    loggingService.Log("####################################################- APPLICATION STARTED -####################################################");
+    loggingService.Header("####################################################- APPLICATION STARTED -####################################################");
 
     //print date
     final now = DateTime.now();

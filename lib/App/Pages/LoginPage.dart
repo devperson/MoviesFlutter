@@ -17,9 +17,6 @@ class LoginPage extends StatelessWidget
     return GetBuilder<LoginPageViewModel>(
         builder: (controller) {
           return Scaffold(
-            // appBar: AppBar(
-            //   title: const Text('Login'),
-            // ),
             body: Padding(
               padding: const EdgeInsets.symmetric(
                   horizontal: NumConstants.pageHMargin),

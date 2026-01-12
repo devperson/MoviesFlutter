@@ -122,6 +122,12 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
        return;
      }
 
+     if (this.navigationService.Value.CanNavigateBack == false)
+     {
+       loggingService.Value.Log("Cancel ${runtimeType}.DoDeviceBackCommand(): Ignore back command because this page CanNavigateBack is false.",);
+       return;
+     }
+
      await OnBackCommand(param);
    }
 

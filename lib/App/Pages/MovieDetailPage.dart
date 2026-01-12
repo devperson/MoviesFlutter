@@ -25,77 +25,79 @@ class MovieDetailPage extends StatelessWidget {
               },
               viewModel: controller,
             ),
-            body: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 30),
+            body: SafeArea(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 30),
 
-                    Center(
-                      child: SizedBox(
-                        width: 200,
-                        height: 300,
-                        child: F_ImageView(
-                          path: controller.MovieItem.posterPath,
-                          fit: BoxFit.cover,
+                      Center(
+                        child: SizedBox(
+                          width: 200,
+                          height: 300,
+                          child: F_ImageView(
+                            path: controller.MovieItem.posterPath,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
-                    ),
 
-                    const SizedBox(height: 25),
+                      const SizedBox(height: 25),
 
-                    // Name row
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(
-                          width: 77,
-                          child: Text(
-                            'Name:',
-                            textAlign: TextAlign.right,
-                          ), // Added const to Text
-                        ),
+                      // Name row
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(
+                            width: 77,
+                            child: Text(
+                              'Name:',
+                              textAlign: TextAlign.right,
+                            ), // Added const to Text
+                          ),
 
-                        const SizedBox(width: 10),
+                          const SizedBox(width: 10),
 
-                        Expanded(
-                          child: Text(
-                            controller.MovieItem.title,
-                            style: const TextStyle(
-                              fontFamily: FontConstants.RegularFont,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
+                          Expanded(
+                            child: Text(
+                              controller.MovieItem.title,
+                              style: const TextStyle(
+                                fontFamily: FontConstants.RegularFont,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
 
-                    const SizedBox(height: 16),
+                      const SizedBox(height: 16),
 
-                    // Description row
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Description:'), // Added const
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            controller.MovieItem.overview,
-                            style: const TextStyle(
-                              fontFamily: FontConstants.RegularFont,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 15,
+                      // Description row
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Description:'), // Added const
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              controller.MovieItem.overview,
+                              style: const TextStyle(
+                                fontFamily: FontConstants.RegularFont,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 15,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
 
-                    const SizedBox(height: 24),
-                  ],
+                      const SizedBox(height: 24),
+                    ],
+                  ),
                 ),
               ),
             ),

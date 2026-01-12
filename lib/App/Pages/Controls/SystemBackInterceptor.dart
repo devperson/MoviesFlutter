@@ -13,11 +13,17 @@ class SystemBackInterceptor extends StatelessWidget
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)
+  {
     return PopScope(
       canPop: false, // Intercepts system back
-      onPopInvokedWithResult: (didPop, result) {
-        if (didPop) return;
+      onPopInvokedWithResult: (didPop, result)
+      {
+        if (didPop)
+        {
+          return;
+        }
+
         onSystemBack(); // Triggers your custom logic
       },
       child: child,
