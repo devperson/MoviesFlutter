@@ -4,7 +4,7 @@ abstract interface class IErrorTrackingService
 {
   Event<Exception> get OnServiceError;
 
-  void Initialize();
+  Future<void> InitializeAsync();
 
   void TrackError(Object ex, StackTrace stackTrace, { List<int>? attachment, Map<String, String>? additionalData });
 }

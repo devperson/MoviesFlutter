@@ -25,12 +25,20 @@ class F_LoggingService implements ILoggingService
     final _fileLogger = LazyInjected<IFileLogger>();
     final _preferences = LazyInjected<IPreferences>();
     final _platformConsole = LazyInjected<IPlatformOutput>();
+    var _isInited = false;
 
-
+    @override
+    bool get IsInited => _isInited;
 
     @override
     Future<void> InitAsync() async
     {
+      if(_isInited) {
+        _platformConsole.Value.Warn("F_LoggingService.InitAsync(): Ignoring this method because it is already initilized");
+        return;
+      }
+      _isInited = true;
+
       //_errorTrackingService.Value.OnServiceError.AddListener(ErrorTrackingService_OnError);
       await _fileLogger.Value.InitAsync();
       _platformConsole.Value.Init();
@@ -300,6 +308,8 @@ class F_LoggingService implements ILoggingService
 
       return "$className.$funcName(); $argsString";
     }
+
+
 }
 
 class ConditionalLogger implements ILogging

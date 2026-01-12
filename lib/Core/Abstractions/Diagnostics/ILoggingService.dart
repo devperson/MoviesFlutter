@@ -11,6 +11,7 @@ abstract interface class ILoggingService extends ILogging
   Object? get LastError;
   set LastError(Object? Value);
   bool get HasError;
+  bool get IsInited;
 
   Future<void> InitAsync();
   void LogMethodStarted2(String MethodName);

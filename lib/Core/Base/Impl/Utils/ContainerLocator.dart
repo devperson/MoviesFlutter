@@ -6,4 +6,16 @@ class ContainerLocator
   {
     return Get.find<T>();
   }
+
+  static T? ResolveSecure<T>()
+  {
+    try
+    {
+      return Get.find<T>();
+    }
+    catch(ex)
+    {
+      return null;
+    }
+  }
 }

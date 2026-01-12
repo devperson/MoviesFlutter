@@ -256,21 +256,13 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
    {
      LogMethodStart("HandleUIError");
 
-     var KnownError = true;
 
-     // // Cancellation / intentional ignore
-     // if (error is CancelledException)
-     // {
-     //   loggingService.Value.LogWarning(
-     //     "Ignoring the CancelledException",
-     //   );
-     //   return;
-     // }
+     var KnownError = true;
 
      // Auth expired / unauthorized
      if (error is AuthExpiredException ||
          error is HttpRequestException &&
-             error.statusCode == HttpStatusCode.Unauthorized)
+         error.statusCode == HttpStatusCode.Unauthorized)
      {
        loggingService.Value.LogWarning(
          "Skip showing error popup for user because this error is handled in main view: ${error.runtimeType}: ${error.toString()}",

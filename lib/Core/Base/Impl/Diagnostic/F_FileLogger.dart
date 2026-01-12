@@ -121,6 +121,7 @@ class F_FileLogger with ConsoleService implements IFileLogger
 
 
 
+  @override
   Future<List<int>?> GetCompressedLogsSync(bool getOnlyLastSession) async
   {
     final tempZipPath = kIsWeb
