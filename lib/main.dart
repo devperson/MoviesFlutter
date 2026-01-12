@@ -17,26 +17,43 @@ import 'Core/Abstractions/MVVM/IPageNavigationService.dart';
 import 'Core/Base/Impl/MVVM/Navigation/F_PageNavigationService.dart';
 import 'Core/Base/Impl/Utils/ColorConstants.dart';
 
-void main()
-{
+// Firebase
+import 'dart:ui';
+// import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+
+void main() {
   unawaited(
     runZonedGuarded(() async {
       //init the WidgetsFlutterBinding as it is required for IPreferences, and for similar platform services
       // MUST be inside the same zone as runApp
       WidgetsFlutterBinding.ensureInitialized();
+      //await Firebase.initializeApp();
+
+      // Pass all uncaught "fatal" errors from the framework to Crashlytics
+      //FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+
+      // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+      // PlatformDispatcher.instance.onError = (error, stack) {
+      //   FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      //   return true;
+      // };
+
       await DiRegistration.RegisterTypes();
 
       runApp(const MyApp());
     },
     (error, stack)
     {
+      //FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
       final console = ContainerLocator.Resolve<IPlatformOutput>();
-      if(console.IsInited == false)
+      if (console.IsInited == false)
       {
         console.Init();
       }
-       console.Error('Unhandled crash:', error: error, stackTrace: stack);
-    }));
+      console.Error('Unhandled crash:', error: error, stackTrace: stack);
+    })
+  );
 }
 
 class MyApp extends StatelessWidget

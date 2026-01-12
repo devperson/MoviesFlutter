@@ -74,6 +74,10 @@ dependencies:
   #JsonDeserializer
   dart_mappable: ^4.6.1
 
+  # Firebase
+  #firebase_core: ^2.24.2
+  #firebase_crashlytics: ^3.4.9
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
