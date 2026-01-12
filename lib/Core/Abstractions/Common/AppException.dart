@@ -14,18 +14,30 @@ class AppException implements Exception
   /// Error message describing the failure.
   final String _message;
   /// Stack trace captured at the moment the exception was created.
-  final StackTrace _stackTrace;
+  late final StackTrace? _stackTrace;
   /// Optional inner / caused exception (Kotlin `cause`, C# `InnerException`).
-  final Exception? _causedException;
-  final StackTrace? _causedStackTrace;
+  late final Exception? _causedException;
+  late final StackTrace? _causedStackTrace;
 
   String get Message => _message;
-  StackTrace get ErrorStackTrace => _stackTrace;
+  StackTrace? get ErrorStackTrace => _stackTrace;
   Exception? get CausedException => _causedException;
   StackTrace? get CausedStackTrace => _causedStackTrace;
 
   AppException.Throw(String message) : this(message, StackTrace.current);
   AppException(this._message, this._stackTrace, [ this._causedException, this._causedStackTrace ]);
+  AppException.FromMessage(this._message, {Exception? causedException = null, StackTrace? causedStackTrace})
+  {
+    this._stackTrace = null;
+    this._causedException = causedException;
+    this._causedStackTrace = causedStackTrace;
+  }
+  AppException.FromException(this._message, {Exception? causedException = null})
+  {
+    this._causedException = causedException;
+    this._stackTrace = null;
+    this._causedStackTrace = null;
+  }
 
   /// Returns a string representation in a Kotlin / C#–style format:
   ///
@@ -38,11 +50,19 @@ class AppException implements Exception
   String toString()
   {
     final buffer = StringBuffer();
-    buffer.write("$runtimeType: $_message\n$_stackTrace");
+    buffer.write("$runtimeType: $_message");
+    if(_stackTrace != null)
+    {
+      buffer.write("\n$_stackTrace");
+    }
 
     if (_causedException != null)
     {
-      buffer.write("\nCaused by: $_causedException\n$_causedStackTrace");
+      buffer.write("\nCaused by: $_causedException");
+      if(_causedStackTrace != null)
+      {
+        buffer.write("\n$_causedStackTrace");
+      }
     }
 
     return buffer.toString();

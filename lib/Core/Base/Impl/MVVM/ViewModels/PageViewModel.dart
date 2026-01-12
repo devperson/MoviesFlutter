@@ -249,7 +249,13 @@ class PageViewModel extends NavigatingBaseViewModel implements IPageLifecycleAwa
 
    void HandleUIErrorFromException(AppException ex)
    {
-     HandleUIError(ex, ex.ErrorStackTrace);
+     if(ex.ErrorStackTrace == null)
+     {
+       final error = AppException("HandleUIErrorFromException() failed because ex.ErrorStackTrace is null for $ex", StackTrace.current);
+       loggingService.Value.LogException(error);
+       throw error;
+     }
+     HandleUIError(ex, ex.ErrorStackTrace!);
    }
 
    void HandleUIError(Object error, StackTrace stack)

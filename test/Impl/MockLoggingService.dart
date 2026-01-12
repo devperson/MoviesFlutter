@@ -27,6 +27,9 @@ class MockLoggingService implements ILoggingService
     return LastError != null;
   }
 
+  @override
+  StackTrace? LastStackTrace;
+
   // ---------- helpers ----------
   final DateFormat _timeFormatter = DateFormat("HH:mm:ss");
   String _getFormattedDate()
@@ -57,6 +60,7 @@ class MockLoggingService implements ILoggingService
   @override
   void LogError(Object ex, StackTrace stacktrace, [String message = "", bool handled = true])
   {
+
     _platformOutput.Value.Error("ERROR: $message,💥Handled Exception: ${ex.ToExceptionString(stacktrace)}");
   }
 
@@ -64,6 +68,7 @@ class MockLoggingService implements ILoggingService
   void TrackError(Object ex, StackTrace stacktrace, [Map<String, String>? data])
   {
     LastError = ex;
+    LastStackTrace = stacktrace;
     _platformOutput.Value.Error("💥Handled Exception: ${ex.ToExceptionString(stacktrace)}");
   }
 
@@ -71,6 +76,7 @@ class MockLoggingService implements ILoggingService
   void LogUnhandledError(Object ex, StackTrace stackTrace)
   {
     LastError = ex;
+    LastStackTrace = stackTrace;
     _platformOutput.Value.Error("💥Unhandled Exception: ${ex.ToExceptionString(stackTrace)}");
   }
 
@@ -151,4 +157,15 @@ class MockLoggingService implements ILoggingService
   @override
   // TODO: implement IsInited
   bool get IsInited => throw UnimplementedError();
+
+  @override
+  void LogException(AppException exception)
+  {
+    LastError = exception;
+    LastStackTrace = exception.ErrorStackTrace;
+
+    _platformOutput.Value.Error("💥Handled Exception: ${exception.toString()}");
+  }
+
+
 }

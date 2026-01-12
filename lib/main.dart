@@ -18,9 +18,11 @@ import 'Core/Abstractions/MVVM/IPageNavigationService.dart';
 import 'Core/Base/Impl/MVVM/Navigation/F_PageNavigationService.dart';
 import 'Core/Base/Impl/Utils/ColorConstants.dart';
 
+late final errorTrackingService;
+
 void main() async
 {
-  final errorTrackingService = F_ErrorTrackingService();
+  errorTrackingService = F_ErrorTrackingService();
 
   await runZonedGuarded(() async {
     //init the WidgetsFlutterBinding as it is required for IPreferences, and for similar platform services
@@ -73,7 +75,9 @@ class MyApp extends StatelessWidget
   Widget build(BuildContext context)
   {
     this.LogAppDeviceInfo();
-    
+    //configure some custom setup after DI available
+    unawaited(errorTrackingService.CustomConfigure());
+
     //Resove initial page from preferences
     final pref = ContainerLocator.Resolve<IPreferences>();
     final isLoggedIn = pref.Get(LoginPageViewModel.IsLoggedIn, false);

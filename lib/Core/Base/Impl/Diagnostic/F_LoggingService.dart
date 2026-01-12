@@ -20,6 +20,8 @@ class F_LoggingService implements ILoggingService
     Object? LastError;
     @override
     bool get HasError => LastError != null;
+    @override
+    StackTrace? LastStackTrace;
 
     final _errorTrackingService = LazyInjected<IErrorTrackingService>();
     final _fileLogger = LazyInjected<IFileLogger>();
@@ -66,7 +68,6 @@ class F_LoggingService implements ILoggingService
     void TrackInternal(Object ex, StackTrace stackTrace, bool handled, [Map<String, String>? data])
     {
         SafeCall(() {
-            LastError = ex;
             LogError(ex, stackTrace, "", handled);
 
             if (handled)
@@ -86,7 +87,8 @@ class F_LoggingService implements ILoggingService
     @override
     void Log(String message)
     {
-        SafeCall(() {
+        SafeCall(()
+        {
             RowNumber++;
             final tag = GetLogAppTag(AppLaunchCount, RowNumber);
             final formatted = "$tag INFO:$message";
@@ -98,7 +100,8 @@ class F_LoggingService implements ILoggingService
     @override
     void LogWarning(String message)
     {
-        SafeCall(() {
+        SafeCall(()
+        {
             RowNumber++;
             final tag = GetLogAppTag(AppLaunchCount, RowNumber);
             final formatted = "$tag WARNING:$message";
@@ -110,7 +113,11 @@ class F_LoggingService implements ILoggingService
     @override
     void LogError(Object ex, StackTrace stackTrace, [String message = "", bool handled = true])
     {
-        SafeCall(() {
+        SafeCall(()
+        {
+            LastError = ex;
+            LastStackTrace = stackTrace;
+
             RowNumber++;
             final tag = GetLogAppTag(AppLaunchCount, RowNumber);
 
@@ -308,6 +315,26 @@ class F_LoggingService implements ILoggingService
 
       return "$className.$funcName(); $argsString";
     }
+
+  @override
+  void LogException(AppException exception)
+  {
+    LastError = exception;
+
+    RowNumber++;
+    final tag = GetLogAppTag(AppLaunchCount, RowNumber);
+
+    final formatted = StringBuffer();
+    formatted.write("$tag ERROR: ");
+    formatted.write(HANDLED_ERROR);
+
+    formatted.write(exception.toString());
+
+    _fileLogger.Value.Error(formatted.toString());
+    _platformConsole.Value.Error(formatted.toString());
+  }
+
+
 
 
 }

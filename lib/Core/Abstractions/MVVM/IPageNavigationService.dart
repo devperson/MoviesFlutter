@@ -1,4 +1,6 @@
 
+import 'package:movies_flutter/Core/Base/Impl/MVVM/ViewModels/PageViewModel.dart';
+
 import 'NavigationParameters.dart';
 
 abstract interface class IPageNavigationService
@@ -8,7 +10,7 @@ abstract interface class IPageNavigationService
   Future<void> NavigateToRoot({NavigationParameters? parameters});
 
   // Widget? getCurrentPage();
-  // GetxController? getCurrentPageModel();
+   PageViewModel? GetCurrentPageModel();
   // GetxController? getRootPageModel();
    List<String> GetNavStack();
 

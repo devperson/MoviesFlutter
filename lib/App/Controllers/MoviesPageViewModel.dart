@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:get/get_connect/http/src/exceptions/exceptions.dart';
 import 'package:movies_flutter/Core/Abstractions/AppServices/IInfrastructureServices.dart';
 
 import '../../Core/Abstractions/Diagnostics/IAppLogExporter.dart';
@@ -175,6 +176,7 @@ class MoviesPageViewModel extends PageViewModel
     try
     {
       LogMethodStart("OnItemTappedCommand", args: {'index': param});
+      throw GetHttpException("Method not implemented");
       final index = param as int;
       final item = this.Movies[index];
 
