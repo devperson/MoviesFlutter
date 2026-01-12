@@ -30,40 +30,17 @@ void main() async
     WidgetsFlutterBinding.ensureInitialized();
     await errorTrackingService.InitializeAsync();
     await DiRegistration.RegisterTypes(errorTrackingService);
-// Firebase
-//import 'dart:ui';
-// import 'package:firebase_core/firebase_core.dart';
-// import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-
-void main() {
-  unawaited(
-    runZonedGuarded(() async {
-      //init the WidgetsFlutterBinding as it is required for IPreferences, and for similar platform services
-      // MUST be inside the same zone as runApp
-      WidgetsFlutterBinding.ensureInitialized();
-      //await Firebase.initializeApp();
-
-      // Pass all uncaught "fatal" errors from the framework to Crashlytics
-      //FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-
-      // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
-      // PlatformDispatcher.instance.onError = (error, stack) {
-      //   FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-      //   return true;
-      // };
-
-      await DiRegistration.RegisterTypes();
 
     runApp(const MyApp());
   },
-  (error, stack) async
-  {
-    final logger = ContainerLocator.Resolve<ILoggingService>();
-    if(!logger.IsInited)
-       await logger.InitAsync();
+          (error, stack) async
+      {
+        final logger = ContainerLocator.Resolve<ILoggingService>();
+        if(!logger.IsInited)
+          await logger.InitAsync();
 
-    logger.TrackError(error, stack);
-  });
+        logger.TrackError(error, stack);
+      });
 }
 
 class MyApp extends StatelessWidget
@@ -75,14 +52,14 @@ class MyApp extends StatelessWidget
   Widget build(BuildContext context)
   {
     this.LogAppDeviceInfo();
-    //configure some custom setup after DI available
+    //configure some c ustom setup after DI available
     unawaited(errorTrackingService.CustomConfigure());
 
     //Resove initial page from preferences
     final pref = ContainerLocator.Resolve<IPreferences>();
     final isLoggedIn = pref.Get(LoginPageViewModel.IsLoggedIn, false);
     final initialPage = isLoggedIn ? MoviesPageViewModel.Name : LoginPageViewModel.Name;
-    
+
     // The initial page is set by GetX, not by NavService.
     // NavService needs to be informed about the initial page.
     // All subsequent navigation is handled by NavService.
@@ -98,16 +75,16 @@ class MyApp extends StatelessWidget
       getPages: PageRegistrar.pages,
       defaultTransition: Transition.rightToLeft,
       theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-                        appBarTheme: const AppBarTheme(
-                          backgroundColor: ColorConstants.BgColor,  //all page background color
-                          foregroundColor: ColorConstants.DefaultTextColor, // all text title + icons colors
-                          elevation: 0,
-                          centerTitle: true,),
-                       scaffoldBackgroundColor: ColorConstants.BgColor,),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: ColorConstants.BgColor,  //all page background color
+          foregroundColor: ColorConstants.DefaultTextColor, // all text title + icons colors
+          elevation: 0,
+          centerTitle: true,),
+        scaffoldBackgroundColor: ColorConstants.BgColor,),
     );
   }
 
-  void LogAppDeviceInfo() 
+  void LogAppDeviceInfo()
   {
     final loggingService = ContainerLocator.Resolve<ILoggingService>();
     final appInfo = ContainerLocator.Resolve<IAppInfo>();
