@@ -319,6 +319,12 @@ class F_PageNavigationService with LoggableService implements IPageNavigationSer
     stack = [page];
   }
 
+  @override
+  PageViewModel? GetCurrentPageModel() {
+    // TODO: implement GetCurrentPageModel
+    throw UnimplementedError();
+  }
+
 
 
   // @override

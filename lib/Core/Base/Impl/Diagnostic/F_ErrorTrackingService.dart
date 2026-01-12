@@ -3,12 +3,16 @@ import 'dart:async';
 import 'package:movies_flutter/Core/Abstractions/Common/AppException.dart';
 import 'package:movies_flutter/Core/Abstractions/Diagnostics/IErrorTrackingService.dart';
 import 'package:movies_flutter/Core/Abstractions/Common/Event.dart';
+import 'package:movies_flutter/Core/Abstractions/Diagnostics/IFileLogger.dart';
 import 'package:movies_flutter/Core/Abstractions/Diagnostics/ILoggingService.dart';
 import 'package:movies_flutter/Core/Base/Impl/Utils/ContainerLocator.dart';
 import 'package:movies_flutter/Core/Base/Impl/Utils/LazyInjected.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:sentry/sentry_io.dart';
 
 import '../../../Abstractions/Diagnostics/IPlatformOutput.dart';
+import '../../../Abstractions/Essentials/Device/DevicePlatform.dart';
+import '../../../Abstractions/Essentials/Device/IDeviceInfo.dart';
 
 class F_ErrorTrackingService implements IErrorTrackingService
 {
@@ -39,6 +43,7 @@ class F_ErrorTrackingService implements IErrorTrackingService
             return ev;
           }
 
+          hint.attachments.clear();
           hint.attachments.add(
             SentryAttachment.fromIntList(logBytes, 'applog.zip',contentType: 'application/x-zip-compressed'));
           //SentryAttachment attach = Se
@@ -64,6 +69,19 @@ class F_ErrorTrackingService implements IErrorTrackingService
       }
     }));
 
+  }
+
+  @override
+  Future<void> CustomConfigure() async
+  {
+    // final deviceInfo = ContainerLocator.Resolve<IDeviceInfo>();
+    // if(deviceInfo.Platform == DevicePlatform.iOS)
+    // {
+      final fileLogger = ContainerLocator.Resolve<IFileLogger>();
+      final logPath = fileLogger.GetCurrentLogFileName();
+      final attachment = IoSentryAttachment.fromPath(logPath);
+      await Sentry.configureScope((scope) => scope.addAttachment(attachment));
+    //}
   }
 
 

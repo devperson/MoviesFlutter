@@ -50,4 +50,5 @@ class AppDI
 class PreferencesMock extends Mock implements IPreferences {}
 class MovieRestServiceMock extends Mock implements IMovieRestService {}
 class MovieRepositoryMock extends Mock implements IRepository<Movie> {}
+//fake models
 class MovieFake extends Fake implements Movie {}

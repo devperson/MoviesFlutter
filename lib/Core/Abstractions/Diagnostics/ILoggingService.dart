@@ -1,3 +1,5 @@
+import 'package:movies_flutter/Core/Abstractions/Common/AppException.dart';
+
 abstract interface class ILogging
 {
   void Log(String Message);
@@ -11,6 +13,7 @@ abstract interface class ILoggingService extends ILogging
   Object? get LastError;
   set LastError(Object? Value);
   bool get HasError;
+  StackTrace? LastStackTrace;
   bool get IsInited;
 
   Future<void> InitAsync();
@@ -18,6 +21,7 @@ abstract interface class ILoggingService extends ILogging
   void Header(String HeaderMessage);
   void LogIndicator(String Name, String Message);
   void LogError(Object Ex, StackTrace stackTrace, [String Message = "", bool Handled = true ]);
+  void LogException(AppException exception);
   void TrackError(Object Ex, StackTrace stackTrace, [Map<String, String>? Data]);
   void LogUnhandledError(Exception Ex, StackTrace stackTrace);
   Future<List<int>?> GetCompressedLogFileBytes(bool GetOnlyLastSession);
