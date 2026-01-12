@@ -52,19 +52,21 @@ class MoviesPage extends StatelessWidget {
                 {
                   await controller.RefreshCommand.ExecuteAsync();
                 },
-                child: AnimatedListView<MovieItemModel>(
-                  items: controller.Movies,
-                  isSameItem: (oldItem, newItem) => oldItem.id == newItem.id,
-                  itemBuilder: (context, index) {
-                    return _buildMovieCell(index, controller);
-                  },
-                  physics: const AlwaysScrollableScrollPhysics(), // Forces the list to be scrollable even when content is short or empty, so pull-to-refresh (RefreshIndicator) can always be triggered.
-                  enterTransition: [FadeIn(), ScaleIn()],
-                  // Added const
-                  exitTransition: [SlideInLeft()],
-                  // Added const
-                  insertDuration: const Duration(milliseconds: 300),
-                  removeDuration: const Duration(milliseconds: 300),
+                child: SafeArea(
+                  child: AnimatedListView<MovieItemModel>(
+                    items: controller.Movies,
+                    isSameItem: (oldItem, newItem) => oldItem.id == newItem.id,
+                    itemBuilder: (context, index) {
+                      return _buildMovieCell(index, controller);
+                    },
+                    physics: const AlwaysScrollableScrollPhysics(), // Forces the list to be scrollable even when content is short or empty, so pull-to-refresh (RefreshIndicator) can always be triggered.
+                    enterTransition: [FadeIn(), ScaleIn()],
+                    // Added const
+                    exitTransition: [SlideInLeft()],
+                    // Added const
+                    insertDuration: const Duration(milliseconds: 300),
+                    removeDuration: const Duration(milliseconds: 300),
+                  ),
                 )
             ),
           );
