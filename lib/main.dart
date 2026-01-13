@@ -35,14 +35,14 @@ void main() async
     //errorTrackingService.CustomConfigure();
     runApp(const MyApp());
   },
-  (error, stack) async
-  {
-    final logger = ContainerLocator.Resolve<ILoggingService>();
-    if(!logger.IsInited)
-       await logger.InitAsync();
+          (error, stack) async
+      {
+        final logger = ContainerLocator.Resolve<ILoggingService>();
+        if(!logger.IsInited)
+          await logger.InitAsync();
 
-    logger.TrackError(error, stack);
-  });
+        logger.TrackError(error, stack);
+      });
 }
 
 class MyApp extends StatelessWidget
@@ -60,7 +60,7 @@ class MyApp extends StatelessWidget
     final pref = ContainerLocator.Resolve<IPreferences>();
     final isLoggedIn = pref.Get(LoginPageViewModel.IsLoggedIn, false);
     final initialPage = isLoggedIn ? MoviesPageViewModel.Name : LoginPageViewModel.Name;
-    
+
     // The initial page is set by GetX, not by NavService.
     // NavService needs to be informed about the initial page.
     // All subsequent navigation is handled by NavService.
@@ -76,16 +76,16 @@ class MyApp extends StatelessWidget
       getPages: PageRegistrar.pages,
       defaultTransition: Transition.rightToLeft,
       theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-                        appBarTheme: const AppBarTheme(
-                          backgroundColor: ColorConstants.BgColor,  //all page background color
-                          foregroundColor: ColorConstants.DefaultTextColor, // all text title + icons colors
-                          elevation: 0,
-                          centerTitle: true,),
-                       scaffoldBackgroundColor: ColorConstants.BgColor,),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: ColorConstants.BgColor,  //all page background color
+          foregroundColor: ColorConstants.DefaultTextColor, // all text title + icons colors
+          elevation: 0,
+          centerTitle: true,),
+        scaffoldBackgroundColor: ColorConstants.BgColor,),
     );
   }
 
-  void LogAppDeviceInfo() 
+  void LogAppDeviceInfo()
   {
     final loggingService = ContainerLocator.Resolve<ILoggingService>();
     final appInfo = ContainerLocator.Resolve<IAppInfo>();

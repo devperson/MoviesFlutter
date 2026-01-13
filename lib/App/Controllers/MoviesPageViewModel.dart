@@ -176,7 +176,7 @@ class MoviesPageViewModel extends PageViewModel
     try
     {
       LogMethodStart("OnItemTappedCommand", args: {'index': param});
-      throw GetHttpException("Method not implemented");
+      //throw GetHttpException("Method not implemented");
       final index = param as int;
       final item = this.Movies[index];
 

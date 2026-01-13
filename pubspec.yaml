@@ -76,6 +76,10 @@ dependencies:
   #Error tracking
   sentry_flutter: ^9.9.2
 
+  # Firebase
+  #firebase_core: ^2.24.2
+  #firebase_crashlytics: ^3.4.9
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
