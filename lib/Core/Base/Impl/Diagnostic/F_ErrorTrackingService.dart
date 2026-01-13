@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:movies_flutter/Core/Abstractions/Common/AppException.dart';
 import 'package:movies_flutter/Core/Abstractions/Diagnostics/IErrorTrackingService.dart';
@@ -18,6 +19,8 @@ class F_ErrorTrackingService implements IErrorTrackingService
 {
   final _consoleOutput = LazyInjected<IPlatformOutput>();
   //final _directoryService = LazyInjected<IDirectoryService>();
+  final _deviceInfo = LazyInjected<IDeviceInfo>();
+
 
   String? logDirectoryForUnhandled = null;
   @override
@@ -32,23 +35,31 @@ class F_ErrorTrackingService implements IErrorTrackingService
         // Adds request headers and IP for users, for more info visit:
         // https://docs.sentry.io/platforms/dart/guides/flutter/data-management/data-collected/
         options.sendDefaultPii = true;
-        options.beforeSend = (ev, hint) async
+        if(_deviceInfo.Value.Platform != DevicePlatform.iOS)
         {
-          final logger = ContainerLocator.Resolve<ILoggingService>();
-          final logBytes = await logger.GetLastSessionLogBytes();
-          //final newLogPath = await _createPathForAttachment();
-
-          if (logBytes == null)
+          options.beforeSend = (ev, hint) async
           {
-            return ev;
-          }
+            final logger = ContainerLocator.Resolve<ILoggingService>();
+            final logBytes = await logger.GetLastSessionLogBytes();
+            //final newLogPath = await _createPathForAttachment();
 
-          hint.attachments.clear();
-          hint.attachments.add(
-            SentryAttachment.fromIntList(logBytes, 'applog.zip',contentType: 'application/x-zip-compressed'));
-          //SentryAttachment attach = Se
-           return ev;
-        };
+            if (logBytes == null) {
+              return ev;
+            }
+
+            hint.attachments.clear();
+            hint.attachments.add(
+                SentryAttachment.fromIntList(logBytes, 'applog.zip', contentType: 'application/x-zip-compressed'));
+            //SentryAttachment attach = Se
+            return ev;
+          };
+        }
+        else
+          {
+            final fileLogger = ContainerLocator.Resolve<IFileLogger>();
+            final logPath = fileLogger.GetCurrentLogFileName();
+
+          }
     });
   }
 
@@ -83,33 +94,5 @@ class F_ErrorTrackingService implements IErrorTrackingService
       await Sentry.configureScope((scope) => scope.addAttachment(attachment));
     //}
   }
-
-
-  // int logFileIndex = 1;
-  // Future<String> _createPathForAttachment() async
-  // {
-  //   if (logDirectoryForUnhandled == null)
-  //   {
-  //     final cacheDir = await _directoryService.Value.GetCacheDir();
-  //     logDirectoryForUnhandled = path.join(cacheDir,'sentryTempFolder');
-  //
-  //     final dir = Directory(logDirectoryForUnhandled!);
-  //     if (!await dir.exists())
-  //     {
-  //       await dir.create(recursive: true);
-  //     }
-  //   }
-  //
-  //   final newPath = path.join(logDirectoryForUnhandled!,'applog$logFileIndex.zip');
-  //
-  //   final file = File(newPath);
-  //   if (await file.exists())
-  //   {
-  //     await file.delete();
-  //   }
-  //
-  //   logFileIndex++;
-  //   return newPath;
-  // }
-
 }
+

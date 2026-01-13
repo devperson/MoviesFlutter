@@ -21,7 +21,6 @@ import '../Abstractions/REST/IAuthTokenService.dart';
 import '../Abstractions/REST/IRestClient.dart';
 import '../Abstractions/UI/IAlertDialogService.dart';
 import '../Abstractions/UI/ISnackbarService.dart';
-import 'Impl/Diagnostic/F_ErrorTrackingService.dart';
 import 'Impl/Diagnostic/F_FileLogger.dart';
 import 'Impl/Diagnostic/F_LogExporter.dart';
 import 'Impl/Diagnostic/F_LoggingService.dart';
@@ -49,43 +48,37 @@ class BaseImplRegistrar
       //Get.put allows to create singilton instances but they will be created right away
       //Get.lazyPut it will not create instance only when accessed but you can not make it singilton.
       //So GetX has some limitation it can not do lazy singilton instances
+      //common
       Get.put<IDirectoryService>(F_DirectoryService(), permanent: true);
-
       final pref = F_PreferencesImplementation();
       await pref.InitializeAsync();
       Get.put<IPreferences>(pref, permanent: true);
+      Get.lazyPut<IZipService>(() => F_ZipService(), fenix: true);
+      Get.put<IMessagesCenter>(SimpleMessageCenter(), permanent: true);
 
+      //logger
       Get.put<IFileLogger>(F_FileLogger(), permanent: true);
       Get.put<IPlatformOutput>(F_PlatformOutput(), permanent: true);
-      Get.put<IErrorTrackingService>(F_ErrorTrackingService(), permanent: true);
-
       final logger = F_LoggingService();
       await logger.InitAsync();
       Get.put<ILoggingService>(logger, permanent: true);
-
       Get.lazyPut<IAppLogExporter>(()=>F_LogExporter(), fenix: true);
 
-      Get.put<IPageNavigationService>(F_PageNavigationService(), permanent: true);
-      Get.lazyPut<IZipService>(() => F_ZipService(), fenix: true);
-      Get.put<IMessagesCenter>(SimpleMessageCenter(), permanent: true);
 
       //UI
       Get.lazyPut<IAlertDialogService>(() => F_AlertDialogService(), fenix: true);
       Get.lazyPut<ISnackbarService>(() => F_SnackbarService(), fenix: true);
       Get.put<IPageNavigationService>(F_PageNavigationService(), permanent: true);
       //Essentials
-
       final appInfo = F_AppInfoImplementation();
       await appInfo.InitializeAsync();
-      Get.put<IAppInfo>(appInfo, permanent: true);
-
       final deviceInfo = F_DeviceInfoImplementation();
       await deviceInfo.InitializeAsync();
+      Get.put<IAppInfo>(appInfo, permanent: true);
       Get.put<IDeviceInfo>(deviceInfo, permanent: true);
-      Get.lazyPut<IMediaPickerService>(() => F_MediaPickerService(), fenix: true);
-
       Get.put<IDisplay>(F_DisplayImplementation(), permanent: true);
       Get.put<IShare>(F_ShareImplementation(), permanent: true);
+      Get.lazyPut<IMediaPickerService>(() => F_MediaPickerService(), fenix: true);
       //REST
       Get.lazyPut<IRestClient>(() => RestClient(), fenix: true);
       Get.lazyPut<RequestQueueList>(() => RequestQueueList(), fenix: true);

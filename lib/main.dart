@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:movies_flutter/App/Controllers/MoviesPageViewModel.dart';
+import 'package:movies_flutter/Core/Abstractions/Diagnostics/IErrorTrackingService.dart';
 import 'package:movies_flutter/Core/Abstractions/Diagnostics/IPlatformOutput.dart';
 import 'package:movies_flutter/Core/Abstractions/Essentials/Device/IDeviceInfo.dart';
 import 'package:movies_flutter/Core/Abstractions/Essentials/IAppInfo.dart';
@@ -30,7 +31,8 @@ void main() async
     WidgetsFlutterBinding.ensureInitialized();
     await errorTrackingService.InitializeAsync();
     await DiRegistration.RegisterTypes(errorTrackingService);
-
+    //configure some custom setup after DI available
+    //errorTrackingService.CustomConfigure();
     runApp(const MyApp());
   },
   (error, stack) async
@@ -52,8 +54,7 @@ class MyApp extends StatelessWidget
   Widget build(BuildContext context)
   {
     this.LogAppDeviceInfo();
-    //configure some custom setup after DI available
-    unawaited(errorTrackingService.CustomConfigure());
+
 
     //Resove initial page from preferences
     final pref = ContainerLocator.Resolve<IPreferences>();
