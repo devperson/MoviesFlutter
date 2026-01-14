@@ -12,14 +12,13 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:sentry/sentry_io.dart';
 
 import '../../../Abstractions/Diagnostics/IPlatformOutput.dart';
-import '../../../Abstractions/Essentials/Device/DevicePlatform.dart';
-import '../../../Abstractions/Essentials/Device/IDeviceInfo.dart';
+import '../Utils/NativeiOSBridging.dart';
+import 'dart:io' show Platform;
 
 class F_ErrorTrackingService implements IErrorTrackingService
 {
+  //WARNING do not use it in InitializeAsync() because InitializeAsync() is called before DI init
   final _consoleOutput = LazyInjected<IPlatformOutput>();
-  //final _directoryService = LazyInjected<IDirectoryService>();
-  final _deviceInfo = LazyInjected<IDeviceInfo>();
 
 
   String? logDirectoryForUnhandled = null;
@@ -29,37 +28,38 @@ class F_ErrorTrackingService implements IErrorTrackingService
   @override
   Future<void> InitializeAsync() async
   {
-    await SentryFlutter.init((options)
+    await SentryFlutter.init((options) async
     {
         options.dsn = 'https://6f765635535a1c1d81ecd9b6c288b836@o4507288977080320.ingest.de.sentry.io/4510697340338256';
         // Adds request headers and IP for users, for more info visit:
         // https://docs.sentry.io/platforms/dart/guides/flutter/data-management/data-collected/
         options.sendDefaultPii = true;
-        if(_deviceInfo.Value.Platform != DevicePlatform.iOS)
+        options.beforeSend = (ev, hint) async
         {
-          options.beforeSend = (ev, hint) async
+          //note that attaching for iOS native unhandled crash is not supported by Sentry
+          //the bellow attaches to Android, Flutter exceptions/crashes(handled/unhandled)
+          //the swift side have additional setup to send attachment to own server
+
+          final logger = ContainerLocator.Resolve<ILoggingService>();
+          final logBytes = await logger.GetLastSessionLogBytes();
+          if (logBytes == null)
           {
-            final logger = ContainerLocator.Resolve<ILoggingService>();
-            final logBytes = await logger.GetLastSessionLogBytes();
-            //final newLogPath = await _createPathForAttachment();
-
-            if (logBytes == null) {
-              return ev;
-            }
-
-            hint.attachments.clear();
-            hint.attachments.add(
-                SentryAttachment.fromIntList(logBytes, 'applog.zip', contentType: 'application/x-zip-compressed'));
-            //SentryAttachment attach = Se
             return ev;
-          };
-        }
-        else
-          {
-            final fileLogger = ContainerLocator.Resolve<IFileLogger>();
-            final logPath = fileLogger.GetCurrentLogFileName();
-
           }
+
+          hint.attachments.clear();
+          hint.attachments.add(
+              SentryAttachment.fromIntList(logBytes, 'applog.zip', contentType: 'application/x-zip-compressed'));
+          
+          return ev;
+        };
+        if(Platform.isIOS)
+        {
+          //we have additional setup at native swift side (check AppDelegate)
+          print("F_ErrorTrackingService.InitializeAsync(): setup additional setup was done at native side for iOS(check swift AppDelegate)");
+          //do not auto initialize native sdk as it is done manually at swift side
+          options.autoInitializeNativeSdk = false;
+        }
     });
   }
 
@@ -79,20 +79,8 @@ class F_ErrorTrackingService implements IErrorTrackingService
         _consoleOutput.Value.Error(ex.ToExceptionString(stackTrace));
       }
     }));
-
   }
 
-  @override
-  Future<void> CustomConfigure() async
-  {
-    // final deviceInfo = ContainerLocator.Resolve<IDeviceInfo>();
-    // if(deviceInfo.Platform == DevicePlatform.iOS)
-    // {
-      final fileLogger = ContainerLocator.Resolve<IFileLogger>();
-      final logPath = fileLogger.GetCurrentLogFileName();
-      final attachment = IoSentryAttachment.fromPath(logPath);
-      await Sentry.configureScope((scope) => scope.addAttachment(attachment));
-    //}
-  }
+
 }
 

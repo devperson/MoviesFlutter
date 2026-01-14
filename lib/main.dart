@@ -19,7 +19,7 @@ import 'Core/Abstractions/MVVM/IPageNavigationService.dart';
 import 'Core/Base/Impl/MVVM/Navigation/F_PageNavigationService.dart';
 import 'Core/Base/Impl/Utils/ColorConstants.dart';
 
-late final errorTrackingService;
+late final IErrorTrackingService errorTrackingService;
 
 void main() async
 {
@@ -31,8 +31,6 @@ void main() async
     WidgetsFlutterBinding.ensureInitialized();
     await errorTrackingService.InitializeAsync();
     await DiRegistration.RegisterTypes(errorTrackingService);
-    //configure some custom setup after DI available
-    //errorTrackingService.CustomConfigure();
     runApp(const MyApp());
   },
           (error, stack) async
