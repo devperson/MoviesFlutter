@@ -13,7 +13,7 @@ class ConsoleServiceImpl
     catch (ex, stackTrace)
     {
       final error = ex.ToExceptionString(stackTrace);
-      PrintRed(error);
+      print(error);
       return null;
     }
   }
