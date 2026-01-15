@@ -19,7 +19,7 @@ The demo shows how:
 - **MVVM** implementation in flutter project
 - Navigation can be driven from **ViewModels**
 - **Domain-Driven Design** structures the shared core
-- Services remain fully abstract and injected via **DI**
+- Services remain fully abstract and are injected via **Dependency Injection** (DI)
 - Comprehensive **logging** captures application actions for diagnostics and troubleshooting
 - The architecture naturally supports **Unit Tests** and **Integration Tests**
 
