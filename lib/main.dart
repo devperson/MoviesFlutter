@@ -73,6 +73,7 @@ class MyApp extends StatelessWidget
       initialRoute: '/' + initialPage,
       getPages: PageRegistrar.pages,
       defaultTransition: Transition.cupertino,
+      transitionDuration: const Duration(milliseconds: 300),
       theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         appBarTheme: const AppBarTheme(
           backgroundColor: ColorConstants.BgColor,  //all page background color
