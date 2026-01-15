@@ -31,7 +31,7 @@ The goal of this project is to demonstrate my experience in creating **beautiful
   https://github.com/devperson/MoviesSwift
   
 - **MoviesDemo (KMP – Fragment / UIKit)**  
-  https://github.com/xusan/movieskmpcompose
+  https://github.com/xusan/MoviesKmpSimplified
 
 - **MoviesDemo (KMP – Jetpack Compose / SwiftUI)**  
   https://github.com/xusan/movieskmpcompose
@@ -60,7 +60,7 @@ The goal of this project is to demonstrate my experience in creating **beautiful
 
 ---
 
-## App Demo
+## Screenshots
 
 | iOS | Android |
 |-----|---------|
