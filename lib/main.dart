@@ -74,7 +74,7 @@ class MyApp extends StatelessWidget
       title: 'Movies Flutter app',
       initialRoute: '/' + initialPage,
       getPages: PageRegistrar.pages,
-      defaultTransition: Transition.rightToLeft,
+      defaultTransition: Transition.cupertino,
       theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         appBarTheme: const AppBarTheme(
           backgroundColor: ColorConstants.BgColor,  //all page background color
