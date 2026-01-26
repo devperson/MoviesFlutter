@@ -44,7 +44,7 @@ class F_LoggingService implements ILoggingService
       //_errorTrackingService.Value.OnServiceError.AddListener(ErrorTrackingService_OnError);
       await _fileLogger.Value.InitAsync();
       _platformConsole.Value.Init();
-      //AppLaunchCount = GetLaunchCount();
+      AppLaunchCount = GetLaunchCount();
     }
 
     void ErrorTrackingService_OnError(Object? ex)
