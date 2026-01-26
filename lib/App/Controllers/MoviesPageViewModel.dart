@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:ffi';
+import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/exceptions/exceptions.dart';
 import 'package:movies_flutter/Core/Abstractions/AppServices/IInfrastructureServices.dart';
 
@@ -61,28 +63,30 @@ class MoviesPageViewModel extends PageViewModel
   }
 
   @override
-  void OnNavigatedTo(NavigationParameters parameters)
+  void OnNavigatedTo(NavigationParameters parameters) async
   {
     try
     {
-      LogMethodStart("Initialize");
+      LogMethodStart("OnNavigatedTo");
 
       if(parameters.ContainsKey(AddEditMoviePageViewModel.NEW_ITEM))
       {
-        final newProduct = GetParameter<MovieItemModel>(parameters, AddEditMoviePageViewModel.NEW_ITEM);
-        Movies.insert(0,newProduct!);
-
+        final movieId = GetParameter<int>(parameters, AddEditMoviePageViewModel.NEW_ITEM);
+        final newMovie = await GetMovieFromDb(movieId!);
+        Movies.insert(0, newMovie!);
         //update ui
         this.NotifyUpdate();
       }
       else if(parameters.ContainsKey(AddEditMoviePageViewModel.REMOVE_ITEM))
       {
-        final removedItem = GetParameter<MovieItemModel>(parameters, AddEditMoviePageViewModel.REMOVE_ITEM);
-        final item = Movies.firstWhere((x) => x.id == removedItem!.id);
-        Movies.remove(item);
-
-        //update ui
-        this.NotifyUpdate();
+        final removedId = GetParameter<int>(parameters, AddEditMoviePageViewModel.REMOVE_ITEM);
+        final item = Movies.firstWhereOrNull((x) => x.id == removedId!);
+        if(item != null)
+        {
+          Movies.remove(item);
+          //update ui
+          this.NotifyUpdate();
+        }
       }
     }
     catch (ex, stack)
@@ -148,22 +152,33 @@ class MoviesPageViewModel extends PageViewModel
 
   }
 
-  void OnMovieCellUpdatedEvent(Object? obj)
+  void OnMovieCellUpdatedEvent(Object? obj) async
   {
     LogMethodStart("OnMovieCellUpdatedEvent", args: {'item': obj});
 
     try
     {
-      final movieItem = obj as MovieItemModel;
+      if(obj == null)
+        return;
 
-      final oldItem = Movies.firstWhere((x) => x.id == movieItem.id);
-      final index = Movies.indexOf(oldItem);
-      if (index >= 0)
-      {
-        Movies[index] = movieItem;
-        //update ui
-        this.NotifyUpdate();
-      }
+      //update movie)
+      final movieId = obj as int;
+      final updatedMovie = await GetMovieFromDb(movieId);
+      if(updatedMovie != null)
+        {
+          MovieItemModel? oldItem = Movies.firstWhereOrNull((x) => x.id == movieId);
+          if(oldItem != null)
+            {
+              final index = Movies.indexOf(oldItem);
+              if (index >= 0)
+              {
+                Movies[index] = updatedMovie;
+                //update ui
+                this.NotifyUpdate();
+              }
+            }
+
+        }
     }
     catch (ex, stack)
     {
@@ -181,7 +196,7 @@ class MoviesPageViewModel extends PageViewModel
       final item = this.Movies[index];
 
       await Navigate(MovieDetailPageViewModel.Name,
-          NavigationParameters().With(SELECTED_ITEM, item));
+          NavigationParameters().With(SELECTED_ITEM, item.id));
     }
     catch (ex, stack)
     {
@@ -288,6 +303,21 @@ class MoviesPageViewModel extends PageViewModel
   {
     loggingService.Value.Log("${TAG}: setting data to Movies property result: ${list.ToDebugString()}");
     Movies = list.map((e) => MovieItemModel.fromDto(e)).toList();
+  }
+
+  Future<MovieItemModel?> GetMovieFromDb(int movieId) async
+  {
+    var result = await movieService.Value.GetById(movieId);
+    if (result.Success)
+    {
+      var newMovie = new MovieItemModel.fromDto(result.ValueOrThrow);
+      return newMovie;
+    }
+    else
+    {
+      loggingService.Value.LogWarning("MovieService.GetById() failed to get record from db");
+      return null;
+    }
   }
 
 

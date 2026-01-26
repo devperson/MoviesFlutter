@@ -136,9 +136,9 @@ abstract class BaseRepository<TEntity extends IEntity, Tb extends RealmObject, T
   }
 
   @override
-  Future<int> RemoveAsync(TEntity entity) async
+  Future<int> RemoveAsync(int movieId) async
   {
-    LogMethodStart('RemoveAsync', args: {'entity': entity});
+    LogMethodStart('RemoveAsync', args: {'movieId': movieId});
     _ensureInitialized();
 
     var hasValue = false;
@@ -146,7 +146,7 @@ abstract class BaseRepository<TEntity extends IEntity, Tb extends RealmObject, T
     _realm!.write(()
     {
       final tb = _realm!
-          .query<Tb>('Id == \$0', [entity.Id])
+          .query<Tb>('Id == \$0', [movieId])
           .firstOrNull;
 
       if (tb != null)

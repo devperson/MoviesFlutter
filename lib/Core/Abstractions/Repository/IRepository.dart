@@ -7,6 +7,6 @@ abstract interface class IRepository<TEntity extends IEntity>
     Future<int> AddAsync(TEntity entity);
     Future<int> UpdateAsync(TEntity entity);
     Future<int> AddAllAsync(List<TEntity> entities);
-    Future<int> RemoveAsync(TEntity entity);
+    Future<int> RemoveAsync(int entityId);
     Future<int> ClearAsync(String reason);
 }

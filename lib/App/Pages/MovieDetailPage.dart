@@ -39,7 +39,7 @@ class MovieDetailPage extends StatelessWidget {
                           width: 200,
                           height: 300,
                           child: F_ImageView(
-                            path: controller.MovieItem.posterPath,
+                            path: controller.MovieItem?.posterPath ?? "",
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -63,7 +63,7 @@ class MovieDetailPage extends StatelessWidget {
 
                           Expanded(
                             child: Text(
-                              controller.MovieItem.title,
+                              controller.MovieItem?.title ?? "",
                               style: const TextStyle(
                                 fontFamily: FontConstants.RegularFont,
                                 fontWeight: FontWeight.w600,
@@ -84,7 +84,7 @@ class MovieDetailPage extends StatelessWidget {
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              controller.MovieItem.overview,
+                              controller.MovieItem?.overview ?? "",
                               style: const TextStyle(
                                 fontFamily: FontConstants.RegularFont,
                                 fontWeight: FontWeight.w400,

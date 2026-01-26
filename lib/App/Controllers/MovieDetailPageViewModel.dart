@@ -1,45 +1,66 @@
 import '../../Core/Abstractions/MVVM/NavigationParameters.dart';
+import '../../Core/Base/Impl/Diagnostic/LoggableService.dart';
 import '../../Core/Base/Impl/MVVM/Helpers/AsyncCommand.dart';
 import '../../Core/Base/Impl/MVVM/ViewModels/PageViewModel.dart';
+import '../../Core/Base/Impl/Utils/LazyInjected.dart';
+import '../../Core/Domain/AppService/IMovieService.dart';
 import '../Utils/Events/MovieCellItemUpdatedEvent.dart';
 import 'AddEditMoviePageViewModel.dart';
 import 'Items/MovieItemModel.dart';
 import 'MoviesPageViewModel.dart';
 
-class MovieDetailPageViewModel extends PageViewModel
+class MovieDetailPageViewModel extends PageViewModel with MovieItemLoader
 {
   static const Name = 'MovieDetailPageViewModel';
-  late MovieItemModel MovieItem;
+
   late final EditCommand = AsyncCommand(OnEditCommand);
 
-  @override
-  void Initialize(NavigationParameters parameters)
-  {
-    super.Initialize(parameters);
 
-    if(parameters.ContainsKey(MoviesPageViewModel.SELECTED_ITEM))
+
+  @override
+  void Initialize(NavigationParameters parameters) async
+  {
+    try
     {
-      MovieItem = parameters.GetValue(MoviesPageViewModel.SELECTED_ITEM);
+      LogMethodStart("Initialize");
+
+      if(parameters.ContainsKey(MoviesPageViewModel.SELECTED_ITEM))
+      {
+        final movieId = parameters.GetValue(MoviesPageViewModel.SELECTED_ITEM);
+        final success = await LoadMovie(movieId);
+        if(success)
+          NotifyUpdate();
+      }  
+    }
+    catch(ex, stackTrace)
+    {
+      loggingService.Value.TrackError(ex, stackTrace);
     }
   }
 
   @override
-  void OnNavigatedTo(NavigationParameters parameters)
+  void OnNavigatedTo(NavigationParameters parameters) async
   {
-    super.OnNavigatedTo(parameters);
-
-    if (parameters.ContainsKey(AddEditMoviePageViewModel.UPDATE_ITEM))
+    try
     {
-      this.MovieItem = parameters.GetValue<MovieItemModel>(AddEditMoviePageViewModel.UPDATE_ITEM)!;
-      final updateCellEvent = eventAggregator.Value.GetOrCreateEvent(()=>MovieCellItemUpdatedEvent());
-      updateCellEvent.Publish(this.MovieItem);
-
-      //refresh UI
-      this.NotifyUpdate();
+      if (parameters.ContainsKey(AddEditMoviePageViewModel.UPDATE_ITEM))
+      {
+        final success = await LoadMovie(MovieItem!.id);
+        if(success)
+        {
+          //refresh UI
+          this.NotifyUpdate();
+          //report to main controller
+          final updateCellEvent = eventAggregator.Value.GetOrCreateEvent(()=>MovieCellItemUpdatedEvent());
+          updateCellEvent.Publish(this.MovieItem!.id);
+        }
+      }
+    }
+    catch(ex, stackTrace)
+    {
+      loggingService.Value.TrackError(ex, stackTrace);
     }
   }
-
-
 
   Future<void> OnEditCommand(Object? param) async
   {
@@ -47,11 +68,34 @@ class MovieDetailPageViewModel extends PageViewModel
     {
       LogMethodStart("OnEditCommand");
 
-      await Navigate(AddEditMoviePageViewModel.Name, NavigationParameters().With(MoviesPageViewModel.SELECTED_ITEM, MovieItem));
+      await Navigate(AddEditMoviePageViewModel.Name, NavigationParameters().With(MoviesPageViewModel.SELECTED_ITEM, MovieItem!.id));
     }
     catch (ex, stack)
     {
       HandleUIError(ex, stack);
+    }
+  }
+
+
+}
+
+mixin MovieItemLoader on LoggableService
+{
+  final moviesService = LazyInjected<IMovieService>();
+  MovieItemModel? MovieItem = null;
+
+  Future LoadMovie(int movieId) async
+  {
+    var result = await moviesService.Value.GetById(movieId);
+    if (result.Success)
+    {
+      this.MovieItem = new MovieItemModel.fromDto(result.ValueOrThrow);
+      return true;
+    }
+    else
+    {
+      loggingService.Value.LogWarning("LoadMovie() for movieId: $movieId is failed");
+      return false;
     }
   }
 }

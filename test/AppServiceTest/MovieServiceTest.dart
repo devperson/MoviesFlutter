@@ -69,7 +69,7 @@ void main()
     expect(result.Success, isTrue, reason: "IMoviesService.GetById() failed in T1_3UpdateMovieTest()");
 
     final item = result.ValueOrThrow;
-    final removeResult = await movieService.RemoveAsync(item);
+    final removeResult = await movieService.RemoveAsync(item.Id);
     expect(removeResult.Success, isTrue, reason: "IMoviesService.RemoveAsync() failed in T1_3RemoveMovieTest() with error: ${removeResult.Error.toString()}");
   });
 

@@ -86,7 +86,7 @@ void main()
         final movieRepo = ContainerLocator.Resolve<IRepository<Movie>>();
         var entity = await movieRepo.FindById(1);
         expect(entity != null, isTrue, reason: "Can not find entity");
-        final deletedCount = await movieRepo.RemoveAsync(entity!);
+        final deletedCount = await movieRepo.RemoveAsync(entity!.Id);
         expect(deletedCount > 0, isTrue, reason: "RemoveAsync() returned negative value");
 
         entity = await movieRepo.FindById(1);

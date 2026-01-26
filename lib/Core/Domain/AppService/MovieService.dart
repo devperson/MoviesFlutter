@@ -86,15 +86,14 @@ class MoviesService with LoggableService implements IMovieService
   }
 
   @override
-  Future<Some<MovieDto>> AddAsync(String name, String overview, String? posterUrl) async
+  Future<Some<int>> AddAsync(String name, String overview, String? posterUrl) async
   {
     try
     {
       LogMethodStart("AddAsync", args: {"name": name, "overview": overview, "posterUrl": posterUrl});
       final movie = Movie.Create(name, overview, posterUrl);
-      await movieRepository.Value.AddAsync(movie);
-      final dtoMovie = movie.ToDto<MovieDto>();
-      return Some.FromValue(dtoMovie);
+      final result = await movieRepository.Value.AddAsync(movie);
+      return Some.FromValue(result);
     }
     catch (ex, stackTrace)
     {
@@ -104,15 +103,15 @@ class MoviesService with LoggableService implements IMovieService
   }
 
   @override
-  Future<Some<MovieDto>> UpdateAsync(MovieDto dtoModel) async
+  Future<Some<int>> UpdateAsync(MovieDto dtoModel) async
   {
     try
     {
       LogMethodStart("UpdateAsync", args: {"dtoModel": dtoModel});
       final movie = dtoModel.ToEntity<Movie>();
-      await movieRepository.Value.UpdateAsync(movie);
+      final result = await movieRepository.Value.UpdateAsync(movie);
 
-      return Some.FromValue(dtoModel);
+      return Some.FromValue(result);
     }
     catch (ex, stackTrace)
     {
@@ -122,14 +121,12 @@ class MoviesService with LoggableService implements IMovieService
   }
 
   @override
-  Future<Some<int>> RemoveAsync(MovieDto dtoModel) async
+  Future<Some<int>> RemoveAsync(int dtoId) async
   {
     try
     {
-      LogMethodStart("RemoveAsync", args: {"dtoModel": dtoModel});
-
-      final movie = dtoModel.ToEntity<Movie>();
-      final res = await movieRepository.Value.RemoveAsync(movie);
+      LogMethodStart("RemoveAsync", args: {"dtoId": dtoId});
+      final res = await movieRepository.Value.RemoveAsync(dtoId);
 
       return Some.FromValue(res);
     }

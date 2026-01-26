@@ -54,7 +54,7 @@ class AddEditMoviePage extends StatelessWidget {
                               children: [
                                 // 1. Background Image
                                 F_ImageView(
-                                  path: controller.MovieItem.posterPath,
+                                  path: controller.MovieItem?.posterPath ?? "",
                                   fit: BoxFit.cover,
                                 ),
 

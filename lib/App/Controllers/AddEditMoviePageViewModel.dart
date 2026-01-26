@@ -10,17 +10,16 @@ import '../../Core/Base/Impl/Utils/LazyInjected.dart';
 import '../../Core/Domain/Dto/MovieDto.dart';
 import '../Utils/CommonStrings.dart';
 import 'Items/MovieItemModel.dart';
+import 'MovieDetailPageViewModel.dart';
 import 'MoviesPageViewModel.dart';
 
-class AddEditMoviePageViewModel extends PageViewModel
+class AddEditMoviePageViewModel extends PageViewModel with MovieItemLoader
 {
   final mediaPickerService = LazyInjected<IMediaPickerService>();
-  final movieService = LazyInjected<IMovieService>();
   static const Name = 'AddEditMoviePageViewModel';
   static const NEW_ITEM = 'NEW_ITEM';
   static const UPDATE_ITEM = 'UPDATE_ITEM';
   static const REMOVE_ITEM = 'REMOVE_ITEM';
-  late MovieItemModel MovieItem;
   late final SaveCommand = AsyncCommand(OnSaveCommand);
   late final ChangePhotoCommand = AsyncCommand(OnChangePhotoCommand);
   late final DeleteCommand = AsyncCommand(OnDeleteCommand);
@@ -31,7 +30,7 @@ class AddEditMoviePageViewModel extends PageViewModel
   final intGenerator = IntIdGenerator();
 
   @override
-  void Initialize(NavigationParameters parameters)
+  void Initialize(NavigationParameters parameters) async
   {
     super.Initialize(parameters);
 
@@ -39,27 +38,32 @@ class AddEditMoviePageViewModel extends PageViewModel
     {
       this.Title = "Edit";
       this.IsEdit = true;
-      final item = parameters.GetValue<MovieItemModel>(MoviesPageViewModel.SELECTED_ITEM)!;
-      this.MovieItem = item.CreateCopy();
+      final movieId = parameters.GetValue<int>(MoviesPageViewModel.SELECTED_ITEM)!;
+
+      final success = await LoadMovie(movieId);
+      if(success)
+      {
+        this.NotifyUpdate();
+      }    
     }
     else
     {
       this.Title = "Create new";
       this.MovieItem = MovieItemModel();
-      this.MovieItem.id = intGenerator.next();
+      this.MovieItem!.id = intGenerator.next();
     }
 
     // Prefill from model
-    titleController.text = MovieItem.title;
-    descriptionController.text = MovieItem.overview;
+    titleController.text = MovieItem!.title;
+    descriptionController.text = MovieItem!.overview;
 
     // Keep model in sync
     titleController.addListener(() {
-      MovieItem.title = titleController.text;
+      MovieItem!.title = titleController.text;
     });
 
     descriptionController.addListener(() {
-      MovieItem.overview = descriptionController.text;
+      MovieItem!.overview = descriptionController.text;
     });
   }
 
@@ -79,39 +83,45 @@ class AddEditMoviePageViewModel extends PageViewModel
     {
       LogMethodStart("OnSaveCommand");
 
-      if (MovieItem.title.isEmpty)
+      if (MovieItem!.title.isEmpty)
       {
         snackbarService.Value.ShowError("The Name field is required");
         return;
       }
-      else if (MovieItem.overview.isEmpty)
+      else if (MovieItem!.overview.isEmpty)
       {
         snackbarService.Value.ShowError("The Overview field is required");
         return;
       }
 
       Some<MovieDto>? Result;
+      bool succes = false;
+      int movieId = 0;
       if (IsEdit)
       {
         // TODO: use mapper
-        final dtoModel = MovieItem.toDto();
-        Result = await movieService.Value.UpdateAsync(dtoModel);
+        final dtoModel = MovieItem!.toDto();
+        final result = await moviesService.Value.UpdateAsync(dtoModel);
+        succes = result.Success;
+        movieId = MovieItem!.id;
+
       }
       else
       {
-        Result = await movieService.Value.AddAsync(
-          MovieItem.title,
-          MovieItem.overview,
-          MovieItem.posterPath,
+        final result = await moviesService.Value.AddAsync(
+          MovieItem!.title,
+          MovieItem!.overview,
+          MovieItem!.posterPath,
         );
+        succes = result.Success;
+        movieId = result.ValueOrThrow;
       }
 
-      if (Result.Success)
+      if (succes)
       {
-        final item = MovieItemModel.fromDto(Result.ValueOrThrow);
         final key = IsEdit ? UPDATE_ITEM : NEW_ITEM;
 
-        await NavigateBack(NavigationParameters().With(key, item));
+        await NavigateBack(NavigationParameters().With(key, movieId));
       }
       else
       {
@@ -130,7 +140,7 @@ class AddEditMoviePageViewModel extends PageViewModel
 
     try
     {
-      final deleteText = MovieItem.posterPath.isNotEmpty ? "Delete" : null;
+      final deleteText = MovieItem!.posterPath.isNotEmpty ? "Delete" : null;
 
       final buttons = ["Pick Photo", "Take Photo"];
 
@@ -143,7 +153,7 @@ class AddEditMoviePageViewModel extends PageViewModel
 
         if (photo != null)
         {
-          MovieItem.posterPath = photo.FilePath;
+          MovieItem!.posterPath = photo.FilePath;
         }
         else
         {
@@ -156,7 +166,7 @@ class AddEditMoviePageViewModel extends PageViewModel
 
         if (photo != null)
         {
-          MovieItem.posterPath = photo.FilePath;
+          MovieItem!.posterPath = photo.FilePath;
         }
         else
         {
@@ -165,7 +175,7 @@ class AddEditMoviePageViewModel extends PageViewModel
       }
       else if (actionResult == deleteText)
       {
-        MovieItem.posterPath = "";
+        MovieItem!.posterPath = "";
       }
 
       this.NotifyUpdate();
@@ -191,12 +201,11 @@ class AddEditMoviePageViewModel extends PageViewModel
 
       if (res == true)
       {
-        final dtoModel = MovieItem.toDto();
-        final result = await movieService.Value.RemoveAsync(dtoModel);
+        final result = await moviesService.Value.RemoveAsync(MovieItem!.id);
 
         if (result.Success)
         {
-          await NavigateToRoot(NavigationParameters().With(REMOVE_ITEM, MovieItem));
+          await NavigateToRoot(NavigationParameters().With(REMOVE_ITEM, MovieItem!.id));
         }
         else
         {

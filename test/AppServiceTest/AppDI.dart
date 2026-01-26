@@ -33,7 +33,7 @@ class AppDI
     when(() => repo.AddAsync(any<Movie>())).thenAnswer((_) async => 1);
     when(() => repo.UpdateAsync(any<Movie>())).thenAnswer((_) async => 1);
     when(() => repo.AddAllAsync(any<List<Movie>>())).thenAnswer((_) async => 1);
-    when(() => repo.RemoveAsync(any<Movie>())).thenAnswer((_) async => 1);
+    when(() => repo.RemoveAsync(any<int>())).thenAnswer((_) async => 1);
     when(() => repo.ClearAsync(any())).thenAnswer((_) async => 1);
 
     Get.lazyPut<IPreferences>(()=>PreferencesMock(), fenix: true);
